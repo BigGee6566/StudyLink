@@ -22,6 +22,22 @@ namespace StudyLink.Data.Configurations
             mb.Entity<UserRole>()
                 .HasOptional(ur => ur.AssignedBy).WithMany().HasForeignKey(ur => ur.AssignedByUserId);
 
+            // These three have two navigations to User (the requester and the staff member who
+            // handled it). Without explicit keys EF6 invents a shadow User_UserId column and leaves
+            // UserId unused - caught by the password-reset integration test.
+            mb.Entity<PasswordResetRequest>()
+                .HasOptional(r => r.User).WithMany().HasForeignKey(r => r.UserId);
+            mb.Entity<PasswordResetRequest>()
+                .HasOptional(r => r.HandledBy).WithMany().HasForeignKey(r => r.HandledByUserId);
+            mb.Entity<ProfileUpdateRequest>()
+                .HasRequired(r => r.User).WithMany().HasForeignKey(r => r.UserId);
+            mb.Entity<ProfileUpdateRequest>()
+                .HasOptional(r => r.HandledBy).WithMany().HasForeignKey(r => r.HandledByUserId);
+            mb.Entity<SupportMessage>()
+                .HasOptional(m => m.User).WithMany().HasForeignKey(m => m.UserId);
+            mb.Entity<SupportMessage>()
+                .HasOptional(m => m.HandledBy).WithMany().HasForeignKey(m => m.HandledByUserId);
+
             mb.Entity<TutorVerification>()
                 .HasRequired(v => v.Tutor).WithMany(t => t.Verifications).HasForeignKey(v => v.TutorId);
             mb.Entity<TutorVerification>()

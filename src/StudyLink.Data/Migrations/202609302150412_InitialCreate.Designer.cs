@@ -13,7 +13,7 @@ namespace StudyLink.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "202609302059544_InitialCreate"; }
+            get { return "202609302150412_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

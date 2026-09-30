@@ -133,7 +133,8 @@ namespace StudyLink.Data.Entities
         [Key, StringLength(60)]
         public string SettingKey { get; set; }
 
-        [Required, StringLength(200)]
+        /// <summary>Never NULL, but may be empty (e.g. Backup.Directory "" = use the SQL Server default).</summary>
+        [Required(AllowEmptyStrings = true), StringLength(200)]
         public string Value { get; set; }
 
         [StringLength(300)]

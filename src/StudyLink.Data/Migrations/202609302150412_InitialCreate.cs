@@ -730,13 +730,12 @@
                         HandledAt = c.DateTime(precision: 0, storeType: "datetime2"),
                         ResponseNote = c.String(maxLength: 200),
                         RequestIp = c.String(maxLength: 45),
-                        User_UserId = c.Int(),
                     })
                 .PrimaryKey(t => t.RequestId)
                 .ForeignKey("dbo.Users", t => t.HandledByUserId)
-                .ForeignKey("dbo.Users", t => t.User_UserId)
-                .Index(t => t.HandledByUserId)
-                .Index(t => t.User_UserId);
+                .ForeignKey("dbo.Users", t => t.UserId)
+                .Index(t => t.UserId)
+                .Index(t => t.HandledByUserId);
             
             CreateTable(
                 "dbo.PasswordResetTokens",
@@ -801,13 +800,12 @@
                         HandledByUserId = c.Int(),
                         HandledAt = c.DateTime(precision: 0, storeType: "datetime2"),
                         ResponseNote = c.String(maxLength: 200),
-                        User_UserId = c.Int(),
                     })
                 .PrimaryKey(t => t.RequestId)
                 .ForeignKey("dbo.Users", t => t.HandledByUserId)
-                .ForeignKey("dbo.Users", t => t.User_UserId)
-                .Index(t => t.HandledByUserId)
-                .Index(t => t.User_UserId);
+                .ForeignKey("dbo.Users", t => t.UserId)
+                .Index(t => t.UserId)
+                .Index(t => t.HandledByUserId);
             
             CreateTable(
                 "dbo.ReportRuns",
@@ -903,15 +901,14 @@
                         HandledByUserId = c.Int(),
                         HandledAt = c.DateTime(precision: 0, storeType: "datetime2"),
                         ResponseNote = c.String(maxLength: 500),
-                        User_UserId = c.Int(),
                     })
                 .PrimaryKey(t => t.MessageId)
                 .ForeignKey("dbo.Campuses", t => t.CampusId)
                 .ForeignKey("dbo.Users", t => t.HandledByUserId)
-                .ForeignKey("dbo.Users", t => t.User_UserId)
+                .ForeignKey("dbo.Users", t => t.UserId)
+                .Index(t => t.UserId)
                 .Index(t => t.CampusId)
-                .Index(t => t.HandledByUserId)
-                .Index(t => t.User_UserId);
+                .Index(t => t.HandledByUserId);
             
             CreateTable(
                 "dbo.SystemSettings",
@@ -1015,7 +1012,7 @@
             DropForeignKey("dbo.Timesheets", "ReviewedByUserId", "dbo.Users");
             DropForeignKey("dbo.TimesheetEntries", "BookingId", "dbo.Bookings");
             DropForeignKey("dbo.SystemSettings", "UpdatedByUserId", "dbo.Users");
-            DropForeignKey("dbo.SupportMessages", "User_UserId", "dbo.Users");
+            DropForeignKey("dbo.SupportMessages", "UserId", "dbo.Users");
             DropForeignKey("dbo.SupportMessages", "HandledByUserId", "dbo.Users");
             DropForeignKey("dbo.SupportMessages", "CampusId", "dbo.Campuses");
             DropForeignKey("dbo.SupplierInvoices", "SupplierId", "dbo.Suppliers");
@@ -1027,14 +1024,14 @@
             DropForeignKey("dbo.Reviews", "HiddenByUserId", "dbo.Users");
             DropForeignKey("dbo.Reviews", "BookingId", "dbo.Bookings");
             DropForeignKey("dbo.ReportRuns", "GeneratedByUserId", "dbo.Users");
-            DropForeignKey("dbo.ProfileUpdateRequests", "User_UserId", "dbo.Users");
+            DropForeignKey("dbo.ProfileUpdateRequests", "UserId", "dbo.Users");
             DropForeignKey("dbo.ProfileUpdateRequests", "HandledByUserId", "dbo.Users");
             DropForeignKey("dbo.PostponementRequests", "TutorId", "dbo.Tutors");
             DropForeignKey("dbo.PostponementRequests", "StudentId", "dbo.Students");
             DropForeignKey("dbo.PostponementRequests", "BookingId", "dbo.Bookings");
             DropForeignKey("dbo.PasswordResetTokens", "UserId", "dbo.Users");
             DropForeignKey("dbo.PasswordResetTokens", "RequestId", "dbo.PasswordResetRequests");
-            DropForeignKey("dbo.PasswordResetRequests", "User_UserId", "dbo.Users");
+            DropForeignKey("dbo.PasswordResetRequests", "UserId", "dbo.Users");
             DropForeignKey("dbo.PasswordResetRequests", "HandledByUserId", "dbo.Users");
             DropForeignKey("dbo.Notifications", "UserId", "dbo.Users");
             DropForeignKey("dbo.Fees", "StudentId", "dbo.Students");
@@ -1113,9 +1110,9 @@
             DropIndex("dbo.TimesheetEntries", new[] { "BookingId" });
             DropIndex("dbo.TimesheetEntries", new[] { "TimesheetId" });
             DropIndex("dbo.SystemSettings", new[] { "UpdatedByUserId" });
-            DropIndex("dbo.SupportMessages", new[] { "User_UserId" });
             DropIndex("dbo.SupportMessages", new[] { "HandledByUserId" });
             DropIndex("dbo.SupportMessages", new[] { "CampusId" });
+            DropIndex("dbo.SupportMessages", new[] { "UserId" });
             DropIndex("dbo.SupplierInvoices", new[] { "ReviewedByUserId" });
             DropIndex("dbo.SupplierInvoices", new[] { "OrderId" });
             DropIndex("dbo.SupplierInvoices", "UQ_SupplierInvoice_Number");
@@ -1123,16 +1120,16 @@
             DropIndex("dbo.Reviews", new[] { "HiddenByUserId" });
             DropIndex("dbo.Reviews", new[] { "BookingId" });
             DropIndex("dbo.ReportRuns", new[] { "GeneratedByUserId" });
-            DropIndex("dbo.ProfileUpdateRequests", new[] { "User_UserId" });
             DropIndex("dbo.ProfileUpdateRequests", new[] { "HandledByUserId" });
+            DropIndex("dbo.ProfileUpdateRequests", new[] { "UserId" });
             DropIndex("dbo.PostponementRequests", new[] { "TutorId" });
             DropIndex("dbo.PostponementRequests", new[] { "StudentId" });
             DropIndex("dbo.PostponementRequests", new[] { "BookingId" });
             DropIndex("dbo.PasswordResetTokens", new[] { "RequestId" });
             DropIndex("dbo.PasswordResetTokens", new[] { "TokenHash" });
             DropIndex("dbo.PasswordResetTokens", new[] { "UserId" });
-            DropIndex("dbo.PasswordResetRequests", new[] { "User_UserId" });
             DropIndex("dbo.PasswordResetRequests", new[] { "HandledByUserId" });
+            DropIndex("dbo.PasswordResetRequests", new[] { "UserId" });
             DropIndex("dbo.Notifications", "IX_Notification_UserUnread");
             DropIndex("dbo.Sales", new[] { "CopyId" });
             DropIndex("dbo.Sales", new[] { "StudentId" });

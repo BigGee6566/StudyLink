@@ -386,7 +386,9 @@ namespace StudyLink.Services.Implementations
                     Campus = t.User.Campus.Name,
                     Subjects = t.Subjects.Where(s => s.Subject.IsActive).Select(s => s.Subject.Name).Distinct(),
                     // Hidden reviews never move a public rating (TutorConnect moderation rule).
-                    Ratings = _db.Reviews.Where(r => r.Booking.TutorId == t.TutorId && !r.IsHidden).Select(r => (int)r.Rating),
+                    // Aggregated in SQL: a nested IQueryable member cannot be queried again once materialised.
+                    ReviewCount = _db.Reviews.Count(r => r.Booking.TutorId == t.TutorId && !r.IsHidden),
+                    Rating = _db.Reviews.Where(r => r.Booking.TutorId == t.TutorId && !r.IsHidden).Average(r => (double?)r.Rating),
                     Next = _db.TutorAvailability.Where(a => a.TutorSubject.TutorId == t.TutorId && !a.IsBooked && a.AvailabilityDate >= today)
                         .Min(a => (DateTime?)a.AvailabilityDate)
                 }).ToList();
@@ -397,8 +399,8 @@ namespace StudyLink.Services.Implementations
                 Initials = (t.FirstName.Substring(0, 1) + t.LastName.Substring(0, 1)).ToUpperInvariant(),
                 Qualification = t.Qualification, ExperienceYears = t.ExperienceYears, HourlyRate = t.HourlyRate, Campus = t.Campus,
                 Subjects = string.Join(", ", t.Subjects.OrderBy(s => s)),
-                ReviewCount = t.Ratings.Count(),
-                AverageRating = t.Ratings.Any() ? Math.Round((decimal)t.Ratings.Average(), 1) : (decimal?)null,
+                ReviewCount = t.ReviewCount,
+                AverageRating = t.Rating.HasValue ? Math.Round((decimal)t.Rating.Value, 1) : (decimal?)null,
                 NextAvailable = t.Next
             }).ToList();
             return new PagedResult<TutorCard>(cards, total, page, f.PageSize);
