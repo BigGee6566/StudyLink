@@ -22,7 +22,7 @@ namespace StudyLink.Services.Implementations
     /// </summary>
     public sealed class ReportService : IReportService
     {
-        private static readonly CultureInfo Za = CultureInfo.GetCultureInfo("en-ZA");
+        private static readonly CultureInfo Display = CultureInfo.GetCultureInfo("en-GB");
 
         private static readonly ReportDefinition[] Definitions =
         {
@@ -107,7 +107,7 @@ namespace StudyLink.Services.Implementations
             return t;
         }
 
-        private static string R(decimal v) => "R " + v.ToString("N2", Za);
+        private static string R(decimal v) => "R " + v.ToString("N2", Display);
         private static string D(DateTime d) => d.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         private static void Sum(ReportResult r, string label, string value) => r.Summary.Add(new KeyValuePair<string, string>(label, value));
 
@@ -146,7 +146,7 @@ namespace StudyLink.Services.Implementations
             r.Table = Table("Student number", "Student", "Email", "Unpaid items", "Amount", "Oldest item");
             foreach (var x in rows)
                 r.Table.Rows.Add(x.StudentNumber, x.FirstName + " " + x.LastName, x.Email, x.Items, R(x.Total), D(x.Oldest));
-            Sum(r, "Students owing", rows.Count.ToString(Za));
+            Sum(r, "Students owing", rows.Count.ToString(Display));
             Sum(r, "Total outstanding", R(rows.Sum(x => x.Total)));
         }
 
@@ -157,7 +157,7 @@ namespace StudyLink.Services.Implementations
             r.Table = Table("Rental", "Title", "Barcode", "Campus", "Student number", "Student", "Due", "Days overdue", "Fine so far");
             foreach (var x in rows)
                 r.Table.Rows.Add(x.Reference, x.BookTitle, x.Barcode, x.Campus, x.StudentNumber, x.StudentName, D(x.DueDate), x.DaysOverdue, R(x.AccruedFine));
-            Sum(r, "Overdue books", rows.Count.ToString(Za));
+            Sum(r, "Overdue books", rows.Count.ToString(Display));
             Sum(r, "Fines accruing", R(rows.Sum(x => x.AccruedFine)));
         }
 
@@ -179,13 +179,13 @@ namespace StudyLink.Services.Implementations
                 r.Table.Rows.Add(b.Title, b.Isbn, b.Category, s.Available, s.Reserved, s.Rented, s.Overdue, s.Sold, s.Lost, s.Damaged, s.ReorderLevel,
                     !b.IsActive ? "Inactive" : s.IsOutOfStock ? "Out of stock" : s.IsLowStock ? "Low" : "OK");
             }
-            Sum(r, lowOnly ? "Titles below reorder level" : "Titles", shown.ToString(Za));
+            Sum(r, lowOnly ? "Titles below reorder level" : "Titles", shown.ToString(Display));
             if (!lowOnly)
             {
                 var all = raw.SelectMany(b => b.Statuses).ToList();
-                Sum(r, "Copies available", all.Count(s => s == CopyStatus.Available).ToString(Za));
-                Sum(r, "Copies on loan", all.Count(s => s == CopyStatus.Rented).ToString(Za));
-                Sum(r, "Copies sold", all.Count(s => s == CopyStatus.Sold).ToString(Za));
+                Sum(r, "Copies available", all.Count(s => s == CopyStatus.Available).ToString(Display));
+                Sum(r, "Copies on loan", all.Count(s => s == CopyStatus.Rented).ToString(Display));
+                Sum(r, "Copies sold", all.Count(s => s == CopyStatus.Sold).ToString(Display));
             }
         }
 
@@ -196,7 +196,7 @@ namespace StudyLink.Services.Implementations
                 .Select(s => new { s.CompletedAt, s.Reference, s.Copy.Book.Title, Campus = s.Copy.Campus.Name, s.Student.StudentNumber, s.Price }).ToList();
             r.Table = Table("Date", "Sale", "Title", "Campus", "Student number", "Price");
             foreach (var s in rows) r.Table.Rows.Add(D(s.CompletedAt.Value), s.Reference, s.Title, s.Campus, s.StudentNumber, R(s.Price));
-            Sum(r, "Books sold", rows.Count.ToString(Za));
+            Sum(r, "Books sold", rows.Count.ToString(Display));
             Sum(r, "Sales value", R(rows.Sum(s => s.Price)));
         }
 
@@ -211,9 +211,9 @@ namespace StudyLink.Services.Implementations
             r.Table = Table("Title", "Rentals started", "Returned", "Renewals");
             foreach (var title in started.Select(x => x.Title).Union(returned.Select(x => x.Title)).Union(renewed.Select(x => x.Title)).OrderBy(t => t))
                 r.Table.Rows.Add(title, started.Where(x => x.Title == title).Sum(x => x.N), returned.Where(x => x.Title == title).Sum(x => x.N), renewed.Where(x => x.Title == title).Sum(x => x.N));
-            Sum(r, "Rentals started", started.Sum(x => x.N).ToString(Za));
-            Sum(r, "Returned", returned.Sum(x => x.N).ToString(Za));
-            Sum(r, "Renewals", renewed.Sum(x => x.N).ToString(Za));
+            Sum(r, "Rentals started", started.Sum(x => x.N).ToString(Display));
+            Sum(r, "Returned", returned.Sum(x => x.N).ToString(Display));
+            Sum(r, "Renewals", renewed.Sum(x => x.N).ToString(Display));
         }
 
         internal static IList<TutorUtilisation> ComputeUtilisation(StudyLinkDbContext db, DateTime from, DateTime to)
@@ -257,11 +257,11 @@ namespace StudyLink.Services.Implementations
             var rows = ComputeUtilisation(_db, from, to);
             r.Table = Table("Tutor", "Hours published", "Hours booked", "Hours delivered", "Utilisation %", "Sessions completed", "Cancelled/declined");
             foreach (var u in rows)
-                r.Table.Rows.Add(u.Name, u.HoursPublished, u.HoursBooked, u.HoursDelivered, u.Percent.ToString("0.0", Za), u.Completed, u.Cancelled);
+                r.Table.Rows.Add(u.Name, u.HoursPublished, u.HoursBooked, u.HoursDelivered, u.Percent.ToString("0.0", Display), u.Completed, u.Cancelled);
             var published = rows.Sum(u => u.HoursPublished);
-            Sum(r, "Verified tutors", rows.Count.ToString(Za));
-            Sum(r, "Overall utilisation", SchedulePolicy.UtilisationPercent(rows.Sum(u => u.HoursBooked), published).ToString("0.0", Za) + "%");
-            Sum(r, "Hours delivered", rows.Sum(u => u.HoursDelivered).ToString("0.##", Za));
+            Sum(r, "Verified tutors", rows.Count.ToString(Display));
+            Sum(r, "Overall utilisation", SchedulePolicy.UtilisationPercent(rows.Sum(u => u.HoursBooked), published).ToString("0.0", Display) + "%");
+            Sum(r, "Hours delivered", rows.Sum(u => u.HoursDelivered).ToString("0.##", Display));
         }
 
         private void Earnings(ReportResult r, DateTime from, DateTime to)
@@ -279,7 +279,7 @@ namespace StudyLink.Services.Implementations
                 r.Table.Rows.Add(x.FirstName + " " + x.LastName, x.Sessions, x.Hours, R(x.Gross), R(x.Gross - net), R(net));
             }
             var gross = rows.Sum(x => x.Gross);
-            Sum(r, "Commission rate", commission.ToString("0.##", Za) + "%");
+            Sum(r, "Commission rate", commission.ToString("0.##", Display) + "%");
             Sum(r, "Gross tutoring fees", R(gross));
             Sum(r, "Paid to tutors", R(rows.Sum(x => MoneyPolicy.TutorShare(x.Gross, commission))));
         }
@@ -292,8 +292,8 @@ namespace StudyLink.Services.Implementations
                 .OrderBy(x => x.LastName).ToList();
             r.Table = Table("Tutor", "Approved weeks", "Approved hours", "Hourly rate");
             foreach (var x in rows) r.Table.Rows.Add(x.FirstName + " " + x.LastName, x.Weeks, x.Hours, R(x.HourlyRate));
-            Sum(r, "Approved hours", rows.Sum(x => x.Hours).ToString("0.##", Za));
-            Sum(r, "Timesheets awaiting review", _db.Timesheets.Count(t => t.Status == TimesheetStatus.Submitted).ToString(Za));
+            Sum(r, "Approved hours", rows.Sum(x => x.Hours).ToString("0.##", Display));
+            Sum(r, "Timesheets awaiting review", _db.Timesheets.Count(t => t.Status == TimesheetStatus.Submitted).ToString(Display));
         }
 
         private void Bookings(ReportResult r, DateTime from, DateTime to)
@@ -312,8 +312,8 @@ namespace StudyLink.Services.Implementations
             r.Table = Table("Subject", "Bookings", "Upcoming", "Completed", "Cancelled", "Declined", "Expired unpaid");
             foreach (var x in rows) r.Table.Rows.Add(x.Subject, x.Total, x.Confirmed, x.Completed, x.Cancelled, x.Declined, x.Expired);
             var total = rows.Sum(x => x.Total);
-            Sum(r, "Bookings", total.ToString(Za));
-            Sum(r, "Completion rate", (total == 0 ? 0 : Math.Round(rows.Sum(x => x.Completed) * 100m / total, 1)).ToString("0.0", Za) + "%");
+            Sum(r, "Bookings", total.ToString(Display));
+            Sum(r, "Completion rate", (total == 0 ? 0 : Math.Round(rows.Sum(x => x.Completed) * 100m / total, 1)).ToString("0.0", Display) + "%");
         }
 
         private void Metrics(ReportResult r, DateTime from, DateTime to)
@@ -323,7 +323,7 @@ namespace StudyLink.Services.Implementations
             foreach (var m in rows)
                 r.Table.Rows.Add(D(m.MetricDate), R(m.Revenue), R(m.Refunds), m.PaymentsCount, m.BookingsCreated, m.SessionsCompleted,
                     m.RentalsStarted, m.RentalsReturned, m.OverdueRentals, m.BooksSold, R(m.FinesIssued), m.NewStudents, m.NewTutors);
-            Sum(r, "Days recorded", rows.Count.ToString(Za));
+            Sum(r, "Days recorded", rows.Count.ToString(Display));
             Sum(r, "Revenue", R(rows.Sum(m => m.Revenue - m.Refunds)));
         }
 
@@ -351,7 +351,7 @@ namespace StudyLink.Services.Implementations
 
     public sealed class DashboardService : IDashboardService
     {
-        private static readonly CultureInfo Za = CultureInfo.GetCultureInfo("en-ZA");
+        private static readonly CultureInfo Display = CultureInfo.GetCultureInfo("en-GB");
 
         private readonly StudyLinkDbContext _db;
         private readonly IBookingService _bookings;
@@ -388,7 +388,7 @@ namespace StudyLink.Services.Implementations
         }
 
         private string FirstName(Actor actor) => _db.Users.Where(u => u.UserId == actor.UserId).Select(u => u.FirstName).FirstOrDefault();
-        private static string R(decimal v) => "R " + v.ToString("N2", Za);
+        private static string R(decimal v) => "R " + v.ToString("N2", Display);
 
         public StudentDashboard Student(Actor actor)
         {
@@ -455,16 +455,16 @@ namespace StudyLink.Services.Implementations
             d.PendingTutors = _verification.Queue(actor, TutorVerificationStatus.PendingVerification).Take(6).ToList();
             d.DeliveriesToReceive = _orders.DeliveriesToReceive(actor).Take(6).ToList();
 
-            d.Kpis.Add(new Kpi("Tutors to verify", d.PendingTutors.Count.ToString(Za), "SC22", "~/Operations/TutorVerification.aspx", d.PendingTutors.Count > 0 ? "orange" : "green"));
-            d.Kpis.Add(new Kpi("Overdue books", overdue.Total.ToString(Za), "Follow up with students", "~/Staff/Returns.aspx?overdue=1", overdue.Total > 0 ? "red" : "green"));
-            d.Kpis.Add(new Kpi("Due back today", _db.Rentals.Count(r => r.Status == RentalStatus.Active && r.DueDate == today).ToString(Za), null, "~/Staff/Returns.aspx", "blue"));
+            d.Kpis.Add(new Kpi("Tutors to verify", d.PendingTutors.Count.ToString(Display), "SC22", "~/Operations/TutorVerification.aspx", d.PendingTutors.Count > 0 ? "orange" : "green"));
+            d.Kpis.Add(new Kpi("Overdue books", overdue.Total.ToString(Display), "Follow up with students", "~/Staff/Returns.aspx?overdue=1", overdue.Total > 0 ? "red" : "green"));
+            d.Kpis.Add(new Kpi("Due back today", _db.Rentals.Count(r => r.Status == RentalStatus.Active && r.DueDate == today).ToString(Display), null, "~/Staff/Returns.aspx", "blue"));
             d.Kpis.Add(new Kpi("Outstanding fines", R(_db.Fines.Where(f => f.Status == FineStatus.Outstanding).Select(f => (decimal?)f.Amount).Sum() ?? 0), null, "~/Staff/Fines.aspx", "orange"));
             if (RolePermissions.Has(actor, Permission.HandlePasswordResets))
-                d.Kpis.Add(new Kpi("Password resets", _db.PasswordResetRequests.Count(p => p.Status == RequestStatus.Pending).ToString(Za), "SC27", "~/Operations/PasswordResets.aspx", "navy"));
-            d.Kpis.Add(new Kpi("Support messages", _db.SupportMessages.Count(m => m.Status != SupportStatus.Resolved).ToString(Za) + " open",
+                d.Kpis.Add(new Kpi("Password resets", _db.PasswordResetRequests.Count(p => p.Status == RequestStatus.Pending).ToString(Display), "SC27", "~/Operations/PasswordResets.aspx", "navy"));
+            d.Kpis.Add(new Kpi("Support messages", _db.SupportMessages.Count(m => m.Status != SupportStatus.Resolved).ToString(Display) + " open",
                 _db.ProfileUpdateRequests.Count(p => p.Status == RequestStatus.Pending) + " profile requests", "~/Staff/Support.aspx", "blue"));
-            d.Kpis.Add(new Kpi("Timesheets to review", _db.Timesheets.Count(t => t.Status == TimesheetStatus.Submitted).ToString(Za), null, "~/Operations/Timesheets.aspx", "navy"));
-            d.Kpis.Add(new Kpi("Deliveries to receive", d.DeliveriesToReceive.Count.ToString(Za), null, "~/Operations/Deliveries.aspx", "green"));
+            d.Kpis.Add(new Kpi("Timesheets to review", _db.Timesheets.Count(t => t.Status == TimesheetStatus.Submitted).ToString(Display), null, "~/Operations/Timesheets.aspx", "navy"));
+            d.Kpis.Add(new Kpi("Deliveries to receive", d.DeliveriesToReceive.Count.ToString(Display), null, "~/Operations/Deliveries.aspx", "green"));
             return d;
         }
 
@@ -489,12 +489,12 @@ namespace StudyLink.Services.Implementations
             d.Kpis.Add(new Kpi("Revenue today", R(net(today, today.AddDays(1))), null, "~/Operations/Reports.aspx?report=revenue", "green"));
             d.Kpis.Add(new Kpi("Revenue this month", R(net(monthStart, today.AddDays(1))), today.ToString("MMMM yyyy"), "~/Operations/Reports.aspx?report=revenue", "green"));
             d.Kpis.Add(new Kpi("Outstanding balances", R(_db.Fees.Where(f => f.Status == FeeStatus.Unpaid).Select(f => (decimal?)f.Amount).Sum() ?? 0), null, "~/Operations/Reports.aspx?report=outstanding", "orange"));
-            d.Kpis.Add(new Kpi("Books on loan", _db.Rentals.Count(r => r.Status == RentalStatus.Active).ToString(Za), overdueCount + " overdue", "~/Manager/Rentals.aspx", overdueCount > 0 ? "red" : "blue"));
-            d.Kpis.Add(new Kpi("Books sold this month", _db.Sales.Count(s => s.Status == SaleStatus.Completed && s.CompletedAt >= monthStart).ToString(Za), null, "~/Operations/Reports.aspx?report=sales", "blue"));
-            d.Kpis.Add(new Kpi("Tutor utilisation", SchedulePolicy.UtilisationPercent(utilisation.Sum(u => u.HoursBooked), published).ToString("0.0", Za) + "%",
+            d.Kpis.Add(new Kpi("Books on loan", _db.Rentals.Count(r => r.Status == RentalStatus.Active).ToString(Display), overdueCount + " overdue", "~/Manager/Rentals.aspx", overdueCount > 0 ? "red" : "blue"));
+            d.Kpis.Add(new Kpi("Books sold this month", _db.Sales.Count(s => s.Status == SaleStatus.Completed && s.CompletedAt >= monthStart).ToString(Display), null, "~/Operations/Reports.aspx?report=sales", "blue"));
+            d.Kpis.Add(new Kpi("Tutor utilisation", SchedulePolicy.UtilisationPercent(utilisation.Sum(u => u.HoursBooked), published).ToString("0.0", Display) + "%",
                 "this month", "~/Operations/Reports.aspx?report=tutor-utilisation", "navy"));
-            d.Kpis.Add(new Kpi("Low-stock titles", lowStock.Total.ToString(Za), null, "~/Manager/Books.aspx?low=1", lowStock.Total > 0 ? "orange" : "green"));
-            d.Kpis.Add(new Kpi("Open supplier orders", _db.SupplierOrders.Count(o => o.Status == SupplierOrderStatus.Placed || o.Status == SupplierOrderStatus.Acknowledged || o.Status == SupplierOrderStatus.PartiallyDelivered).ToString(Za),
+            d.Kpis.Add(new Kpi("Low-stock titles", lowStock.Total.ToString(Display), null, "~/Manager/Books.aspx?low=1", lowStock.Total > 0 ? "orange" : "green"));
+            d.Kpis.Add(new Kpi("Open supplier orders", _db.SupplierOrders.Count(o => o.Status == SupplierOrderStatus.Placed || o.Status == SupplierOrderStatus.Acknowledged || o.Status == SupplierOrderStatus.PartiallyDelivered).ToString(Display),
                 _db.SupplierInvoices.Count(i => i.Status == InvoiceStatus.Submitted) + " invoices to review", "~/Manager/SupplierOrders.aspx", "blue"));
 
             for (var day = today.AddDays(-13); day <= today; day = day.AddDays(1))
@@ -520,9 +520,9 @@ namespace StudyLink.Services.Implementations
                 RecentInvoices = invoices.Take(6).ToList(),
                 LowStockTitles = titles.Where(t => t.IsLow).Take(8).ToList()
             };
-            d.Kpis.Add(new Kpi("Open orders", open.Count.ToString(Za), open.Count(o => o.Status == SupplierOrderStatus.Placed) + " to acknowledge", "~/Supplier/Orders.aspx", "blue"));
-            d.Kpis.Add(new Kpi("Units to deliver", open.Sum(o => o.UnitsOrdered - o.UnitsDelivered).ToString(Za), null, "~/Supplier/Orders.aspx", "orange"));
-            d.Kpis.Add(new Kpi("Deliveries in transit", open.Sum(o => o.PendingDeliveries).ToString(Za), "awaiting hub receipt", "~/Supplier/Deliveries.aspx", "navy"));
+            d.Kpis.Add(new Kpi("Open orders", open.Count.ToString(Display), open.Count(o => o.Status == SupplierOrderStatus.Placed) + " to acknowledge", "~/Supplier/Orders.aspx", "blue"));
+            d.Kpis.Add(new Kpi("Units to deliver", open.Sum(o => o.UnitsOrdered - o.UnitsDelivered).ToString(Display), null, "~/Supplier/Orders.aspx", "orange"));
+            d.Kpis.Add(new Kpi("Deliveries in transit", open.Sum(o => o.PendingDeliveries).ToString(Display), "awaiting hub receipt", "~/Supplier/Deliveries.aspx", "navy"));
             d.Kpis.Add(new Kpi("Invoices awaiting payment", R(invoices.Where(i => i.Status == InvoiceStatus.Submitted || i.Status == InvoiceStatus.Approved).Sum(i => i.Amount)),
                 null, "~/Supplier/Invoices.aspx", "orange"));
             d.Kpis.Add(new Kpi("Paid this month", R(invoices.Where(i => i.Status == InvoiceStatus.Paid && i.PaidAt >= monthStart).Sum(i => i.Amount)), null, "~/Supplier/Invoices.aspx", "green"));
@@ -545,7 +545,7 @@ namespace StudyLink.Services.Implementations
             try
             {
                 var mb = _db.Database.SqlQuery<decimal>("SELECT CAST(SUM(CAST(size AS bigint)) * 8.0 / 1024 AS decimal(12,1)) FROM sys.database_files").FirstOrDefault();
-                d.DatabaseSize = mb.ToString("N1", Za) + " MB";
+                d.DatabaseSize = mb.ToString("N1", Display) + " MB";
             }
             catch (Exception)
             {
@@ -554,11 +554,11 @@ namespace StudyLink.Services.Implementations
 
             var users = _db.Users.Count();
             var active = _db.Users.Count(u => u.IsActive);
-            d.Kpis.Add(new Kpi("User accounts", users.ToString(Za), active + " active", "~/Admin/Users.aspx", "blue"));
-            d.Kpis.Add(new Kpi("Locked accounts", d.LockedAccounts.Count.ToString(Za), null, "~/Admin/Security.aspx", d.LockedAccounts.Count > 0 ? "red" : "green"));
-            d.Kpis.Add(new Kpi("Password resets", _db.PasswordResetRequests.Count(p => p.Status == RequestStatus.Pending).ToString(Za), "pending", "~/Operations/PasswordResets.aspx", "orange"));
-            d.Kpis.Add(new Kpi("Audit events today", _db.AuditLogs.Count(a => a.CreatedAt >= today).ToString(Za), null, "~/Admin/AuditLog.aspx", "navy"));
-            d.Kpis.Add(new Kpi("Last backup", d.LastBackup == null ? "Never" : d.LastBackup.StartedAt.ToString("d MMM HH:mm", Za),
+            d.Kpis.Add(new Kpi("User accounts", users.ToString(Display), active + " active", "~/Admin/Users.aspx", "blue"));
+            d.Kpis.Add(new Kpi("Locked accounts", d.LockedAccounts.Count.ToString(Display), null, "~/Admin/Security.aspx", d.LockedAccounts.Count > 0 ? "red" : "green"));
+            d.Kpis.Add(new Kpi("Password resets", _db.PasswordResetRequests.Count(p => p.Status == RequestStatus.Pending).ToString(Display), "pending", "~/Operations/PasswordResets.aspx", "orange"));
+            d.Kpis.Add(new Kpi("Audit events today", _db.AuditLogs.Count(a => a.CreatedAt >= today).ToString(Display), null, "~/Admin/AuditLog.aspx", "navy"));
+            d.Kpis.Add(new Kpi("Last backup", d.LastBackup == null ? "Never" : d.LastBackup.StartedAt.ToString("d MMM HH:mm", Display),
                 d.LastBackup?.Status.ToString(), "~/Admin/Backups.aspx", d.LastBackup?.Status == BackupStatus.Succeeded ? "green" : "orange"));
             d.Kpis.Add(new Kpi("Database size", d.DatabaseSize, d.DatabaseName, "~/Admin/System.aspx", "navy"));
             return d;

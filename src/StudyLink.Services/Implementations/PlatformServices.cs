@@ -255,10 +255,16 @@ namespace StudyLink.Services.Implementations
     public sealed class SmtpEmailSender : IEmailSender
     {
         private readonly string _from;
+        private readonly string _pickupDirectory;
 
-        public SmtpEmailSender(string fromAddress)
+        /// <param name="pickupDirectory">
+        /// When set, messages are written as .eml files to this absolute folder instead of being sent
+        /// (development). When null, the SMTP server in &lt;system.net&gt;&lt;mailSettings&gt; is used.
+        /// </param>
+        public SmtpEmailSender(string fromAddress, string pickupDirectory = null)
         {
             _from = fromAddress;
+            _pickupDirectory = pickupDirectory;
         }
 
         public void Send(string to, string subject, string htmlBody)
@@ -270,6 +276,12 @@ namespace StudyLink.Services.Implementations
                 using (var message = new MailMessage(_from, to.Trim(), subject, htmlBody) { IsBodyHtml = true })
                 using (var client = new SmtpClient())
                 {
+                    if (_pickupDirectory != null)
+                    {
+                        Directory.CreateDirectory(_pickupDirectory);
+                        client.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
+                        client.PickupDirectoryLocation = _pickupDirectory;
+                    }
                     client.Send(message);
                 }
             }

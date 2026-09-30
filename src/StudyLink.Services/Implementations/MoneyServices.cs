@@ -249,7 +249,7 @@ namespace StudyLink.Services.Implementations
 
             // Sent after commit because the receipt link needs the new payment's id.
             _notifications.Notify(actor.UserId, NotificationType.PaymentRecorded, "Payment received",
-                "We received R " + payment.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-ZA")) + " (" + payment.Reference + ").",
+                "We received R " + payment.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-GB")) + " (" + payment.Reference + ").",
                 "~/Student/Fees/PaymentComplete.aspx?id=" + payment.PaymentId);
             _db.SaveChanges();
             SendReceipt(payment.PaymentId);
@@ -300,11 +300,11 @@ namespace StudyLink.Services.Implementations
         {
             var r = Build(paymentId);
             var rows = string.Join("", r.Lines.Select(l => "<tr><td>" + Accounts.Html(l.Description) + "</td><td style=\"text-align:right\">R "
-                                                          + l.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-ZA")) + "</td></tr>"));
+                                                          + l.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-GB")) + "</td></tr>"));
             _email.Send(r.StudentEmail, "StudyLink receipt " + r.Reference,
                 "<p>Hello " + Accounts.Html(r.StudentName) + ",</p><p>Thank you for your payment to " + Accounts.Html(r.Organisation) + ".</p>"
                 + "<table>" + rows + "<tr><th>Total</th><th style=\"text-align:right\">R "
-                + r.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-ZA")) + "</th></tr></table>"
+                + r.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-GB")) + "</th></tr></table>"
                 + "<p>Reference: <b>" + r.Reference + "</b><br>Card: " + Accounts.Html(r.CardBrand) + " ending " + r.CardLast4
                 + "<br>Date: " + r.CreatedAt.ToString("d MMM yyyy HH:mm") + "</p>");
         }
@@ -405,7 +405,7 @@ namespace StudyLink.Services.Implementations
             fee.SettledAt = now;
             _audit.Record(actor, "PaymentRefunded", "Fee", feeId, "Paid", "Refunded", AuditService.Truncate(reason, 500));
             _notifications.Notify(fee.Student.UserId, NotificationType.RefundIssued, "Refund issued",
-                "R " + fee.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-ZA")) + " was refunded to your card: " + fee.Description,
+                "R " + fee.Amount.ToString("N2", CultureInfo.GetCultureInfo("en-GB")) + " was refunded to your card: " + fee.Description,
                 "~/Student/Fees/MyFees.aspx");
             _db.SaveChanges();
             return ServiceResult.Ok();

@@ -34,7 +34,7 @@ namespace StudyLink.Services.Implementations
 
         public static string Time(TimeSpan t) => t.ToString(@"hh\:mm", CultureInfo.InvariantCulture);
         public static string When(DateTime date, TimeSpan start, TimeSpan end) =>
-            date.ToString("ddd d MMM yyyy", CultureInfo.GetCultureInfo("en-ZA")) + ", " + Time(start) + "–" + Time(end);
+            date.ToString("ddd d MMM yyyy", CultureInfo.GetCultureInfo("en-GB")) + ", " + Time(start) + "–" + Time(end);
     }
 
     public sealed class SubjectService : ISubjectService

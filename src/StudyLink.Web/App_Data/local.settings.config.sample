@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copy to local.settings.config (git-ignored) in this folder.
+  Seed:Demo = true creates the demo accounts and sample data on first start of a DEBUG build,
+  all with the password given in Seed:DevPassword. Leave Seed:Demo false in production.
+-->
+<appSettings>
+  <add key="Seed:Demo" value="true" />
+  <add key="Seed:DevPassword" value="choose-a-dev-password-1" />
+</appSettings>
