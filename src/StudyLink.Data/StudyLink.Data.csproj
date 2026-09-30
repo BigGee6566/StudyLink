@@ -8,7 +8,15 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Company>Nova Tech Developers</Company>
     <Product>StudyLink</Product>
+    <!-- EF6 migrations read their model snapshot as "<Namespace>.<MigrationClass>.resources"; name
+         each .resx after the class in its sibling .cs file rather than after the file name. -->
+    <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Migrations\*.resx">
+      <DependentUpon>%(Filename).cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.5.1" />
   </ItemGroup>
