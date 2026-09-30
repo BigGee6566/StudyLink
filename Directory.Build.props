@@ -1,0 +1,14 @@
+<Project>
+  <!--
+    The solution lives on OneDrive. Every file MSBuild writes under bin\ and obj\ is picked up by
+    the sync client, which made a single library build take over ten minutes. SDK-style projects
+    (Data, Services, Tests) therefore build to %LOCALAPPDATA%\StudyLinkBuild instead.
+    The Web Forms project is old-style and keeps its bin\ folder, because IIS Express serves the
+    site straight from the project directory.
+  -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' != 'StudyLink.Web'">
+    <StudyLinkBuildRoot>$(LOCALAPPDATA)\StudyLinkBuild\</StudyLinkBuildRoot>
+    <BaseIntermediateOutputPath>$(StudyLinkBuildRoot)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(StudyLinkBuildRoot)bin\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+</Project>

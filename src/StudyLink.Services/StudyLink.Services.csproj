@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net481</TargetFramework>
+    <RootNamespace>StudyLink.Services</RootNamespace>
+    <AssemblyName>StudyLink.Services</AssemblyName>
+    <LangVersion>7.3</LangVersion>
+    <Company>Nova Tech Developers</Company>
+    <Product>StudyLink</Product>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StudyLink.Data\StudyLink.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.5.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Transactions" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="StudyLink.Tests" />
+  </ItemGroup>
+</Project>
