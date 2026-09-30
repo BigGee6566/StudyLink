@@ -1,0 +1,22 @@
+﻿# Build output
+bin/
+obj/
+*.pdb
+# Visual Studio
+.vs/
+*.user
+*.suo
+# NuGet
+packages/
+TestResults/
+# Machine-local settings (seed password, connection string) - the .sample files are committed
+**/App_Data/local.settings.config
+**/App_Data/connectionStrings.config
+# Runtime output
+**/App_Data/Logs/
+**/App_Data/MailDrop/
+**/App_Data/Invoices/
+**/App_Data/Backups/
+**/App_Data/Uploads/
+# Legacy build artefacts
+legacy/**/*.dll
