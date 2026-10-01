@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
 using StudyLink.Data.Entities;
 using StudyLink.Web.Infrastructure;
-using StudyLink.Web.MasterPages;
 
 namespace StudyLink.Web
 {
@@ -13,7 +12,7 @@ namespace StudyLink.Web
 
         protected void Page_Init(object sender, EventArgs e)
         {
-            if (Master is Public master) master.ShowHero = false;
+            if (Master is MasterPages.Public master) master.ShowHero = false;
         }
 
         protected void Page_Load(object sender, EventArgs e)

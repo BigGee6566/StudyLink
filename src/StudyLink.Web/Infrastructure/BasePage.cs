@@ -116,5 +116,34 @@ namespace StudyLink.Web.Infrastructure
         protected string Query(string name) => Request.QueryString[name];
 
         protected static string H(object value) => HttpUtility.HtmlEncode(Convert.ToString(value));
+
+        /// <summary>Show a service-composed link (e.g. "~/Tutor/Schedule.aspx") as a browser URL.</summary>
+        protected string Url(string appRelative) => string.IsNullOrEmpty(appRelative) ? "#" : ResolveUrl(appRelative);
+
+        /// <summary>Absolute reset/setup link prefix the services append the single-use token to.</summary>
+        protected string ResetLinkBase => new Uri(Request.Url, ResolveUrl("~/Account/ResetPassword.aspx?token=")).AbsoluteUri;
+    }
+
+    /// <summary>
+    /// Pages visitors can browse anonymously (books, tutors, help). Signed-in users keep their
+    /// navigation shell; visitors get the public header. Both masters expose the same placeholders.
+    /// </summary>
+    public abstract class CataloguePage : BasePage
+    {
+        protected override void OnPreInit(EventArgs e)
+        {
+            MasterPageFile = IsSignedIn ? "~/MasterPages/App.Master" : "~/MasterPages/Public.Master";
+            base.OnPreInit(e);
+        }
+
+        /// <summary>The campus the visitor chose on the landing page, else their own campus.</summary>
+        protected int? PreferredCampus()
+        {
+            var chosen = CampusPreference.Get(Context);
+            if (chosen.HasValue) return chosen;
+            if (!IsSignedIn) return null;
+            var userId = CurrentUser.UserId;
+            return S.Db.Users.Where(u => u.UserId == userId).Select(u => (int?)u.CampusId).FirstOrDefault();
+        }
     }
 }

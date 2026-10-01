@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -322,7 +322,7 @@ namespace StudyLink.Services.Implementations
         {
             var p = _db.Payments.AsNoTracking().Include(x => x.Student.User).Single(x => x.PaymentId == paymentId);
             var lines = _db.PaymentAllocations.AsNoTracking().Where(a => a.PaymentId == paymentId || (p.RefundOfPaymentId != null && a.PaymentId == p.RefundOfPaymentId))
-                .Select(a => new { a.Fee.Description, a.Fee.Type, a.Amount, a.Fee.BookingId, a.Fee.RentalId, a.Fee.SaleId }).ToList();
+                .Select(a => new { a.FeeId, FeeStatus = a.Fee.Status, a.Fee.Description, a.Fee.Type, a.Amount, a.Fee.BookingId, a.Fee.RentalId, a.Fee.SaleId }).ToList();
             var studentId = p.StudentId;
             return new Receipt
             {
@@ -331,7 +331,7 @@ namespace StudyLink.Services.Implementations
                 StudentName = p.Student.User.FullName, StudentNumber = p.Student.StudentNumber, StudentEmail = p.Student.User.Email,
                 Organisation = _settings.GetString(SettingKeys.OrganisationName, "Forte Books & Tuition Hub"),
                 OutstandingAfter = _db.Fees.Where(f => f.StudentId == studentId && f.Status == FeeStatus.Unpaid).Select(f => (decimal?)f.Amount).Sum() ?? 0,
-                Lines = lines.Select(l => new ReceiptLine { Description = l.Description, Type = l.Type, Amount = l.Amount }).ToList(),
+                Lines = lines.Select(l => new ReceiptLine { FeeId = l.FeeId, Status = l.FeeStatus, Description = l.Description, Type = l.Type, Amount = l.Amount }).ToList(),
                 BookingId = lines.Select(l => l.BookingId).FirstOrDefault(x => x.HasValue),
                 RentalId = lines.Select(l => l.RentalId).FirstOrDefault(x => x.HasValue),
                 SaleId = lines.Select(l => l.SaleId).FirstOrDefault(x => x.HasValue)

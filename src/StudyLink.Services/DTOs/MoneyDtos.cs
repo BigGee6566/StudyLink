@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using StudyLink.Data.Entities;
 
@@ -55,6 +55,8 @@ namespace StudyLink.Services.DTOs
 
     public sealed class ReceiptLine
     {
+        public int FeeId { get; set; }
+        public FeeStatus Status { get; set; }
         public string Description { get; set; }
         public FeeType Type { get; set; }
         public decimal Amount { get; set; }

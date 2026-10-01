@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -456,13 +456,13 @@ namespace StudyLink.Services.Implementations
             d.DeliveriesToReceive = _orders.DeliveriesToReceive(actor).Take(6).ToList();
 
             d.Kpis.Add(new Kpi("Tutors to verify", d.PendingTutors.Count.ToString(Display), "SC22", "~/Operations/TutorVerification.aspx", d.PendingTutors.Count > 0 ? "orange" : "green"));
-            d.Kpis.Add(new Kpi("Overdue books", overdue.Total.ToString(Display), "Follow up with students", "~/Staff/Returns.aspx?overdue=1", overdue.Total > 0 ? "red" : "green"));
-            d.Kpis.Add(new Kpi("Due back today", _db.Rentals.Count(r => r.Status == RentalStatus.Active && r.DueDate == today).ToString(Display), null, "~/Staff/Returns.aspx", "blue"));
-            d.Kpis.Add(new Kpi("Outstanding fines", R(_db.Fines.Where(f => f.Status == FineStatus.Outstanding).Select(f => (decimal?)f.Amount).Sum() ?? 0), null, "~/Staff/Fines.aspx", "orange"));
+            d.Kpis.Add(new Kpi("Overdue books", overdue.Total.ToString(Display), "Follow up with students", "~/Operations/Returns.aspx?overdue=1", overdue.Total > 0 ? "red" : "green"));
+            d.Kpis.Add(new Kpi("Due back today", _db.Rentals.Count(r => r.Status == RentalStatus.Active && r.DueDate == today).ToString(Display), null, "~/Operations/Returns.aspx", "blue"));
+            d.Kpis.Add(new Kpi("Outstanding fines", R(_db.Fines.Where(f => f.Status == FineStatus.Outstanding).Select(f => (decimal?)f.Amount).Sum() ?? 0), null, "~/Operations/Fines.aspx", "orange"));
             if (RolePermissions.Has(actor, Permission.HandlePasswordResets))
                 d.Kpis.Add(new Kpi("Password resets", _db.PasswordResetRequests.Count(p => p.Status == RequestStatus.Pending).ToString(Display), "SC27", "~/Operations/PasswordResets.aspx", "navy"));
             d.Kpis.Add(new Kpi("Support messages", _db.SupportMessages.Count(m => m.Status != SupportStatus.Resolved).ToString(Display) + " open",
-                _db.ProfileUpdateRequests.Count(p => p.Status == RequestStatus.Pending) + " profile requests", "~/Staff/Support.aspx", "blue"));
+                _db.ProfileUpdateRequests.Count(p => p.Status == RequestStatus.Pending) + " profile requests", "~/Operations/Support.aspx", "blue"));
             d.Kpis.Add(new Kpi("Timesheets to review", _db.Timesheets.Count(t => t.Status == TimesheetStatus.Submitted).ToString(Display), null, "~/Operations/Timesheets.aspx", "navy"));
             d.Kpis.Add(new Kpi("Deliveries to receive", d.DeliveriesToReceive.Count.ToString(Display), null, "~/Operations/Deliveries.aspx", "green"));
             return d;
@@ -489,7 +489,7 @@ namespace StudyLink.Services.Implementations
             d.Kpis.Add(new Kpi("Revenue today", R(net(today, today.AddDays(1))), null, "~/Operations/Reports.aspx?report=revenue", "green"));
             d.Kpis.Add(new Kpi("Revenue this month", R(net(monthStart, today.AddDays(1))), today.ToString("MMMM yyyy"), "~/Operations/Reports.aspx?report=revenue", "green"));
             d.Kpis.Add(new Kpi("Outstanding balances", R(_db.Fees.Where(f => f.Status == FeeStatus.Unpaid).Select(f => (decimal?)f.Amount).Sum() ?? 0), null, "~/Operations/Reports.aspx?report=outstanding", "orange"));
-            d.Kpis.Add(new Kpi("Books on loan", _db.Rentals.Count(r => r.Status == RentalStatus.Active).ToString(Display), overdueCount + " overdue", "~/Manager/Rentals.aspx", overdueCount > 0 ? "red" : "blue"));
+            d.Kpis.Add(new Kpi("Books on loan", _db.Rentals.Count(r => r.Status == RentalStatus.Active).ToString(Display), overdueCount + " overdue", "~/Operations/Returns.aspx", overdueCount > 0 ? "red" : "blue"));
             d.Kpis.Add(new Kpi("Books sold this month", _db.Sales.Count(s => s.Status == SaleStatus.Completed && s.CompletedAt >= monthStart).ToString(Display), null, "~/Operations/Reports.aspx?report=sales", "blue"));
             d.Kpis.Add(new Kpi("Tutor utilisation", SchedulePolicy.UtilisationPercent(utilisation.Sum(u => u.HoursBooked), published).ToString("0.0", Display) + "%",
                 "this month", "~/Operations/Reports.aspx?report=tutor-utilisation", "navy"));
@@ -554,13 +554,13 @@ namespace StudyLink.Services.Implementations
 
             var users = _db.Users.Count();
             var active = _db.Users.Count(u => u.IsActive);
-            d.Kpis.Add(new Kpi("User accounts", users.ToString(Display), active + " active", "~/Admin/Users.aspx", "blue"));
+            d.Kpis.Add(new Kpi("User accounts", users.ToString(Display), active + " active", "~/Operations/Users.aspx", "blue"));
             d.Kpis.Add(new Kpi("Locked accounts", d.LockedAccounts.Count.ToString(Display), null, "~/Admin/Security.aspx", d.LockedAccounts.Count > 0 ? "red" : "green"));
             d.Kpis.Add(new Kpi("Password resets", _db.PasswordResetRequests.Count(p => p.Status == RequestStatus.Pending).ToString(Display), "pending", "~/Operations/PasswordResets.aspx", "orange"));
             d.Kpis.Add(new Kpi("Audit events today", _db.AuditLogs.Count(a => a.CreatedAt >= today).ToString(Display), null, "~/Admin/AuditLog.aspx", "navy"));
             d.Kpis.Add(new Kpi("Last backup", d.LastBackup == null ? "Never" : d.LastBackup.StartedAt.ToString("d MMM HH:mm", Display),
                 d.LastBackup?.Status.ToString(), "~/Admin/Backups.aspx", d.LastBackup?.Status == BackupStatus.Succeeded ? "green" : "orange"));
-            d.Kpis.Add(new Kpi("Database size", d.DatabaseSize, d.DatabaseName, "~/Admin/System.aspx", "navy"));
+            d.Kpis.Add(new Kpi("Database size", d.DatabaseSize, d.DatabaseName, "~/Admin/Backups.aspx", "navy"));
             return d;
         }
     }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -464,7 +464,7 @@ namespace StudyLink.Services.Implementations
             next.NotifiedAt = now;
             notifications.Notify(next.Student.UserId, NotificationType.WaitlistAvailable, "A book you wanted is available",
                 "\"" + next.Book.Title + "\" is back in stock. Reserve it before someone else does.",
-                "~/Student/Books/BookDetails.aspx?id=" + bookId + "&campus=" + campusId);
+                "~/Catalogue/BookDetails.aspx?id=" + bookId + "&campus=" + campusId);
             return true;
         }
     }

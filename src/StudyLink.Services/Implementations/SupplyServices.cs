@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -456,7 +456,7 @@ namespace StudyLink.Services.Implementations
                 Subject = subject.Trim(), Body = body.Trim(), CreatedAt = _clock.Now
             });
             _notifications.NotifyHolders(Permission.HandleSupport, NotificationType.SupportMessageReceived, "New support message",
-                name.Trim() + ": " + subject.Trim(), "~/Staff/Support.aspx");
+                name.Trim() + ": " + subject.Trim(), "~/Operations/Support.aspx");
             _db.SaveChanges();
             return ServiceResult.Ok();
         }

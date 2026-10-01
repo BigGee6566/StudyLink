@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" CodeBehind="BookCover.ashx.cs" Class="StudyLink.Web.Handlers.BookCover" %>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -853,7 +853,7 @@ namespace StudyLink.Services.Implementations
             });
             _notifications.NotifyHolders(Permission.HandleSupport, NotificationType.ProfileUpdateRequested,
                 "Profile update requested", detail.FullName + " asked to change their " + fieldName.ToLowerInvariant() + ".",
-                "~/Staff/Support.aspx");
+                "~/Operations/Support.aspx");
             _db.SaveChanges();
             return ServiceResult.Ok();
         }
@@ -1196,7 +1196,7 @@ namespace StudyLink.Services.Implementations
                 approve ? "You are now a verified tutor" : "Tutor application not approved",
                 approve ? "Your tutor profile was verified. Publish your availability so students can book you."
                         : "Your application was not approved: " + verification.Notes,
-                approve ? "~/Tutor/Availability.aspx" : "~/Tutor/Profile.aspx");
+                approve ? "~/Tutor/Availability.aspx" : "~/Account/Profile.aspx");
             _db.SaveChanges();
             return ServiceResult.Ok();
         }

@@ -116,6 +116,13 @@
     <Compile Include="Account\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Account\Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -137,6 +144,76 @@
     <Compile Include="Account\Setup.aspx.designer.cs">
       <DependentUpon>Setup.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Admin\AuditLog.aspx.cs">
+      <DependentUpon>AuditLog.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\AuditLog.aspx.designer.cs">
+      <DependentUpon>AuditLog.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Backups.aspx.cs">
+      <DependentUpon>Backups.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Backups.aspx.designer.cs">
+      <DependentUpon>Backups.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Roles.aspx.cs">
+      <DependentUpon>Roles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Roles.aspx.designer.cs">
+      <DependentUpon>Roles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Security.aspx.cs">
+      <DependentUpon>Security.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Security.aspx.designer.cs">
+      <DependentUpon>Security.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Admin\Settings.aspx.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\Settings.aspx.designer.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Catalogue\BookDetails.aspx.cs">
+      <DependentUpon>BookDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Catalogue\BookDetails.aspx.designer.cs">
+      <DependentUpon>BookDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Catalogue\Books.aspx.cs">
+      <DependentUpon>Books.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Catalogue\Books.aspx.designer.cs">
+      <DependentUpon>Books.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Catalogue\TutorProfile.aspx.cs">
+      <DependentUpon>TutorProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Catalogue\TutorProfile.aspx.designer.cs">
+      <DependentUpon>TutorProfile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Catalogue\Tutors.aspx.cs">
+      <DependentUpon>Tutors.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Catalogue\Tutors.aspx.designer.cs">
+      <DependentUpon>Tutors.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ErrorPages\Error404.aspx.cs">
       <DependentUpon>Error404.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -151,6 +228,14 @@
     <Compile Include="ErrorPages\Error500.aspx.designer.cs">
       <DependentUpon>Error500.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\BookCover.ashx.cs">
+      <DependentUpon>BookCover.ashx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handlers\InvoiceFile.ashx.cs">
+      <DependentUpon>InvoiceFile.ashx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Infrastructure\AppServices.cs" />
     <Compile Include="Infrastructure\BackgroundSweep.cs" />
     <Compile Include="Infrastructure\BasePage.cs" />
@@ -160,7 +245,50 @@
     <Compile Include="Infrastructure\Fmt.cs" />
     <Compile Include="Infrastructure\Icons.cs" />
     <Compile Include="Infrastructure\NavigationMap.cs" />
+    <Compile Include="Infrastructure\Ui.cs" />
     <Compile Include="Infrastructure\WebAuth.cs" />
+    <Compile Include="Manager\BookEdit.aspx.cs">
+      <DependentUpon>BookEdit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Manager\BookEdit.aspx.designer.cs">
+      <DependentUpon>BookEdit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Manager\Books.aspx.cs">
+      <DependentUpon>Books.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Manager\Books.aspx.designer.cs">
+      <DependentUpon>Books.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Manager\Categories.aspx.cs">
+      <DependentUpon>Categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Manager\Categories.aspx.designer.cs">
+      <DependentUpon>Categories.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Manager\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Manager\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Manager\Payments.aspx.cs">
+      <DependentUpon>Payments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Manager\Payments.aspx.designer.cs">
+      <DependentUpon>Payments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Manager\SupplierOrders.aspx.cs">
+      <DependentUpon>SupplierOrders.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Manager\SupplierOrders.aspx.designer.cs">
+      <DependentUpon>SupplierOrders.aspx</DependentUpon>
+    </Compile>
     <Compile Include="MasterPages\App.Master.cs">
       <DependentUpon>App.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -182,7 +310,301 @@
     <Compile Include="MasterPages\Public.Master.designer.cs">
       <DependentUpon>Public.Master</DependentUpon>
     </Compile>
+    <Compile Include="Notifications\Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Notifications\Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Deliveries.aspx.cs">
+      <DependentUpon>Deliveries.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Deliveries.aspx.designer.cs">
+      <DependentUpon>Deliveries.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Fines.aspx.cs">
+      <DependentUpon>Fines.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Fines.aspx.designer.cs">
+      <DependentUpon>Fines.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\PasswordResets.aspx.cs">
+      <DependentUpon>PasswordResets.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\PasswordResets.aspx.designer.cs">
+      <DependentUpon>PasswordResets.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Reports.aspx.cs">
+      <DependentUpon>Reports.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Reports.aspx.designer.cs">
+      <DependentUpon>Reports.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Returns.aspx.cs">
+      <DependentUpon>Returns.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Returns.aspx.designer.cs">
+      <DependentUpon>Returns.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Reviews.aspx.cs">
+      <DependentUpon>Reviews.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Reviews.aspx.designer.cs">
+      <DependentUpon>Reviews.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Subjects.aspx.cs">
+      <DependentUpon>Subjects.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Subjects.aspx.designer.cs">
+      <DependentUpon>Subjects.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Support.aspx.cs">
+      <DependentUpon>Support.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Support.aspx.designer.cs">
+      <DependentUpon>Support.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Timesheets.aspx.cs">
+      <DependentUpon>Timesheets.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Timesheets.aspx.designer.cs">
+      <DependentUpon>Timesheets.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\TutorVerification.aspx.cs">
+      <DependentUpon>TutorVerification.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\TutorVerification.aspx.designer.cs">
+      <DependentUpon>TutorVerification.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Operations\Users.aspx.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Operations\Users.aspx.designer.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Public\Contact.aspx.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Public\Contact.aspx.designer.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Public\HowItWorks.aspx.cs">
+      <DependentUpon>HowItWorks.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Public\HowItWorks.aspx.designer.cs">
+      <DependentUpon>HowItWorks.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Public\Privacy.aspx.cs">
+      <DependentUpon>Privacy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Public\Privacy.aspx.designer.cs">
+      <DependentUpon>Privacy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Staff\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Staff\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Books\MyRentals.aspx.cs">
+      <DependentUpon>MyRentals.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Books\MyRentals.aspx.designer.cs">
+      <DependentUpon>MyRentals.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Books\RentalConfirmed.aspx.cs">
+      <DependentUpon>RentalConfirmed.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Books\RentalConfirmed.aspx.designer.cs">
+      <DependentUpon>RentalConfirmed.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Fees\MyFees.aspx.cs">
+      <DependentUpon>MyFees.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Fees\MyFees.aspx.designer.cs">
+      <DependentUpon>MyFees.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Fees\PayFees.aspx.cs">
+      <DependentUpon>PayFees.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Fees\PayFees.aspx.designer.cs">
+      <DependentUpon>PayFees.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Fees\PaymentComplete.aspx.cs">
+      <DependentUpon>PaymentComplete.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Fees\PaymentComplete.aspx.designer.cs">
+      <DependentUpon>PaymentComplete.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Payments\Checkout.aspx.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Payments\Checkout.aspx.designer.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Tutoring\BookingConfirmed.aspx.cs">
+      <DependentUpon>BookingConfirmed.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Tutoring\BookingConfirmed.aspx.designer.cs">
+      <DependentUpon>BookingConfirmed.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Tutoring\BookingDetails.aspx.cs">
+      <DependentUpon>BookingDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Tutoring\BookingDetails.aspx.designer.cs">
+      <DependentUpon>BookingDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Tutoring\MyBookings.aspx.cs">
+      <DependentUpon>MyBookings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Tutoring\MyBookings.aspx.designer.cs">
+      <DependentUpon>MyBookings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Student\Tutoring\SelectSlot.aspx.cs">
+      <DependentUpon>SelectSlot.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Student\Tutoring\SelectSlot.aspx.designer.cs">
+      <DependentUpon>SelectSlot.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Supplier\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Supplier\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Supplier\Deliveries.aspx.cs">
+      <DependentUpon>Deliveries.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Supplier\Deliveries.aspx.designer.cs">
+      <DependentUpon>Deliveries.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Supplier\Invoices.aspx.cs">
+      <DependentUpon>Invoices.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Supplier\Invoices.aspx.designer.cs">
+      <DependentUpon>Invoices.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Supplier\OrderDetails.aspx.cs">
+      <DependentUpon>OrderDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Supplier\OrderDetails.aspx.designer.cs">
+      <DependentUpon>OrderDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Supplier\Orders.aspx.cs">
+      <DependentUpon>Orders.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Supplier\Orders.aspx.designer.cs">
+      <DependentUpon>Orders.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Supplier\Stock.aspx.cs">
+      <DependentUpon>Stock.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Supplier\Stock.aspx.designer.cs">
+      <DependentUpon>Stock.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\Availability.aspx.cs">
+      <DependentUpon>Availability.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\Availability.aspx.designer.cs">
+      <DependentUpon>Availability.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\Earnings.aspx.cs">
+      <DependentUpon>Earnings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\Earnings.aspx.designer.cs">
+      <DependentUpon>Earnings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\Reviews.aspx.cs">
+      <DependentUpon>Reviews.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\Reviews.aspx.designer.cs">
+      <DependentUpon>Reviews.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\Schedule.aspx.cs">
+      <DependentUpon>Schedule.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\Schedule.aspx.designer.cs">
+      <DependentUpon>Schedule.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\SessionDetails.aspx.cs">
+      <DependentUpon>SessionDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\SessionDetails.aspx.designer.cs">
+      <DependentUpon>SessionDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\Subjects.aspx.cs">
+      <DependentUpon>Subjects.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\Subjects.aspx.designer.cs">
+      <DependentUpon>Subjects.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Tutor\Timesheet.aspx.cs">
+      <DependentUpon>Timesheet.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tutor\Timesheet.aspx.designer.cs">
+      <DependentUpon>Timesheet.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CardForm.ascx.cs">
+      <DependentUpon>CardForm.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\CardForm.ascx.designer.cs">
+      <DependentUpon>CardForm.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
@@ -199,13 +621,26 @@
     <Content Include="Account\ChangePassword.aspx" />
     <Content Include="Account\ForgotPassword.aspx" />
     <Content Include="Account\Login.aspx" />
+    <Content Include="Account\Profile.aspx" />
     <Content Include="Account\Register.aspx" />
     <Content Include="Account\ResetPassword.aspx" />
     <Content Include="Account\Setup.aspx" />
+    <Content Include="Admin\AuditLog.aspx" />
+    <Content Include="Admin\Backups.aspx" />
+    <Content Include="Admin\Dashboard.aspx" />
+    <Content Include="Admin\Roles.aspx" />
+    <Content Include="Admin\Security.aspx" />
+    <Content Include="Admin\Settings.aspx" />
     <Content Include="App_Data\local.settings.config.sample" />
+    <Content Include="Catalogue\BookDetails.aspx" />
+    <Content Include="Catalogue\Books.aspx" />
+    <Content Include="Catalogue\TutorProfile.aspx" />
+    <Content Include="Catalogue\Tutors.aspx" />
     <Content Include="Content\css\studylink.css" />
     <Content Include="ErrorPages\Error404.aspx" />
     <Content Include="ErrorPages\Error500.aspx" />
+    <Content Include="Handlers\BookCover.ashx" />
+    <Content Include="Handlers\InvoiceFile.ashx" />
     <Content Include="Images\branding\apple-touch-icon.png" />
     <Content Include="Images\branding\favicon-32.png" />
     <Content Include="Images\branding\studylink-dashboard-dark.png" />
@@ -213,10 +648,58 @@
     <Content Include="Images\branding\studylink-favicon.png" />
     <Content Include="Images\branding\studylink-logo.png" />
     <Content Include="Images\branding\studylink-mark.png" />
+    <Content Include="Manager\BookEdit.aspx" />
+    <Content Include="Manager\Books.aspx" />
+    <Content Include="Manager\Categories.aspx" />
+    <Content Include="Manager\Dashboard.aspx" />
+    <Content Include="Manager\Payments.aspx" />
+    <Content Include="Manager\SupplierOrders.aspx" />
     <Content Include="MasterPages\App.Master" />
     <Content Include="MasterPages\Auth.Master" />
     <Content Include="MasterPages\Public.Master" />
+    <Content Include="Notifications\Index.aspx" />
+    <Content Include="Operations\Deliveries.aspx" />
+    <Content Include="Operations\Fines.aspx" />
+    <Content Include="Operations\PasswordResets.aspx" />
+    <Content Include="Operations\Reports.aspx" />
+    <Content Include="Operations\Returns.aspx" />
+    <Content Include="Operations\Reviews.aspx" />
+    <Content Include="Operations\Subjects.aspx" />
+    <Content Include="Operations\Support.aspx" />
+    <Content Include="Operations\Timesheets.aspx" />
+    <Content Include="Operations\TutorVerification.aspx" />
+    <Content Include="Operations\Users.aspx" />
+    <Content Include="Public\Contact.aspx" />
+    <Content Include="Public\HowItWorks.aspx" />
+    <Content Include="Public\Privacy.aspx" />
     <Content Include="Scripts\studylink.js" />
+    <Content Include="Staff\Dashboard.aspx" />
+    <Content Include="Student\Dashboard.aspx" />
+    <Content Include="Student\Books\MyRentals.aspx" />
+    <Content Include="Student\Books\RentalConfirmed.aspx" />
+    <Content Include="Student\Fees\MyFees.aspx" />
+    <Content Include="Student\Fees\PayFees.aspx" />
+    <Content Include="Student\Fees\PaymentComplete.aspx" />
+    <Content Include="Student\Payments\Checkout.aspx" />
+    <Content Include="Student\Tutoring\BookingConfirmed.aspx" />
+    <Content Include="Student\Tutoring\BookingDetails.aspx" />
+    <Content Include="Student\Tutoring\MyBookings.aspx" />
+    <Content Include="Student\Tutoring\SelectSlot.aspx" />
+    <Content Include="Supplier\Dashboard.aspx" />
+    <Content Include="Supplier\Deliveries.aspx" />
+    <Content Include="Supplier\Invoices.aspx" />
+    <Content Include="Supplier\OrderDetails.aspx" />
+    <Content Include="Supplier\Orders.aspx" />
+    <Content Include="Supplier\Stock.aspx" />
+    <Content Include="Tutor\Availability.aspx" />
+    <Content Include="Tutor\Dashboard.aspx" />
+    <Content Include="Tutor\Earnings.aspx" />
+    <Content Include="Tutor\Reviews.aspx" />
+    <Content Include="Tutor\Schedule.aspx" />
+    <Content Include="Tutor\SessionDetails.aspx" />
+    <Content Include="Tutor\Subjects.aspx" />
+    <Content Include="Tutor\Timesheet.aspx" />
+    <Content Include="UserControls\CardForm.ascx" />
   </ItemGroup>
   <!-- END GENERATED ITEMS -->
   <PropertyGroup>

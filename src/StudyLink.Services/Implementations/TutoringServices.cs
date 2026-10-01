@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -812,7 +812,7 @@ namespace StudyLink.Services.Implementations
                 FeeLedger.CancelUnpaid(_db, bookingId: b.BookingId);
                 _notifications.Notify(b.Student.UserId, NotificationType.BookingExpired, "Reservation expired",
                     "Your reservation " + b.Reference + " was released because it was not paid in time.",
-                    "~/Student/Tutoring/BookSession.aspx");
+                    "~/Catalogue/Tutors.aspx");
                 changed++;
             }
 
