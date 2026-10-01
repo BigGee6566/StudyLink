@@ -476,7 +476,8 @@ namespace StudyLink.Services.Implementations
             var monthStart = new DateTime(today.Year, today.Month, 1);
             var d = new OperationsDashboard { FirstName = FirstName(actor) };
 
-            var pays = _db.Payments.AsNoTracking().Where(p => p.Status == PaymentStatus.Completed && p.CreatedAt >= monthStart.AddDays(-31))
+            var since = monthStart.AddDays(-31); // computed outside the query: EF6 cannot translate DateTime.AddDays
+            var pays = _db.Payments.AsNoTracking().Where(p => p.Status == PaymentStatus.Completed && p.CreatedAt >= since)
                 .Select(p => new { p.CreatedAt, p.Type, p.Amount }).ToList();
             Func<DateTime, DateTime, decimal> net = (a, b) => pays.Where(p => p.CreatedAt >= a && p.CreatedAt < b)
                 .Sum(p => p.Type == PaymentType.Charge ? p.Amount : -p.Amount);

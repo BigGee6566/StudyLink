@@ -36,6 +36,7 @@ namespace StudyLink.Web.Infrastructure
     public abstract class BasePage : Page
     {
         private const string FlashKey = "StudyLink.Flash";
+        private const string SessionPinKey = "StudyLink.Session";
 
         protected StudyLinkServices S => AppServices.Current;
         protected StudyLinkPrincipal CurrentUser => WebAuth.Current(Context);
@@ -51,7 +52,12 @@ namespace StudyLink.Web.Infrastructure
             // CSRF: bind ViewState (and so every postback) to this user's session. A forged
             // cross-site post carries someone else's ViewState and fails MAC validation.
             if (IsSignedIn && Session != null)
+            {
+                // ASP.NET issues a new SessionID on every request until something is stored in the
+                // session, which would make every postback fail MAC validation. Pin the session first.
+                if (Session[SessionPinKey] == null) Session[SessionPinKey] = true;
                 ViewStateUserKey = CurrentUser.UserId + ":" + Session.SessionID;
+            }
 
             var perms = GetType().GetCustomAttributes(typeof(RequirePermissionAttribute), true).Cast<RequirePermissionAttribute>().ToList();
             var needsSignIn = perms.Any() || GetType().IsDefined(typeof(RequireSignInAttribute), true);

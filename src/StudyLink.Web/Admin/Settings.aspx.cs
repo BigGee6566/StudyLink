@@ -16,6 +16,13 @@ namespace StudyLink.Web.Admin
             if (!IsPostBack) Bind();
         }
 
+        /// <summary>"Rental.PeriodDays" → "Rental · Period days".</summary>
+        protected static string Label(string key)
+        {
+            var dot = key.IndexOf('.');
+            return dot < 0 ? Fmt.Words(key) : key.Substring(0, dot) + " · " + Fmt.Words(key.Substring(dot + 1));
+        }
+
         private void Bind()
         {
             Rows.DataSource = S.Settings.List();
@@ -34,7 +41,7 @@ namespace StudyLink.Web.Admin
                 if (value == original) continue;
                 var result = S.Settings.Update(Actor, key, value);
                 if (result.Succeeded) changed++;
-                else errors.Add(Fmt.Words(key) + ": " + result.Error);
+                else errors.Add(Label(key) + ": " + result.Error);
             }
             if (errors.Count > 0)
             {

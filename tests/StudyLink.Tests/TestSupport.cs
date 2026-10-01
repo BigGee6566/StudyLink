@@ -28,29 +28,40 @@ namespace StudyLink.Tests
     [TestClass]
     public static class TestDatabase
     {
-        public static string ConnectionString { get; private set; }
+        private static readonly string Server = Environment.GetEnvironmentVariable("STUDYLINK_TEST_SERVER") ?? @".\SQLEXPRESS";
 
-        [AssemblyInitialize]
-        public static void Create(TestContext _)
+        // Built on first use (not in AssemblyInitialize) so a run of only the HTTP tests, which talk to
+        // the running site instead, never pays for creating the test database.
+        private static readonly Lazy<string> Created = new Lazy<string>(Create);
+
+        public static string ConnectionString => Created.Value;
+
+        private static string Create()
         {
-            var server = Environment.GetEnvironmentVariable("STUDYLINK_TEST_SERVER") ?? @".\SQLEXPRESS";
-            ConnectionString = $"Data Source={server};Initial Catalog=StudyLink_Test;Integrated Security=True;MultipleActiveResultSets=False";
+            var connectionString = $"Data Source={Server};Initial Catalog=StudyLink_Test;Integrated Security=True;MultipleActiveResultSets=False";
             Database.SetInitializer<StudyLinkDbContext>(null);
 
-            Drop(server);
+            Drop(Server);
             var config = new StudyLink.Data.Migrations.Configuration
             {
-                TargetDatabase = new System.Data.Entity.Infrastructure.DbConnectionInfo(ConnectionString, "System.Data.SqlClient")
+                TargetDatabase = new System.Data.Entity.Infrastructure.DbConnectionInfo(connectionString, "System.Data.SqlClient")
             };
             new DbMigrator(config).Update(); // schema + integrity constraints + LookupData seed
+            using (var c = new SqlConnection($"Data Source={Server};Initial Catalog=master;Integrated Security=True"))
+            {
+                c.Open(); // Express defaults to AUTO_CLOSE ON, which makes every new test connection slow
+                new SqlCommand("ALTER DATABASE StudyLink_Test SET AUTO_CLOSE OFF", c).ExecuteNonQuery();
+            }
+            return connectionString;
         }
 
         [AssemblyCleanup]
         public static void Cleanup()
         {
+            if (!Created.IsValueCreated) return;
             SqlConnection.ClearAllPools();
             if (Environment.GetEnvironmentVariable("STUDYLINK_KEEP_TEST_DB") != "1")
-                Drop(new SqlConnectionStringBuilder(ConnectionString).DataSource);
+                Drop(Server);
         }
 
         private static void Drop(string server)

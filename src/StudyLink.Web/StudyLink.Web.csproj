@@ -237,6 +237,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Infrastructure\AppServices.cs" />
+    <Compile Include="Infrastructure\Asset.cs" />
     <Compile Include="Infrastructure\BackgroundSweep.cs" />
     <Compile Include="Infrastructure\BasePage.cs" />
     <Compile Include="Infrastructure\CampusPreference.cs" />

@@ -8,7 +8,7 @@
                     <asp:Repeater ID="Rows" runat="server">
                         <ItemTemplate>
                             <tr>
-                                <td data-label="Setting"><strong><%#: Fmt.Words(Eval("SettingKey")) %></strong><div class="muted small"><%#: Eval("Description") %></div></td>
+                                <td data-label="Setting"><strong><%#: Label((string)Eval("SettingKey")) %></strong><div class="muted small"><%#: Eval("Description") %></div></td>
                                 <td data-label="Value" style="min-width:220px">
                                     <asp:HiddenField ID="Key" runat="server" Value='<%# Eval("SettingKey") %>' />
                                     <asp:HiddenField ID="Original" runat="server" Value='<%# Eval("Value") %>' />

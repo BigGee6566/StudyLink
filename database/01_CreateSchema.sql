@@ -24,6 +24,10 @@ GO
 IF DB_ID(N'StudyLink') IS NULL
     EXEC (N'CREATE DATABASE StudyLink;');
 GO
+-- SQL Express creates databases with AUTO_CLOSE ON; reopening the database on each new connection
+-- is slow enough on a busy machine to time logins out.
+ALTER DATABASE StudyLink SET AUTO_CLOSE OFF;
+GO
 USE StudyLink;
 GO
 SET QUOTED_IDENTIFIER ON;

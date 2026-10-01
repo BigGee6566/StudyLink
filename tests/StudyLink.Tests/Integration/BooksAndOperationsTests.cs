@@ -211,6 +211,32 @@ namespace StudyLink.Tests.Integration
                 StringAssert.Contains(w.S.Reports.ToCsv(report), "Days overdue");
             }
         }
+
+        /// <summary>
+        /// Every dashboard query must translate to SQL (EF6 rejects things like DateTime.AddDays inside a
+        /// query at run time only), and every report must run for a manager.
+        /// </summary>
+        [TestMethod]
+        public void AllDashboardsAndReports_BuildFromLiveData()
+        {
+            using (var w = new World())
+            {
+                var manager = w.NewManager();
+                w.Book(manager, copiesAtAlice: 1, weekly: 10m, lateFee: 5m);
+                var student = w.NewStudent();
+                var tutor = w.NewTutor();
+
+                Assert.IsNotNull(w.S.Dashboards.Student(student));
+                Assert.IsNotNull(w.S.Dashboards.Tutor(tutor));
+                Assert.IsNotNull(w.S.Dashboards.Staff(w.NewStaff()));
+                Assert.IsNotNull(w.S.Dashboards.Manager(manager));
+                Assert.IsNotNull(w.S.Dashboards.Supplier(w.NewSupplier()));
+                Assert.IsNotNull(w.S.Dashboards.Admin(w.Admin()));
+
+                foreach (var report in w.S.Reports.Available(manager))
+                    Assert.IsNotNull(w.S.Reports.Run(manager, report.Key, w.Clock.Today.AddDays(-30), w.Clock.Today).Table, report.Key);
+            }
+        }
     }
 
     [TestClass]

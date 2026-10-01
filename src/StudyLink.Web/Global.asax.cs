@@ -21,7 +21,10 @@ namespace StudyLink.Web
             try
             {
                 using (var db = new StudyLinkDbContext())
+                {
                     db.Database.Initialize(force: false);
+                    DisableAutoClose(db);
+                }
                 DemoSeeder.RunIfRequested();
             }
             catch (Exception ex)
@@ -31,6 +34,25 @@ namespace StudyLink.Web
             }
 
             BackgroundSweep.Start();
+        }
+
+        /// <summary>
+        /// SQL Express creates databases with AUTO_CLOSE ON, so the database shuts down whenever the last
+        /// connection closes and every reopen delays the next login (timeouts on a busy machine).
+        /// ALTER DATABASE cannot run inside a transaction, hence outside the migrations. Needs ALTER
+        /// permission; where that is missing the DBA script (database\01_CreateSchema.sql) does it.
+        /// </summary>
+        private static void DisableAutoClose(StudyLinkDbContext db)
+        {
+            try
+            {
+                db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction,
+                    "IF DATABASEPROPERTYEX(DB_NAME(), 'IsAutoClose') = 1 EXEC (N'ALTER DATABASE CURRENT SET AUTO_CLOSE OFF');");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "DisableAutoClose");
+            }
         }
 
         /// <summary>Rebuilds the principal (id, roles, name) from the forms ticket on every request.</summary>
