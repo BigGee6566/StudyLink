@@ -25,5 +25,6 @@ namespace StudyLink.Web.Operations
         protected global::System.Web.UI.WebControls.View ProfileView;
         protected global::System.Web.UI.WebControls.Repeater ProfileRequests;
         protected global::System.Web.UI.WebControls.Literal NoProfileRequests;
+        protected global::System.Web.UI.WebControls.TextBox ProfileNote;
     }
 }

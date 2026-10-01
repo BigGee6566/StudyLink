@@ -26,6 +26,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class="panel__footer">
+                <asp:TextBox ID="DeclineNote" runat="server" CssClass="form-control" MaxLength="200" placeholder="Reason, if you decline a request (the student sees this)" aria-label="Reason for declining" />
+            </div>
         </div>
     </asp:PlaceHolder>
     <div class="panel">

@@ -123,7 +123,7 @@ namespace StudyLink.Web.Operations
             {
                 RoleList.DataSource = u.Roles;
                 RoleList.DataBind();
-                Ui.FillText(AddRole, S.Users.CreatableRoles(Actor).Where(r => !u.Roles.Contains(r)), null, Fmt.Words);
+                Ui.FillText(AddRole, new[] { RoleNames.Staff, RoleNames.Manager, RoleNames.SystemAdmin }.Where(r => !u.Roles.Contains(r)), null, Fmt.Words);
                 AddRoleButton.Visible = AddRole.Items.Count > 0;
             }
         }

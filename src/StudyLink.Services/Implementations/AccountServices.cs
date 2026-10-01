@@ -392,7 +392,7 @@ namespace StudyLink.Services.Implementations
             _notifications.NotifyHolders(Permission.VerifyTutors, NotificationType.TutorRegistrationSubmitted,
                 "New tutor awaiting verification",
                 user.FirstName + " " + user.LastName + " registered as a tutor (" + tutor.Qualification + ").",
-                "~/Operations/TutorVerification.aspx?tutor=" + tutor.TutorId);
+                "~/Operations/TutorVerification.aspx?id=" + tutor.TutorId);
             _db.SaveChanges();
             return ServiceResult<int>.Ok(user.UserId);
         }

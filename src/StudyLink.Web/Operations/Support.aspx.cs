@@ -62,7 +62,8 @@ namespace StudyLink.Web.Operations
         {
             if (!int.TryParse((string)e.CommandArgument, out var id)) return;
             var approve = e.CommandName == "approve";
-            Show(S.Profiles.Review(Actor, id, approve, null), approve ? "Change approved and applied." : "Change request rejected.");
+            if (Show(S.Profiles.Review(Actor, id, approve, ProfileNote.Text), approve ? "Change approved and applied." : "Change request rejected."))
+                ProfileNote.Text = "";
             Bind();
         }
     }

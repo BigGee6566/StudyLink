@@ -359,6 +359,7 @@ namespace StudyLink.Services.Implementations
         public PagedResult<TutorCard> Search(TutorSearchFilter f)
         {
             var today = _clock.Today;
+            var nowTime = _clock.Now.TimeOfDay;
             // BR-26: only verified tutors with active accounts are ever listed.
             var q = _db.Tutors.AsNoTracking().Where(t => t.VerificationStatus == TutorVerificationStatus.Verified && t.User.IsActive);
             if (f.SubjectId.HasValue)
@@ -389,7 +390,8 @@ namespace StudyLink.Services.Implementations
                     // Aggregated in SQL: a nested IQueryable member cannot be queried again once materialised.
                     ReviewCount = _db.Reviews.Count(r => r.Booking.TutorId == t.TutorId && !r.IsHidden),
                     Rating = _db.Reviews.Where(r => r.Booking.TutorId == t.TutorId && !r.IsHidden).Average(r => (double?)r.Rating),
-                    Next = _db.TutorAvailability.Where(a => a.TutorSubject.TutorId == t.TutorId && !a.IsBooked && a.AvailabilityDate >= today)
+                    Next = _db.TutorAvailability.Where(a => a.TutorSubject.TutorId == t.TutorId && !a.IsBooked && a.TutorSubject.Subject.IsActive
+                                                            && (a.AvailabilityDate > today || (a.AvailabilityDate == today && a.StartTime > nowTime)))
                         .Min(a => (DateTime?)a.AvailabilityDate)
                 }).ToList();
 
@@ -684,6 +686,7 @@ namespace StudyLink.Services.Implementations
             if (accept)
             {
                 booking.Status = BookingStatus.Confirmed;
+                _audit.Record(actor, "BookingConfirmed", "Booking", bookingId, "AwaitingTutor", "Confirmed");
                 _notifications.Notify(booking.Student.UserId, NotificationType.BookingConfirmed, "Session confirmed",
                     booking.TutorSubject.Subject.Name + " on " + when + " is confirmed by your tutor.",
                     "~/Student/Tutoring/BookingDetails.aspx?id=" + bookingId);

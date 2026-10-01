@@ -403,7 +403,7 @@ namespace StudyLink.Services.Implementations
             {
                 FirstName = FirstName(actor),
                 Reminder = next != null
-                    ? "Reminder: your " + next.Subject + " session with " + next.TutorName + " is " + (next.SessionDate.Date == now.Date ? "today" : "tomorrow") + " at " + next.StartTime.ToString(@"hh\:mm") + "."
+                    ? "Reminder: your " + next.Subject + " session with " + next.TutorName + " is " + (next.SessionDate.Date == now.Date ? "today" : next.SessionDate.Date == now.Date.AddDays(1) ? "tomorrow" : "on " + next.SessionDate.ToString("dddd", Display)) + " at " + next.StartTime.ToString(@"hh\:mm") + "."
                     : soonDue != null ? "Reminder: \"" + soonDue.BookTitle + "\" is due back " + (soonDue.DueDate.Date == now.Date ? "today." : "tomorrow.") : null,
                 Outstanding = fees.Outstanding,
                 UnpaidItems = fees.Unpaid.Count,
@@ -487,13 +487,13 @@ namespace StudyLink.Services.Implementations
             var lowStock = _inventory.Inventory(actor, new BookFilter { LowStockOnly = true, PageSize = 8 });
             var overdueCount = _db.Rentals.Count(r => r.Status == RentalStatus.Active && r.DueDate < today);
 
-            d.Kpis.Add(new Kpi("Revenue today", R(net(today, today.AddDays(1))), null, "~/Operations/Reports.aspx?report=revenue", "green"));
-            d.Kpis.Add(new Kpi("Revenue this month", R(net(monthStart, today.AddDays(1))), today.ToString("MMMM yyyy"), "~/Operations/Reports.aspx?report=revenue", "green"));
-            d.Kpis.Add(new Kpi("Outstanding balances", R(_db.Fees.Where(f => f.Status == FeeStatus.Unpaid).Select(f => (decimal?)f.Amount).Sum() ?? 0), null, "~/Operations/Reports.aspx?report=outstanding", "orange"));
+            d.Kpis.Add(new Kpi("Revenue today", R(net(today, today.AddDays(1))), null, "~/Operations/Reports.aspx?key=revenue", "green"));
+            d.Kpis.Add(new Kpi("Revenue this month", R(net(monthStart, today.AddDays(1))), today.ToString("MMMM yyyy"), "~/Operations/Reports.aspx?key=revenue", "green"));
+            d.Kpis.Add(new Kpi("Outstanding balances", R(_db.Fees.Where(f => f.Status == FeeStatus.Unpaid).Select(f => (decimal?)f.Amount).Sum() ?? 0), null, "~/Operations/Reports.aspx?key=outstanding", "orange"));
             d.Kpis.Add(new Kpi("Books on loan", _db.Rentals.Count(r => r.Status == RentalStatus.Active).ToString(Display), overdueCount + " overdue", "~/Operations/Returns.aspx", overdueCount > 0 ? "red" : "blue"));
-            d.Kpis.Add(new Kpi("Books sold this month", _db.Sales.Count(s => s.Status == SaleStatus.Completed && s.CompletedAt >= monthStart).ToString(Display), null, "~/Operations/Reports.aspx?report=sales", "blue"));
+            d.Kpis.Add(new Kpi("Books sold this month", _db.Sales.Count(s => s.Status == SaleStatus.Completed && s.CompletedAt >= monthStart).ToString(Display), null, "~/Operations/Reports.aspx?key=sales", "blue"));
             d.Kpis.Add(new Kpi("Tutor utilisation", SchedulePolicy.UtilisationPercent(utilisation.Sum(u => u.HoursBooked), published).ToString("0.0", Display) + "%",
-                "this month", "~/Operations/Reports.aspx?report=tutor-utilisation", "navy"));
+                "this month", "~/Operations/Reports.aspx?key=tutor-utilisation", "navy"));
             d.Kpis.Add(new Kpi("Low-stock titles", lowStock.Total.ToString(Display), null, "~/Manager/Books.aspx?low=1", lowStock.Total > 0 ? "orange" : "green"));
             d.Kpis.Add(new Kpi("Open supplier orders", _db.SupplierOrders.Count(o => o.Status == SupplierOrderStatus.Placed || o.Status == SupplierOrderStatus.Acknowledged || o.Status == SupplierOrderStatus.PartiallyDelivered).ToString(Display),
                 _db.SupplierInvoices.Count(i => i.Status == InvoiceStatus.Submitted) + " invoices to review", "~/Manager/SupplierOrders.aspx", "blue"));

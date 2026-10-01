@@ -52,7 +52,8 @@ namespace StudyLink.Web.Tutor
         {
             if (!int.TryParse((string)e.CommandArgument, out var id)) return;
             if (e.CommandName == "approve") Show(S.Postponements.Approve(Actor, id), "Session moved. The student has been notified.");
-            if (e.CommandName == "decline") Show(S.Postponements.Decline(Actor, id, null), "Request declined. The student has been notified.");
+            if (e.CommandName == "decline" && Show(S.Postponements.Decline(Actor, id, DeclineNote.Text), "Request declined. The student has been notified."))
+                DeclineNote.Text = "";
             Bind();
         }
     }

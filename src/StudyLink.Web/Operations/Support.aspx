@@ -59,6 +59,9 @@
                     </table>
                 </div>
                 <asp:Literal ID="NoProfileRequests" runat="server" />
+                <div class="panel__footer">
+                    <asp:TextBox ID="ProfileNote" runat="server" CssClass="form-control" MaxLength="200" placeholder="Note to the user (required when rejecting)" aria-label="Note" />
+                </div>
             </div>
         </asp:View>
     </asp:MultiView>

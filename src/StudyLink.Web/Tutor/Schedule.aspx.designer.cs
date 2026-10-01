@@ -12,6 +12,7 @@ namespace StudyLink.Web.Tutor
         protected global::System.Web.UI.WebControls.Literal TabStrip;
         protected global::System.Web.UI.WebControls.PlaceHolder PostponePanel;
         protected global::System.Web.UI.WebControls.Repeater Postponements;
+        protected global::System.Web.UI.WebControls.TextBox DeclineNote;
         protected global::System.Web.UI.WebControls.Literal ListTitle;
         protected global::System.Web.UI.WebControls.Repeater Rows;
         protected global::System.Web.UI.WebControls.Literal EmptyState;

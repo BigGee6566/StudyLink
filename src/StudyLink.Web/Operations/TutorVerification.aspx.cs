@@ -48,8 +48,7 @@ namespace StudyLink.Web.Operations
             History.DataSource = app.History;
             History.DataBind();
 
-            var undecided = s.Status == TutorVerificationStatus.PendingVerification || s.Status == TutorVerificationStatus.Rejected;
-            DecideForm.Visible = ApproveButton.Visible = undecided;
+            DecideForm.Visible = ApproveButton.Visible = s.Status == TutorVerificationStatus.PendingVerification;
             RejectButton.Visible = s.Status == TutorVerificationStatus.PendingVerification;
             SuspendButton.Visible = s.Status == TutorVerificationStatus.Verified;
             ReinstateButton.Visible = s.Status == TutorVerificationStatus.Suspended;

@@ -16,7 +16,7 @@ namespace StudyLink.Web.Tutor
         {
             if (!IsPostBack)
             {
-                Ui.FillEnum(Attendance, null, new[] { AttendanceStatus.Attended, AttendanceStatus.StudentAbsent, AttendanceStatus.TutorAbsent });
+                Ui.FillEnum(Attendance, null, new[] { AttendanceStatus.Attended, AttendanceStatus.StudentAbsent });
                 Ui.FillEnum<ScheduleChangeReason>(CancelReason);
             }
             Bind();
