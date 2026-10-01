@@ -2,14 +2,14 @@
 
 Run from the StudyLink folder:  python branding/make_assets.py
 Source : branding/source/studylink-brand-sheet.png (1536x1024, logo on top, three icons below)
-Output : src/StudyLink.Web/Images/branding/*.png and src/StudyLink.Web/favicon.ico
+Output : Images/branding/*.png and favicon.ico (the web project is the repository root)
 """
 import os
 from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "branding", "source", "studylink-brand-sheet.png")
-WEB = os.path.join(ROOT, "src", "StudyLink.Web")
+WEB = ROOT
 OUT = os.path.join(WEB, "Images", "branding")
 os.makedirs(OUT, exist_ok=True)
 

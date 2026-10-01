@@ -17,7 +17,7 @@ namespace StudyLink.Tests.Http
     /// they exercise all three access-control layers: web.config folder rules, the page guard and the
     /// services. Skipped (inconclusive) when the site is not running.
     ///   STUDYLINK_BASEURL        default http://localhost:51820
-    ///   STUDYLINK_DEMO_PASSWORD  default: Seed:DevPassword from src\StudyLink.Web\App_Data\local.settings.config
+    ///   STUDYLINK_DEMO_PASSWORD  default: Seed:DevPassword from App_Data\local.settings.config
     /// </summary>
     [TestClass, TestCategory("Http")]
     public class SiteTests
@@ -303,7 +303,7 @@ namespace StudyLink.Tests.Http
         {
             var fromEnv = Environment.GetEnvironmentVariable("STUDYLINK_DEMO_PASSWORD");
             if (!string.IsNullOrEmpty(fromEnv)) return fromEnv;
-            var config = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(thisFile), @"..\..\..\src\StudyLink.Web\App_Data\local.settings.config"));
+            var config = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(thisFile), @"..\..\App_Data\local.settings.config"));
             if (!File.Exists(config)) Assert.Inconclusive("Set STUDYLINK_DEMO_PASSWORD or create " + config);
             return XDocument.Load(config).Root.Elements("add").First(e => (string)e.Attribute("key") == "Seed:DevPassword").Attribute("value").Value;
         }

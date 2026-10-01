@@ -1,13 +1,13 @@
 # Testing Plan
 
-StudyLink is tested at four levels. The automated suites live in `tests\StudyLink.Tests`; the manual levels are
+StudyLink is tested at four levels. The automated suites live in `Tests`; the manual levels are
 `docs\UAT-Checklist.md` and `docs\DemoWalkthrough.md`.
 
 | Level | What | How to run |
 |---|---|---|
-| Unit | Pure business rules (no database) | `dotnet test tests/StudyLink.Tests --filter "FullyQualifiedName~Unit"` |
-| Integration | Services against a real SQL Server database built from the migrations | `dotnet test tests/StudyLink.Tests --filter "FullyQualifiedName~Integration"` |
-| HTTP | The running site: sign-in per role, role access matrix, full link crawl | Start the site (F5), then `dotnet test tests/StudyLink.Tests --filter TestCategory=Http` |
+| Unit | Pure business rules (no database) | `dotnet test Tests --filter "FullyQualifiedName~Unit"` |
+| Integration | Services against a real SQL Server database built from the migrations | `dotnet test Tests --filter "FullyQualifiedName~Integration"` |
+| HTTP | The running site: sign-in per role, role access matrix, full link crawl | Start the site (F5), then `dotnet test Tests --filter TestCategory=Http` |
 | UAT / demo | People walking through each role's scenarios | `UAT-Checklist.md`, `DemoWalkthrough.md` |
 
 ## 1. Unit tests (`Unit\PolicyTests.cs`)
@@ -82,7 +82,7 @@ round-trip), so they cover all three access layers: web.config folder rules, the
 ## 4. Build checks
 
 * `MSBuild StudyLink.sln` must report no errors or warnings.
-* `aspnet_compiler -v / -p src\StudyLink.Web <out>` precompiles every page, master, user control and handler,
+* `tools\precompile.ps1` precompiles every page, master, user control and handler,
   catching markup and data-binding mistakes that MSBuild can't see.
 
 ## 5. Browser checks

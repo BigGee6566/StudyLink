@@ -1,19 +1,14 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Web", "StudyLink.Web.csproj", "{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Data", "src\StudyLink.Data\StudyLink.Data.csproj", "{5F6AE7E6-ECC6-4960-9C57-E8705C04721D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Data", "Data\StudyLink.Data.csproj", "{5F6AE7E6-ECC6-4960-9C57-E8705C04721D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Services", "src\StudyLink.Services\StudyLink.Services.csproj", "{8FFF34D6-966C-4840-BDF0-9CE7943C3A5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Services", "Services\StudyLink.Services.csproj", "{8FFF34D6-966C-4840-BDF0-9CE7943C3A5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Web", "src\StudyLink.Web\StudyLink.Web.csproj", "{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Tests", "tests\StudyLink.Tests\StudyLink.Tests.csproj", "{D926D546-8791-4F0E-81C4-EC412F6E1865}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyLink.Tests", "Tests\StudyLink.Tests.csproj", "{D926D546-8791-4F0E-81C4-EC412F6E1865}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +16,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5F6AE7E6-ECC6-4960-9C57-E8705C04721D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F6AE7E6-ECC6-4960-9C57-E8705C04721D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F6AE7E6-ECC6-4960-9C57-E8705C04721D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -29,10 +28,6 @@ Global
 		{8FFF34D6-966C-4840-BDF0-9CE7943C3A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FFF34D6-966C-4840-BDF0-9CE7943C3A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FFF34D6-966C-4840-BDF0-9CE7943C3A5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D926D546-8791-4F0E-81C4-EC412F6E1865}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D926D546-8791-4F0E-81C4-EC412F6E1865}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D926D546-8791-4F0E-81C4-EC412F6E1865}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -40,11 +35,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{5F6AE7E6-ECC6-4960-9C57-E8705C04721D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{8FFF34D6-966C-4840-BDF0-9CE7943C3A5D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{6B2F4E71-9C3A-4D58-8E0B-5A1C7D2E9F40} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{D926D546-8791-4F0E-81C4-EC412F6E1865} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

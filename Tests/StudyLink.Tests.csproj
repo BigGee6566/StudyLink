@@ -13,8 +13,8 @@
     <PackageReference Include="EntityFramework" Version="6.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\StudyLink.Data\StudyLink.Data.csproj" />
-    <ProjectReference Include="..\..\src\StudyLink.Services\StudyLink.Services.csproj" />
+    <ProjectReference Include="..\Data\StudyLink.Data.csproj" />
+    <ProjectReference Include="..\Services\StudyLink.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />

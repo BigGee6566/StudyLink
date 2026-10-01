@@ -8,7 +8,7 @@
     <Product>StudyLink</Product>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StudyLink.Data\StudyLink.Data.csproj" />
+    <ProjectReference Include="..\Data\StudyLink.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.5.1" />

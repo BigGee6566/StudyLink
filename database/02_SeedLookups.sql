@@ -1,6 +1,6 @@
 /* =============================================================================
    StudyLink - 02_SeedLookups.sql
-   Reference data every installation needs. Mirrors src\StudyLink.Data\Seed\LookupData.cs,
+   Reference data every installation needs. Mirrors Data\Seed\LookupData.cs,
    which the application also applies on start-up, so running both is harmless:
    every insert below is "only if missing". Settings an administrator has changed
    are never overwritten.

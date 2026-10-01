@@ -3,7 +3,7 @@
    Books, Tutoring & Academic Resource Hub  |  Nova Tech Developers
    Target: Microsoft SQL Server 2016+ (developed on SQL Server 2022 Express)
 
-   GENERATED from the EF6 migrations in src\StudyLink.Data\Migrations
+   GENERATED from the EF6 migrations in Data\Migrations
    (ef6.exe database update --script). Do not hand-edit: change the model,
    add a migration, and regenerate. The web application applies the same
    migrations automatically on first start, so running this script is only
@@ -13,7 +13,7 @@
          then database\02_SeedLookups.sql
 
    Enum columns are INT; the values are documented in
-   src\StudyLink.Data\Entities\Enums.cs (e.g. Bookings.Status 1 = AwaitingPayment,
+   Data\Entities\Enums.cs (e.g. Bookings.Status 1 = AwaitingPayment,
    2 = AwaitingTutor, 3 = Confirmed, 4 = Completed, 5 = Cancelled, 6 = Declined,
    7 = Expired).
    ============================================================================= */

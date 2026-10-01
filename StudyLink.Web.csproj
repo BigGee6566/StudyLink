@@ -63,11 +63,11 @@
     <PackageReference Include="EntityFramework" Version="6.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StudyLink.Data\StudyLink.Data.csproj">
+    <ProjectReference Include="Data\StudyLink.Data.csproj">
       <Project>{5f6ae7e6-ecc6-4960-9c57-e8705c04721d}</Project>
       <Name>StudyLink.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\StudyLink.Services\StudyLink.Services.csproj">
+    <ProjectReference Include="Services\StudyLink.Services.csproj">
       <Project>{8fff34d6-966c-4840-bdf0-9ce7943c3a5d}</Project>
       <Name>StudyLink.Services</Name>
     </ProjectReference>

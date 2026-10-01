@@ -16,26 +16,32 @@ platform for tutoring, textbook rentals and sales, fees and card payments, suppl
 ## Folder structure
 
 ```
-StudyLink\
-├─ StudyLink.sln
-├─ src\
-│  ├─ StudyLink.Web\        Web Forms site: pages per role folder, master pages, handlers, design system
-│  ├─ StudyLink.Services\   Business rules (services, policies, validation, security, DTOs)
-│  └─ StudyLink.Data\       EF6 entities, configurations, migrations, lookup seed
-├─ tests\StudyLink.Tests\   Unit, SQL-backed integration and HTTP (role access + crawl) tests
+StudyLink\                  The Web Forms site (StudyLink.Web.csproj) lives directly in this folder
+├─ StudyLink.sln            Open this in Visual Studio 2022
+├─ StudyLink.Web.csproj, Web.config, Global.asax, Default.aspx
+├─ Account\ Public\ Catalogue\ Student\ Tutor\ Staff\ Operations\ Supplier\ Manager\ Admin\ Notifications\
+│                           Pages, one folder per role
+├─ MasterPages\ UserControls\ Handlers\ ErrorPages\ Infrastructure\
+├─ Content\ Scripts\ Images\ App_Data\
+├─ Services\                StudyLink.Services: business rules (services, policies, validation, security, DTOs)
+├─ Data\                    StudyLink.Data: EF6 entities, configurations, migrations, lookup seed
+├─ Tests\                   StudyLink.Tests: unit, SQL-backed integration and HTTP (role access + crawl) tests
 ├─ database\                01_CreateSchema.sql (generated from the migrations), 02_SeedLookups.sql
 ├─ docs\                    Analysis, migration plan, testing plan, UAT checklist, demo walkthrough, mockups
 ├─ branding\                Source logo sheet and the script that cuts the logo, favicons and icons
-├─ tools\                   sync_web_project.py (designer files + project items for the Web Forms project)
+├─ tools\                   sync_web_project.py (designer files + project items), precompile.ps1
 └─ legacy\TutorConnect\     The original VB.NET TutorConnect source, untouched (reference only)
 ```
+
+The folders that are not part of the site (`Services`, `Data`, `Tests`, `legacy`, `docs`, `database`, `tools`)
+are hidden segments in `Web.config`, so IIS Express never serves them.
 
 ## Run it (Visual Studio 2022)
 
 1. **Prerequisites:** Visual Studio 2022 with the *ASP.NET and web development* workload, and SQL Server
    (Express) reachable as `.\SQLEXPRESS`. To use another server, change the `StudyLink` connection string in
-   `src\StudyLink.Web\Web.config`.
-2. **Local settings:** copy `src\StudyLink.Web\App_Data\local.settings.config.sample` to
+   `Web.config`.
+2. **Local settings:** copy `App_Data\local.settings.config.sample` to
    `local.settings.config` in the same folder, and choose your own `Seed:DevPassword`. This file is git-ignored.
    Keep `Seed:Demo` set to `true` if you want demo data.
 3. Open `StudyLink.sln`, set **StudyLink.Web** as the startup project and press **F5** (IIS Express).
@@ -68,13 +74,13 @@ stored.
 * `4111 1111 1111 1111` with any future expiry and a 3-digit CVV is **approved**.
 * `4000 0000 0000 0002` is **declined**.
 
-Emails (receipts, reset links, set-password links) are written as `.eml` files to `src\StudyLink.Web\App_Data\MailDrop`
+Emails (receipts, reset links, set-password links) are written as `.eml` files to `App_Data\MailDrop`
 in development. Set `StudyLink:MailMode` to `Smtp` and configure `<mailSettings>` to send real mail.
 
 ## Tests
 
 ```bash
-dotnet test tests/StudyLink.Tests/StudyLink.Tests.csproj
+dotnet test Tests/StudyLink.Tests.csproj
 ```
 
 * **Unit** (`Unit\`): scheduling and overlap rules, due dates and fines, stock maths, card validation, the
@@ -105,10 +111,10 @@ normally does.
   `AUTO_CLOSE ON`, so the database shuts down between requests and reopening it is slow on a busy PC. The site
   turns it off at start-up, and `01_CreateSchema.sql` does the same. To fix by hand:
   `ALTER DATABASE StudyLink SET AUTO_CLOSE OFF;`
-* **The error page shows a reference code:** the full error for that reference is in `src\StudyLink.Web\App_Data\Logs\errors-<date>.log`.
-* **A page compiles in Visual Studio but fails at runtime:** precompile all markup to find the error:
-  `C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v / -p src\StudyLink.Web %TEMP%\slpc`
-  (the output path must be short).
+* **The error page shows a reference code:** the full error for that reference is in `App_Data\Logs\errors-<date>.log`.
+* **A page compiles in Visual Studio but fails at runtime:** build, then precompile all markup to find the error:
+  `powershell -File tools\precompile.ps1`. It copies just the site (without `legacy`, `Data`, `Tests`, …) to
+  `%TEMP%` and runs `aspnet_compiler` there, because `legacy\TutorConnect` has its own application-level `Web.config`.
 
 ## Key decisions
 

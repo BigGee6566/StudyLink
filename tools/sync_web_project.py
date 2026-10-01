@@ -15,7 +15,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-WEB = os.path.join(ROOT, "src", "StudyLink.Web")
+WEB = ROOT
 CSPROJ = os.path.join(WEB, "StudyLink.Web.csproj")
 
 MARKUP_EXT = (".aspx", ".ascx", ".master")
@@ -23,6 +23,8 @@ CODE_PARENTS = MARKUP_EXT + (".asax", ".ashx")
 CONTENT_EXT = (".aspx", ".ascx", ".master", ".ashx", ".asax", ".css", ".js", ".png", ".jpg", ".jpeg",
                ".gif", ".svg", ".ico", ".webp", ".woff", ".woff2", ".sample")
 EXCLUDED_DIRS = {"bin", "obj", ".vs", "Logs", "MailDrop", "Invoices", "Backups"}
+# The web project is the repository root, so the other projects and the non-site folders sit beside its pages.
+NOT_SITE = {".git", ".claude", "Data", "Services", "Tests", "TestResults", "legacy", "docs", "database", "tools", "branding", "packages"}
 
 HTML_TYPES = {
     "form": "System.Web.UI.HtmlControls.HtmlForm",
@@ -149,7 +151,7 @@ def write_designer(markup):
 
 def walk():
     for dirpath, dirnames, filenames in os.walk(WEB):
-        dirnames[:] = sorted(d for d in dirnames if d not in EXCLUDED_DIRS)
+        dirnames[:] = sorted(d for d in dirnames if d not in EXCLUDED_DIRS and not (dirpath == WEB and d in NOT_SITE))
         for fn in sorted(filenames):
             yield dirpath, fn
 
