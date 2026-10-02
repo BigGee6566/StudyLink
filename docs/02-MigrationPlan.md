@@ -8,7 +8,7 @@ How TutorConnect's proven rules were carried into StudyLink, and how StudyLink i
 |---|---|---|
 | D-1 | ASP.NET Web Forms, C#, .NET Framework 4.8.1 | The team's existing projects and tooling. The brief's MVC "controller + view" maps to an `.aspx` page with a thin code-behind calling a service. |
 | D-2 | Port TutorConnect's own authentication (PBKDF2-SHA256 at 100k iterations, lockout, rate limiting, Forms ticket) with Users / Roles / UserRoles | Proven code. No OWIN or Identity packages. |
-| D-3 | EF6 Code First + migrations | One model drives both the database and `database\01_CreateSchema.sql`. |
+| D-3 | EF6 Code First + migrations | One model drives both the database and `database\StudyLink.sql`. |
 | D-4 | Pay first, then the tutor confirms; a decline or a tutor cancellation refunds in full | The slot is held only for students who pay; the tutor still decides. |
 | D-5 | Legacy source kept under `legacy\TutorConnect` | Reference and traceability. |
 | D-6 | `IPaymentGateway` with a simulated card gateway; store only brand and last four | No real card data in a student project. A real provider is one new class. |

@@ -73,6 +73,25 @@ namespace StudyLink.Data.Entities
         public string FullName => FirstName + " " + LastName;
     }
 
+    /// <summary>
+    /// A profile picture, in its own table so that reading a User (which happens on every signed-in
+    /// request) never loads image bytes. One row per user at most; no row means the default avatar.
+    /// </summary>
+    [Table("UserPhotos")]
+    public class UserPhoto
+    {
+        public int UserId { get; set; }
+        public virtual User User { get; set; }
+
+        [Required]
+        public byte[] Photo { get; set; }
+
+        [Required, StringLength(50)]
+        public string ContentType { get; set; }
+
+        public DateTime UpdatedAt { get; set; }
+    }
+
     public class Role
     {
         public int RoleId { get; set; }

@@ -38,6 +38,18 @@ namespace StudyLink.Data.Seed
         public const string OrganisationName = "General.OrganisationName";
         public const string SupportEmail = "General.SupportEmail";
         public const string BackupDirectory = "Backup.Directory";
+
+        // Shown in the public footer and on the Contact page.
+        public const string ContactPhone = "Contact.Phone";
+        public const string ContactEmail = "Contact.Email";
+        public const string ContactHours = "Contact.Hours";
+        public const string AddressAlice = "Contact.AddressAlice";
+        public const string AddressEastLondon = "Contact.AddressEastLondon";
+        public const string AddressBisho = "Contact.AddressBisho";
+        public const string SocialFacebook = "Social.Facebook";
+        public const string SocialInstagram = "Social.Instagram";
+        public const string SocialX = "Social.X";
+        public const string SocialLinkedIn = "Social.LinkedIn";
     }
 
     /// <summary>
@@ -98,7 +110,17 @@ namespace StudyLink.Data.Seed
             (SettingKeys.ResetTokenMinutes, "60", "Minutes a password-reset link stays valid."),
             (SettingKeys.OrganisationName, "Forte Books & Tuition Hub", "Shown on receipts and emails."),
             (SettingKeys.SupportEmail, "support@studylink.local", "Reply-to address on system emails."),
-            (SettingKeys.BackupDirectory, "", "Folder for database backups on the SQL Server machine. Empty = SQL Server default.")
+            (SettingKeys.BackupDirectory, "", "Folder for database backups on the SQL Server machine. Empty = SQL Server default."),
+            (SettingKeys.ContactPhone, "To be confirmed", "Hub phone number shown in the footer and on the Contact page."),
+            (SettingKeys.ContactEmail, "To be confirmed", "Hub email address shown in the footer and on the Contact page."),
+            (SettingKeys.ContactHours, "Mon-Fri 08:00-16:30", "Counter opening hours shown in the footer and on the Contact page."),
+            (SettingKeys.AddressAlice, "Hub counter, Alice campus (address to be confirmed)", "Alice campus address."),
+            (SettingKeys.AddressEastLondon, "Hub counter, East London campus (address to be confirmed)", "East London campus address."),
+            (SettingKeys.AddressBisho, "Hub counter, Bisho campus (address to be confirmed)", "Bisho campus address."),
+            (SettingKeys.SocialFacebook, "", "Facebook page URL. Empty = icon shown as a placeholder without a link."),
+            (SettingKeys.SocialInstagram, "", "Instagram profile URL. Empty = placeholder."),
+            (SettingKeys.SocialX, "", "X (Twitter) profile URL. Empty = placeholder."),
+            (SettingKeys.SocialLinkedIn, "", "LinkedIn page URL. Empty = placeholder.")
         };
 
         public static void Apply(StudyLinkDbContext db)

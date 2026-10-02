@@ -14,6 +14,10 @@ namespace StudyLink.Data.Configurations
             mb.Entity<User>()
                 .HasOptional(u => u.CreatedBy).WithMany().HasForeignKey(u => u.CreatedByUserId);
 
+            // Shared primary key: UserPhotos.UserId is both the key and the foreign key to Users.
+            mb.Entity<UserPhoto>().HasKey(p => p.UserId);
+            mb.Entity<UserPhoto>().HasRequired(p => p.User).WithOptional();
+
             mb.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
             mb.Entity<UserRole>()
                 .HasRequired(ur => ur.User).WithMany(u => u.UserRoles).HasForeignKey(ur => ur.UserId);

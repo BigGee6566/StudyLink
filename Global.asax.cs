@@ -12,7 +12,7 @@ namespace StudyLink.Web
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            // The site brings its own database up to date (same migrations as database\01_CreateSchema.sql).
+            // The site brings its own database up to date (same migrations as database\StudyLink.sql).
             if (!string.Equals(ConfigurationManager.AppSettings["StudyLink:MigrateOnStart"], "false", StringComparison.OrdinalIgnoreCase))
                 Database.SetInitializer(new MigrateDatabaseToLatestVersion<StudyLinkDbContext, StudyLink.Data.Migrations.Configuration>(true));
             else
@@ -40,7 +40,7 @@ namespace StudyLink.Web
         /// SQL Express creates databases with AUTO_CLOSE ON, so the database shuts down whenever the last
         /// connection closes and every reopen delays the next login (timeouts on a busy machine).
         /// ALTER DATABASE cannot run inside a transaction, hence outside the migrations. Needs ALTER
-        /// permission; where that is missing the DBA script (database\01_CreateSchema.sql) does it.
+        /// permission; where that is missing the DBA script (database\StudyLink.sql) does it.
         /// </summary>
         private static void DisableAutoClose(StudyLinkDbContext db)
         {
