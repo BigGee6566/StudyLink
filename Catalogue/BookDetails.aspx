@@ -7,7 +7,6 @@
             <div class="book-hero">
                 <div class="book-cover">
                     <asp:Literal ID="Cover" runat="server" />
-                    <span><asp:Literal ID="CoverTitle" runat="server" /></span>
                 </div>
                 <div>
                     <h2 class="h3 fw-bold mb-1"><asp:Literal ID="BookTitle" runat="server" /></h2>

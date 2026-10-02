@@ -28,7 +28,7 @@
                     <span>Study<b>Link</b></span>
                 </a>
                 <div class="sidebar__user">
-                    <div class="avatar" aria-hidden="true"><asp:Literal ID="UserInitials" runat="server" /></div>
+                    <asp:Literal ID="UserAvatar" runat="server" />
                     <div>
                         <div class="sidebar__name"><asp:Literal ID="UserName" runat="server" /></div>
                         <div class="sidebar__role"><asp:Literal ID="UserRole" runat="server" /></div>

@@ -9,8 +9,10 @@ namespace StudyLink.Web.Public
 {
     public partial class HowItWorks
     {
-        protected global::System.Web.UI.WebControls.Literal Period;
+        protected global::StudyLink.Web.UserControls.HowItWorksSteps StudentSteps;
+        protected global::StudyLink.Web.UserControls.HowItWorksSteps TutorSteps;
         protected global::System.Web.UI.WebControls.Literal Cutoff;
         protected global::System.Web.UI.WebControls.Literal Hold;
+        protected global::System.Web.UI.WebControls.Literal Period;
     }
 }

@@ -25,10 +25,10 @@ namespace StudyLink.Web.Student
 
             Sessions.DataSource = d.Upcoming;
             Sessions.DataBind();
-            NoSessions.Text = d.Upcoming.Count == 0 ? Ui.Empty("calendar", "No upcoming sessions.", "<a class=\"btn btn-sm btn-primary\" href=\"" + ResolveUrl("~/Catalogue/Tutors.aspx") + "\">Find a tutor</a>") : "";
+            NoSessions.Text = d.Upcoming.Count == 0 ? Ui.Empty(EmptyArt.Calendar, "No upcoming sessions", "Book a verified tutor and your sessions will show here.", "<a class=\"btn btn-sm btn-primary\" href=\"" + ResolveUrl("~/Catalogue/Tutors.aspx") + "\">Find a tutor</a>") : "";
             Rentals.DataSource = d.Rentals;
             Rentals.DataBind();
-            NoRentals.Text = d.Rentals.Count == 0 ? Ui.Empty("library", "You have no books on loan.") : "";
+            NoRentals.Text = d.Rentals.Count == 0 ? Ui.Empty(EmptyArt.Books, "No books on loan", "Rent a prescribed textbook and it will show here with its due date.") : "";
         }
     }
 }

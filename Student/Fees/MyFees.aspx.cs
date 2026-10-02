@@ -28,11 +28,11 @@ namespace StudyLink.Web.Student.Fees
             PaidYear.Text = Fmt.Money(st.PaidThisYear);
             Payments.DataSource = st.Payments;
             Payments.DataBind();
-            NoPayments.Text = st.Payments.Count == 0 ? Ui.Empty("card", "No payments yet.") : "";
+            NoPayments.Text = st.Payments.Count == 0 ? Ui.Empty(EmptyArt.Receipt, "No payments yet", "Receipts for everything you pay will be kept here.") : "";
 
             History.DataSource = st.History;
             History.DataBind();
-            NoHistory.Text = st.History.Count == 0 ? Ui.Empty("list", "No settled fees yet.") : "";
+            NoHistory.Text = st.History.Count == 0 ? Ui.Empty(EmptyArt.Receipt, "No settled fees yet", null) : "";
         }
     }
 }

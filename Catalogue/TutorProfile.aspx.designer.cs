@@ -9,7 +9,7 @@ namespace StudyLink.Web.Catalogue
 {
     public partial class TutorProfile
     {
-        protected global::System.Web.UI.WebControls.Literal Initials;
+        protected global::System.Web.UI.WebControls.Literal TutorAvatar;
         protected global::System.Web.UI.WebControls.Literal FullName;
         protected global::System.Web.UI.WebControls.Literal Qualification;
         protected global::System.Web.UI.WebControls.Literal Rating;

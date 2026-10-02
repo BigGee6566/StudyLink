@@ -2,7 +2,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <%-- SC25 - Book Management (catalogue) and Inventory (stock derived from copy statuses) --%>
     <asp:Literal ID="TabStrip" runat="server" />
-    <div class="panel">
+    <div class="panel filter-panel">
         <div class="panel__body">
             <asp:Panel runat="server" CssClass="filter-bar" DefaultButton="SearchButton">
                 <div><label class="form-label" for="<%= SearchText.ClientID %>">Search</label><asp:TextBox ID="SearchText" runat="server" CssClass="form-control" placeholder="Title, author or ISBN" /></div>

@@ -2,7 +2,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <asp:Literal ID="TabStrip" runat="server" />
     <asp:PlaceHolder ID="DetailPanel" runat="server" Visible="false">
-        <div class="panel">
+        <div class="panel doc-watermark">
             <div class="panel__header"><h2 class="panel__title"><asp:Literal ID="SheetTitle" runat="server" /></h2><asp:Literal ID="SheetStatus" runat="server" /></div>
             <div class="table-wrap">
                 <table class="data-table stack">

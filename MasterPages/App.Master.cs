@@ -29,7 +29,7 @@ namespace StudyLink.Web.MasterPages
             if (user == null) return;
 
             HomeUrl = WebAuth.HomeUrl(user.Roles);
-            UserInitials.Text = HttpUtility.HtmlEncode(user.Initials);
+            UserAvatar.Text = Ui.Avatar(user.UserId, AppServices.Current.Profiles.PhotoVersion(user.UserId));
             UserName.Text = HttpUtility.HtmlEncode(user.DisplayName);
             UserRole.Text = HttpUtility.HtmlEncode(NavigationMap.RoleLabel(user.Roles));
 

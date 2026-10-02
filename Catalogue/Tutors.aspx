@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Book a Session" Language="C#" AutoEventWireup="true" CodeBehind="Tutors.aspx.cs" Inherits="StudyLink.Web.Catalogue.Tutors" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <%-- SC7 - Book a Session: find a verified tutor by subject, level and campus --%>
-    <div class="panel">
+    <div class="panel filter-panel">
         <div class="panel__body">
             <asp:Panel runat="server" CssClass="filter-bar" DefaultButton="SearchButton">
                 <div>
@@ -31,7 +31,7 @@
             <ItemTemplate>
                 <div class="tutor-card">
                     <div class="tutor-card__head">
-                        <div class="avatar" aria-hidden="true"><%#: Eval("Initials") %></div>
+                        <%# Ui.Avatar((int)Eval("UserId"), (DateTime?)Eval("PhotoVersion")) %>
                         <div>
                             <div class="tutor-card__name"><%#: Eval("FullName") %></div>
                             <div class="muted small"><%#: Eval("Qualification") %> · <%# Eval("ExperienceYears") %> yrs</div>

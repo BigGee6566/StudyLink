@@ -3,8 +3,8 @@
     <h1>Choose a new password</h1>
     <asp:Panel ID="FormPanel" runat="server" DefaultButton="SaveButton">
         <p class="lead">This link works once. Choose a password with at least 8 characters, including a letter and a number.</p>
-        <div class="mb-3"><label class="form-label" for="<%= NewPassword.ClientID %>">New password</label><asp:TextBox ID="NewPassword" runat="server" CssClass="form-control" TextMode="Password" autocomplete="new-password" /></div>
-        <div class="mb-3"><label class="form-label" for="<%= Confirm.ClientID %>">Confirm new password</label><asp:TextBox ID="Confirm" runat="server" CssClass="form-control" TextMode="Password" autocomplete="new-password" /></div>
+        <div class="mb-3"><label class="form-label" for="<%= NewPassword.ClientID %>">New password</label><asp:TextBox ID="NewPassword" runat="server" CssClass="form-control" TextMode="Password" data-password-toggle="true" autocomplete="new-password" /></div>
+        <div class="mb-3"><label class="form-label" for="<%= Confirm.ClientID %>">Confirm new password</label><asp:TextBox ID="Confirm" runat="server" CssClass="form-control" TextMode="Password" data-password-toggle="true" autocomplete="new-password" /></div>
         <asp:Button ID="SaveButton" runat="server" Text="Save new password" CssClass="btn btn-primary btn-lg btn-block" OnClick="Save_Click" />
     </asp:Panel>
     <asp:Panel ID="InvalidPanel" runat="server" Visible="false">

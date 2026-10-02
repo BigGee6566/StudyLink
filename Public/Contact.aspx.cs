@@ -6,9 +6,12 @@ namespace StudyLink.Web.Public
     /// <summary>Contact / Support form. Messages land in the staff support inbox (and are rate limited).</summary>
     public partial class Contact : CataloguePage
     {
+        private PublicContact _info;
+        protected PublicContact Info => _info ?? (_info = PublicContact.Load(S.Settings));
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            Subheading = "Questions about books, sessions or your account.";
+            Subheading = "Questions about books, sessions or your account? Send us a message or visit the hub counter.";
             if (IsPostBack) return;
             Ui.Fill(Campus, S.Lookups.Campuses(), "Any campus", PreferredCampus());
             if (IsSignedIn)

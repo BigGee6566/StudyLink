@@ -203,7 +203,8 @@ namespace StudyLink.Services.Implementations
 
     public sealed class InventoryService : IInventoryService
     {
-        private static readonly string[] CoverTypes = { "image/jpeg", "image/png", "image/webp" };
+        /// <summary>A new title needs its cover, so students can check they are choosing the right edition.</summary>
+        public const string CoverRequired = "Upload a photo of the book's cover, so students can check they are choosing the right edition.";
 
         private readonly StudyLinkDbContext _db;
         private readonly IAuditService _audit;
@@ -266,7 +267,7 @@ namespace StudyLink.Services.Implementations
             }).FirstOrDefault();
         }
 
-        public ServiceResult<int> Save(Actor actor, BookEdit e)
+        public ServiceResult<int> Save(Actor actor, BookEdit e, bool allowMissingCover = false)
         {
             RolePermissions.Demand(actor, Permission.ManageBooks);
             var isbn = BookRules.NormaliseIsbn(e.Isbn, out var isbnError);
@@ -283,8 +284,8 @@ namespace StudyLink.Services.Implementations
                         ?? (!_db.Categories.Any(c => c.CategoryId == e.CategoryId) ? "Choose a category." : null)
                         ?? (e.SubjectId.HasValue && !_db.Subjects.Any(s => s.SubjectId == e.SubjectId) ? "Choose a valid subject." : null)
                         ?? (e.PreferredSupplierId.HasValue && !_db.Suppliers.Any(s => s.SupplierId == e.PreferredSupplierId) ? "Choose a valid supplier." : null)
-                        ?? (e.CoverImage != null && (e.CoverImage.Length > 2 * 1024 * 1024 || !CoverTypes.Contains(e.CoverContentType))
-                            ? "Covers must be JPEG, PNG or WebP images under 2 MB." : null)
+                        ?? (!e.BookId.HasValue && !allowMissingCover && (e.CoverImage == null || e.CoverImage.Length == 0) ? CoverRequired : null)
+                        ?? (e.CoverImage != null ? ImageRules.Check(e.CoverImage) : null)
                         ?? (_db.Books.Any(b => b.Isbn == isbn && b.BookId != e.BookId) ? "A book with this ISBN already exists." : null);
             if (error != null) return ServiceResult<int>.Fail(error);
 
@@ -325,7 +326,7 @@ namespace StudyLink.Services.Implementations
             if (e.CoverImage != null)
             {
                 book.CoverImage = e.CoverImage;
-                book.CoverContentType = e.CoverContentType;
+                book.CoverContentType = ImageRules.Detect(e.CoverImage);
             }
 
             try

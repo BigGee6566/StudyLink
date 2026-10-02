@@ -15,7 +15,13 @@ namespace StudyLink.Services.Validation
         private static readonly Regex EmailPattern = new Regex(@"^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$", RegexOptions.Compiled);
         private static readonly Regex CellPattern = new Regex(@"^(0\d{9}|\+27\d{9})$", RegexOptions.Compiled);
         private static readonly Regex UserNamePattern = new Regex(@"^[A-Za-z0-9._-]{3,50}$", RegexOptions.Compiled);
-        private static readonly Regex StudentNumberPattern = new Regex(@"^[A-Za-z0-9]{5,20}$", RegexOptions.Compiled);
+        private static readonly Regex StudentNumberPattern = new Regex(@"^S\d{9}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        /// <summary>Student numbers are 10 characters: the letter S and 9 digits (stored upper-case).</summary>
+        public const string StudentNumberMessage = "Enter your student number: the letter S followed by 9 digits (for example S202600001).";
+
+        /// <summary>The same rule for the browser's pattern attribute, so the form says so before posting.</summary>
+        public const string StudentNumberHtmlPattern = "[Ss][0-9]{9}";
 
         public const int MinPasswordLength = 8;
 
@@ -76,5 +82,33 @@ namespace StudyLink.Services.Validation
         }
 
         public static bool TooLong(string value, int maxLength) => value != null && value.Trim().Length > maxLength;
+    }
+
+    /// <summary>
+    /// Uploaded images (book covers, profile photos) are identified by their first bytes, never by the
+    /// file name or the type the browser claims, so a renamed script or HTML file cannot be stored.
+    /// </summary>
+    public static class ImageRules
+    {
+        public const int MaxBytes = 2 * 1024 * 1024;
+
+        /// <summary>"image/jpeg", "image/png" or "image/webp"; null for anything else.</summary>
+        public static string Detect(byte[] data)
+        {
+            if (data == null || data.Length < 12) return null;
+            if (data[0] == 0xFF && data[1] == 0xD8 && data[2] == 0xFF) return "image/jpeg";
+            if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47
+                && data[4] == 0x0D && data[5] == 0x0A && data[6] == 0x1A && data[7] == 0x0A) return "image/png";
+            if (data[0] == (byte)'R' && data[1] == (byte)'I' && data[2] == (byte)'F' && data[3] == (byte)'F'
+                && data[8] == (byte)'W' && data[9] == (byte)'E' && data[10] == (byte)'B' && data[11] == (byte)'P') return "image/webp";
+            return null;
+        }
+
+        /// <summary>Null when the image is acceptable; otherwise the message to show.</summary>
+        public static string Check(byte[] data) =>
+            data == null || data.Length == 0 ? "Choose an image to upload."
+            : data.Length > MaxBytes ? "The image must be 2 MB or smaller."
+            : Detect(data) == null ? "The image must be a JPEG, PNG or WebP picture."
+            : null;
     }
 }

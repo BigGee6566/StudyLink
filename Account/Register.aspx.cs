@@ -27,8 +27,15 @@ namespace StudyLink.Web.Account
 
         protected string LoginUrl => "~/Account/Login.aspx?registered=" + (IsTutor ? "tutor" : "student");
 
+        protected void Page_Init(object sender, EventArgs e)
+        {
+            if (Master is MasterPages.Auth master) master.BrandImage = "register-bg";
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            StudentNumber.Attributes["pattern"] = UserValidator.StudentNumberHtmlPattern;
+            StudentNumber.Attributes["title"] = UserValidator.StudentNumberMessage;
             if (IsPostBack) return;
             if (IsSignedIn)
             {

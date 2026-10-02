@@ -24,7 +24,9 @@ namespace StudyLink.Web.Manager
         protected global::System.Web.UI.WebControls.TextBox LateFee;
         protected global::System.Web.UI.WebControls.TextBox Reorder;
         protected global::System.Web.UI.WebControls.TextBox Description;
+        protected global::System.Web.UI.WebControls.Literal CoverPreview;
         protected global::System.Web.UI.WebControls.FileUpload Cover;
+        protected global::System.Web.UI.WebControls.Literal CoverHint;
         protected global::System.Web.UI.WebControls.CheckBox Rentable;
         protected global::System.Web.UI.WebControls.CheckBox ForSale;
         protected global::System.Web.UI.WebControls.Button SaveButton;

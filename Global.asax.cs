@@ -18,22 +18,37 @@ namespace StudyLink.Web
             else
                 Database.SetInitializer<StudyLinkDbContext>(null);
 
-            try
+            // Each start-up step is isolated: a failure is logged and the site still starts, so the error
+            // page (or the rest of the site) can still explain what is wrong.
+            Step("Application_Start: migrations", () =>
             {
                 using (var db = new StudyLinkDbContext())
                 {
                     db.Database.Initialize(force: false);
                     DisableAutoClose(db);
                 }
-                DemoSeeder.RunIfRequested();
+            });
+            Step("Application_Start: demo seed", DemoSeeder.RunIfRequested);
+            Step("Application_Start: demo data correction", DemoSeeder.CorrectIfRequested);
+            Step("Application_Start: shipped covers", () =>
+            {
+                using (var db = new StudyLinkDbContext())
+                    CoverLibrary.FillMissing(db);
+            });
+
+            BackgroundSweep.Start();
+        }
+
+        private static void Step(string name, Action action)
+        {
+            try
+            {
+                action();
             }
             catch (Exception ex)
             {
-                // Keep the site up so the error page can explain; the log has the detail.
-                ErrorLogger.Log(ex, "Application_Start");
+                ErrorLogger.Log(ex, name);
             }
-
-            BackgroundSweep.Start();
         }
 
         /// <summary>

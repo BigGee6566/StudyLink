@@ -22,6 +22,8 @@ namespace StudyLink.Web.Operations
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            StudentNumber.Attributes["pattern"] = Services.Validation.UserValidator.StudentNumberHtmlPattern;
+            StudentNumber.Attributes["title"] = Services.Validation.UserValidator.StudentNumberMessage;
             if (IsPostBack) return;
             if (EditedUserId.HasValue || Query("new") == "1") ShowEditor();
             else ShowList();

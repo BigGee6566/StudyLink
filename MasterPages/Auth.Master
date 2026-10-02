@@ -20,6 +20,7 @@
     <form id="AuthForm" runat="server">
         <div class="auth-layout">
             <aside class="auth-brand">
+                <%= SiteImage.Img(BrandImage, "", "(max-width: 1023px) 100vw, 45vw", eager: true, css: "auth-brand__bg") %>
                 <div>
                     <a class="auth-brand__logo" href="<%: ResolveUrl("~/Default.aspx") %>"><img src="<%: ResolveUrl("~/Images/branding/studylink-logo.png") %>" alt="StudyLink - Bringing students and tutors together." /></a>
                     <h2>Books, tutoring and academic resources in one place.</h2>

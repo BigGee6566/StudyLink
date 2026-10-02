@@ -11,6 +11,9 @@ namespace StudyLink.Web.MasterPages
     {
         private readonly StringBuilder _alerts = new StringBuilder();
 
+        /// <summary>The photo behind the brand panel (Images/site use): sign-in pages by default, Register its own.</summary>
+        public string BrandImage { get; set; } = "login-bg";
+
         public void ShowAlert(string message, AlertKind kind)
         {
             var css = kind == AlertKind.Success ? "success" : kind == AlertKind.Error ? "error" : kind == AlertKind.Warning ? "warning" : "info";

@@ -12,8 +12,6 @@ namespace StudyLink.Web.Manager
     [RequirePermission(Permission.ManageBooks)]
     public partial class BookEdit : BasePage
     {
-        private const int MaxCoverBytes = 1024 * 1024;
-
         protected int BookIdValue => QueryInt("id") ?? 0;
         private bool IsNew => !QueryInt("id").HasValue;
 
@@ -63,6 +61,8 @@ namespace StudyLink.Web.Manager
             Description.Text = b.Description;
             Rentable.Checked = b.IsRentable;
             ForSale.Checked = b.IsForSale;
+            CoverPreview.Text = "<div class=\"book-cover cover-preview\">" + Ui.BookCover(b.BookId ?? 0, b.HasCover, b.Title, b.Authors, b.Edition, "") + "</div>";
+            CoverHint.Text = b.HasCover ? "Upload a new image only to replace the current cover." : "This title has no cover yet; students see a plain placeholder.";
             RetireButton.Visible = b.IsActive;
             RestoreButton.Visible = !b.IsActive;
             BindCopies();
@@ -107,21 +107,13 @@ namespace StudyLink.Web.Manager
             book.IsRentable = Rentable.Checked;
             book.IsForSale = ForSale.Checked;
 
+            // Type, size and "new titles need a cover" are checked by the service, from the bytes themselves.
             if (Cover.HasFile)
-            {
-                var type = Cover.PostedFile.ContentType;
-                if ((type != "image/jpeg" && type != "image/png") || Cover.PostedFile.ContentLength > MaxCoverBytes)
-                {
-                    Fail("The cover must be a JPG or PNG image of 1 MB or less.");
-                    return;
-                }
                 using (var ms = new MemoryStream())
                 {
                     Cover.PostedFile.InputStream.CopyTo(ms);
                     book.CoverImage = ms.ToArray();
                 }
-                book.CoverContentType = type;
-            }
 
             var result = S.Inventory.Save(Actor, book);
             if (Show(result)) RedirectWith("~/Manager/BookEdit.aspx?id=" + result.Value, IsNew ? "Book added. Now add copies or order stock." : "Book saved.");

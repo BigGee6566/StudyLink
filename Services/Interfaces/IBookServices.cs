@@ -23,7 +23,11 @@ namespace StudyLink.Services.Interfaces
     {
         PagedResult<InventoryRow> Inventory(Actor actor, BookFilter filter);
         BookEdit Get(Actor actor, int bookId);
-        ServiceResult<int> Save(Actor actor, BookEdit book);
+        /// <summary>
+        /// Adds or updates a title. A new title must come with its cover; only the demo seeder and tests
+        /// pass <paramref name="allowMissingCover"/> (those books show the placeholder jacket).
+        /// </summary>
+        ServiceResult<int> Save(Actor actor, BookEdit book, bool allowMissingCover = false);
         ServiceResult SetActive(Actor actor, int bookId, bool active);
 
         IList<CopyRow> Copies(Actor actor, int bookId);

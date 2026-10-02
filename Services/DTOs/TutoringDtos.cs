@@ -37,8 +37,12 @@ namespace StudyLink.Services.DTOs
     public sealed class TutorCard
     {
         public int TutorId { get; set; }
+        public int UserId { get; set; }
+
+        /// <summary>When the tutor's photo last changed; null = default avatar.</summary>
+        public DateTime? PhotoVersion { get; set; }
+
         public string FullName { get; set; }
-        public string Initials { get; set; }
         public string Qualification { get; set; }
         public int ExperienceYears { get; set; }
         public decimal HourlyRate { get; set; }

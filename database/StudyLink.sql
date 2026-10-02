@@ -969,18 +969,20 @@ SELECT v.SettingKey, v.Value, v.Description, SYSDATETIME() FROM (VALUES
     (N'Security.LockoutMinutes', N'15', N'Minutes an account stays locked.'),
     (N'Security.ResetTokenMinutes', N'60', N'Minutes a password-reset link stays valid.'),
     (N'General.OrganisationName', N'Forte Books & Tuition Hub', N'Shown on receipts and emails.'),
-    (N'General.SupportEmail', N'support@studylink.local', N'Reply-to address on system emails.'),
+    (N'General.SupportEmail', N'support@studylink.ac.za', N'Reply-to address on system emails.'),
     (N'Backup.Directory', N'', N'Folder for database backups on the SQL Server machine. Empty = SQL Server default.'),
-    (N'Contact.Phone', N'To be confirmed', N'Hub phone number shown in the footer and on the Contact page.'),
-    (N'Contact.Email', N'To be confirmed', N'Hub email address shown in the footer and on the Contact page.'),
-    (N'Contact.Hours', N'Mon-Fri 08:00-16:30', N'Counter opening hours shown in the footer and on the Contact page.'),
-    (N'Contact.AddressAlice', N'Hub counter, Alice campus (address to be confirmed)', N'Alice campus address.'),
-    (N'Contact.AddressEastLondon', N'Hub counter, East London campus (address to be confirmed)', N'East London campus address.'),
-    (N'Contact.AddressBisho', N'Hub counter, Bisho campus (address to be confirmed)', N'Bisho campus address.'),
-    (N'Social.Facebook', N'', N'Facebook page URL. Empty = icon shown as a placeholder without a link.'),
-    (N'Social.Instagram', N'', N'Instagram profile URL. Empty = placeholder.'),
-    (N'Social.X', N'', N'X (Twitter) profile URL. Empty = placeholder.'),
-    (N'Social.LinkedIn', N'', N'LinkedIn page URL. Empty = placeholder.')
+    (N'Contact.Phone', N'+27 (0)40 602 2000', N'Hub phone number shown in the footer and on the Contact page.'),
+    (N'Contact.Email', N'support@studylink.ac.za', N'Hub email address shown in the footer and on the Contact page.'),
+    (N'Contact.WhatsApp', N'+27 (0)60 000 0000', N'WhatsApp number shown in the footer and on the Contact page.'),
+    (N'Contact.Hours', N'Mon-Fri 08:00-17:00, Sat 09:00-13:00', N'Counter opening hours shown in the footer and on the Contact page.'),
+    (N'Contact.AddressAlice', N'University of Fort Hare, Alice, 5700, Eastern Cape', N'Alice campus address.'),
+    (N'Contact.AddressEastLondon', N'50 Church Street, East London, 5201, Eastern Cape', N'East London campus address.'),
+    (N'Contact.AddressBisho', N'Independence Avenue, Bisho, 5605, Eastern Cape', N'Bisho campus address.'),
+    (N'Social.Facebook', N'', N'Facebook page URL. Empty = the icon links nowhere yet.'),
+    (N'Social.Instagram', N'', N'Instagram profile URL. Empty = the icon links nowhere yet.'),
+    (N'Social.X', N'', N'X (Twitter) profile URL. Empty = the icon links nowhere yet.'),
+    (N'Social.LinkedIn', N'', N'LinkedIn page URL. Empty = the icon links nowhere yet.'),
+    (N'Social.YouTube', N'', N'YouTube channel URL. Empty = the icon links nowhere yet.')
 ) v(SettingKey, Value, Description)
 WHERE NOT EXISTS (SELECT 1 FROM dbo.SystemSettings t WHERE t.SettingKey = v.SettingKey);
 

@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Booking Confirmed" Language="C#" MasterPageFile="~/MasterPages/App.Master" AutoEventWireup="true" CodeBehind="BookingConfirmed.aspx.cs" Inherits="StudyLink.Web.Student.Tutoring.BookingConfirmed" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <%-- SC16 - Booking Confirmed --%>
-    <div class="confirm-card">
+    <div class="confirm-card doc-watermark">
         <div class="confirm-card__icon"><%= Icons.Svg("check", 38) %></div>
         <h2>Session booked!</h2>
         <p class="muted"><asp:Literal ID="Lead" runat="server" /></p>

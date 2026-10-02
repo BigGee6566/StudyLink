@@ -3,6 +3,25 @@
     <div class="detail-grid">
         <div>
             <div class="panel">
+                <div class="panel__header"><h2 class="panel__title">Profile photo</h2></div>
+                <div class="panel__body">
+                    <div class="d-flex gap-4 align-items-center flex-wrap">
+                        <asp:Literal ID="PhotoPreview" runat="server" />
+                        <div class="flex-fill">
+                            <asp:Literal ID="PhotoHint" runat="server" />
+                            <label class="form-label" for="<%= Photo.ClientID %>">Choose a photo</label>
+                            <asp:FileUpload ID="Photo" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/webp" />
+                            <div class="form-hint">JPEG, PNG or WebP, 2 MB at most. A clear, front-facing photo works best.</div>
+                            <div class="form-actions mt-2">
+                                <asp:Button ID="UploadPhoto" runat="server" CssClass="btn btn-primary" Text="Upload photo" OnClick="UploadPhoto_Click" />
+                                <asp:Button ID="RemovePhotoButton" runat="server" CssClass="btn btn-outline-danger" Text="Remove photo" OnClick="RemovePhoto_Click" data-confirm="Remove your profile photo?" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
                 <div class="panel__header"><h2 class="panel__title">Contact details</h2></div>
                 <div class="panel__body">
                     <div class="row g-3">

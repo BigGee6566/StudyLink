@@ -31,7 +31,7 @@ namespace StudyLink.Web.Notifications
             var page = S.Notifications.ForUser(CurrentUser.UserId, QueryInt("page") ?? 1, 20);
             List.DataSource = page.Items;
             List.DataBind();
-            EmptyState.Text = page.Total == 0 ? Ui.Empty("bell", "You have no notifications yet.") : "";
+            EmptyState.Text = page.Total == 0 ? Ui.Empty(EmptyArt.Bell, "You're all caught up", "Booking, payment and due-date updates will appear here.") : "";
             Pager.Text = Ui.Pager(Request, page);
             MarkAll.Visible = page.Items.Any(n => !n.IsRead);
         }

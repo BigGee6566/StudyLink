@@ -106,6 +106,11 @@ namespace StudyLink.Web.Infrastructure
 
         public static string Stars(byte rating) => Stars((decimal)rating);
 
+        /// <summary>Friendly empty state with a small flat illustration, a short title and what to do next.</summary>
+        public static string Empty(EmptyArt art, string title, string message, string actionHtml = null) =>
+            "<div class=\"empty-state\">" + EmptyArtSvg.Render(art) + "<p class=\"empty-state__title\">" + Fmt.H(title) + "</p>" +
+            (string.IsNullOrEmpty(message) ? "" : "<p class=\"mb-3\">" + Fmt.H(message) + "</p>") + (actionHtml ?? "") + "</div>";
+
         public static string Empty(string icon, string message, string actionHtml = null) =>
             "<div class=\"empty-state\">" + Icons.Svg(icon, 32) + "<p class=\"mb-2\">" + Fmt.H(message) + "</p>" + (actionHtml ?? "") + "</div>";
 
@@ -163,6 +168,43 @@ namespace StudyLink.Web.Infrastructure
                 labels.Append("<span>").Append(p.Date.ToString("d/M", Gb)).Append("</span>");
             }
             return bars.Append("</div>").ToString() + labels.Append("</div>");
+        }
+
+        /// <summary>The seeded categories, each with its own jacket colour (book-jacket--1..8); others are hashed.</summary>
+        private static readonly string[] JacketCategories = StudyLink.Data.Seed.LookupData.Categories.Select(c => c.Name).ToArray();
+
+        /// <summary>
+        /// The uploaded cover, or a typeset jacket (title, author, edition) when there is none. The
+        /// jacket colour is fixed per category, so related titles look related.
+        /// </summary>
+        public static string BookCover(int bookId, bool hasCover, string title, string authors, string edition, string category)
+        {
+            if (hasCover)
+                return "<img src=\"" + VirtualPathUtility.ToAbsolute("~/Handlers/BookCover.ashx?id=" + bookId) + "\" alt=\"Cover of " +
+                       Fmt.H(title) + "\" loading=\"lazy\" />";
+            var known = Array.IndexOf(JacketCategories, category ?? "");
+            var tone = 1 + (known >= 0 ? known : (int)((uint)(category ?? "").Aggregate(17, (h, c) => h * 31 + c) % 8));
+            return "<div class=\"book-jacket book-jacket--" + tone + "\" role=\"img\" aria-label=\"" + Fmt.H(title) + " (no cover image yet)\">" +
+                   "<span class=\"book-jacket__band\"></span><span class=\"book-jacket__title\">" + Fmt.H(title) + "</span>" +
+                   "<span class=\"book-jacket__author\">" + Fmt.H(authors) + "</span>" +
+                   (string.IsNullOrWhiteSpace(edition) ? "" : "<span class=\"book-jacket__edition\">" + Fmt.H(edition) + " edition</span>") + "</div>";
+        }
+
+        private const string Silhouette =
+            "<svg viewBox=\"0 0 40 40\" width=\"100%\" height=\"100%\" aria-hidden=\"true\" focusable=\"false\">" +
+            "<circle cx=\"20\" cy=\"15\" r=\"7\" fill=\"currentColor\"/><path d=\"M6 37c1.5-8.5 7.5-11.5 14-11.5S32.5 28.5 34 37z\" fill=\"currentColor\"/></svg>";
+
+        /// <summary>
+        /// A user's profile photo, or the default silhouette when they have none. The version (last change)
+        /// is part of the URL, so a new photo shows at once even though browsers cache the old one.
+        /// </summary>
+        public static string Avatar(int userId, DateTime? photoVersion, string css = null)
+        {
+            var cls = "avatar" + (string.IsNullOrEmpty(css) ? "" : " " + css);
+            if (!photoVersion.HasValue)
+                return "<span class=\"" + cls + " avatar--default\" aria-hidden=\"true\">" + Silhouette + "</span>";
+            return "<span class=\"" + cls + "\" aria-hidden=\"true\"><img src=\"" + VirtualPathUtility.ToAbsolute("~/Handlers/Avatar.ashx") +
+                   "?id=" + userId + "&amp;v=" + photoVersion.Value.Ticks.ToString("x") + "\" alt=\"\" loading=\"lazy\" /></span>";
         }
 
         public static string Initials(string name) =>

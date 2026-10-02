@@ -8,6 +8,6 @@
         <h2 class="h5 fw-bold">Who can see your information</h2>
         <p>Only the people who need it: your tutor sees your name and contact details for sessions you book; hub staff see what they need to verify tutors, issue and receive books and help with your account; managers see financial and stock reports.</p>
         <h2 class="h5 fw-bold">Your rights</h2>
-        <p class="mb-0">In line with POPIA you may ask to see or correct your information. Use <a href="<%: ResolveUrl("~/Public/Contact.aspx") %>">Contact / Support</a> or the change-request form on your profile.</p>
+        <p class="mb-0">In line with POPIA you may ask to see or correct your information. Use <a href="<%: ResolveUrl("~/Public/Contact.aspx") %>">Contact</a> or the change-request form on your profile.</p>
     </div></div>
 </asp:Content>

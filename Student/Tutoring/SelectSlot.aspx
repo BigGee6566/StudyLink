@@ -33,7 +33,7 @@
                                 <button type="button" class="slot-btn" aria-pressed="false" data-slot="<%# Eval("AvailabilityId") %>"
                                         data-time="<%#: Fmt.Day((DateTime)Eval("Date")) + ", " + Eval("TimeRange") %>" data-fee="<%#: Fmt.Money(Eval("Fee")) %>"
                                         data-hours="<%#: Fmt.Hours((decimal)Eval("Hours")) %>" data-campus="<%#: Eval("Campus") %>" data-subject="<%#: Eval("Subject") + " · " + Eval("StudyLevel") %>">
-                                    <%#: Eval("TimeRange") %><small><%#: Eval("Subject") %></small>
+                                    <%#: Eval("TimeRange") %><small><%# Icons.Subject((string)Eval("Subject"), 11) %> <%#: Eval("Subject") %></small>
                                 </button>
                             </ItemTemplate>
                         </asp:Repeater>
@@ -48,7 +48,7 @@
                 <div class="panel__header"><h2 class="panel__title">Your booking</h2></div>
                 <div class="panel__body">
                     <div class="tutor-card__head mb-3">
-                        <div class="avatar" aria-hidden="true"><asp:Literal ID="TutorInitials" runat="server" /></div>
+                        <asp:Literal ID="TutorAvatar" runat="server" />
                         <div><div class="tutor-card__name"><asp:Literal ID="TutorName" runat="server" /></div><div class="muted small"><asp:Literal ID="TutorRate" runat="server" /></div></div>
                     </div>
                     <div class="summary-box mb-3" data-slot-summary="true" hidden="hidden">

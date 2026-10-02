@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Contact & Support" Language="C#" AutoEventWireup="true" CodeBehind="Contact.aspx.cs" Inherits="StudyLink.Web.Public.Contact" %>
+﻿<%@ Page Title="Contact" Language="C#" AutoEventWireup="true" CodeBehind="Contact.aspx.cs" Inherits="StudyLink.Web.Public.Contact" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <div class="detail-grid">
         <div class="panel">
@@ -21,10 +21,14 @@
             <div class="panel__header"><h2 class="panel__title">Forte Books &amp; Tuition Hub</h2></div>
             <div class="panel__body">
                 <p>Visit the hub counter at any of our three campuses for book collection, returns and help with your account.</p>
-                <ul class="list-unstyled mb-3">
-                    <li class="mb-2"><%= Icons.Svg("pin", 16) %> Alice campus</li>
-                    <li class="mb-2"><%= Icons.Svg("pin", 16) %> East London campus</li>
-                    <li class="mb-2"><%= Icons.Svg("pin", 16) %> Bisho campus</li>
+                <ul class="list-unstyled contact-list mb-3">
+                    <li><%= Icons.Svg("phone", 18) %><span><strong>Phone</strong><br /><%: Info.Phone %></span></li>
+                    <li><%= Icons.Svg("mail", 18) %><span><strong>Email</strong><br /><% if (Info.EmailIsAddress) { %><a href="mailto:<%: Info.Email %>"><%: Info.Email %></a><% } else { %><%: Info.Email %><% } %></span></li>
+                    <li><%= Icons.Svg("whatsapp", 18) %><span><strong>WhatsApp</strong><br /><%: Info.WhatsApp %></span></li>
+                    <li><%= Icons.Svg("clock", 18) %><span><strong>Counter hours</strong><br /><%: Info.Hours %></span></li>
+                    <% foreach (var c in Info.Campuses) { %>
+                    <li><%= Icons.Svg("pin", 18) %><span><strong><%: c.Key %> campus</strong><br /><%: c.Value %></span></li>
+                    <% } %>
                 </ul>
                 <p class="muted small mb-0">Forgot your password? Use <a href="<%: ResolveUrl("~/Account/ForgotPassword.aspx") %>">Forgot password</a> and hub staff will verify you and email a reset link.</p>
             </div>

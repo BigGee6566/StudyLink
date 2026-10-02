@@ -24,7 +24,7 @@ namespace StudyLink.Web.Student.Tutoring
             }
             Heading = "Book " + profile.Card.FullName;
             Subheading = "Choose a date and time that suits you.";
-            TutorInitials.Text = H(profile.Card.Initials);
+            TutorAvatar.Text = Ui.Avatar(profile.Card.UserId, profile.Card.PhotoVersion);
             TutorName.Text = H(profile.Card.FullName);
             TutorRate.Text = Fmt.Money(profile.Card.HourlyRate) + " per hour · " + H(profile.Card.Campus);
 
@@ -41,7 +41,7 @@ namespace StudyLink.Web.Student.Tutoring
             _selected = Ui.Date(Query("date")) is DateTime d && dates.Contains(d.Date) ? d.Date : dates.Cast<DateTime?>().FirstOrDefault();
             Dates.DataSource = dates;
             Dates.DataBind();
-            NoDates.Text = dates.Count == 0 ? Ui.Empty("calendar", "This tutor has no open slots right now. Please check back soon.") : "";
+            NoDates.Text = dates.Count == 0 ? Ui.Empty(EmptyArt.Calendar, "No open slots right now", "This tutor has not published any free times yet. Please check back soon or choose another tutor.") : "";
 
             var slots = _selected.HasValue ? S.Availability.OpenSlots(TutorId, _selected, subject) : new System.Collections.Generic.List<Services.DTOs.SlotRow>();
             Slots.DataSource = slots;

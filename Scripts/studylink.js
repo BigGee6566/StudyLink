@@ -3,6 +3,60 @@
 (function () {
   "use strict";
   var body = document.body;
+  // Content that animates in starts hidden only when this script runs, so it is never lost without JS.
+  document.documentElement.classList.add("js");
+
+  // Public site: collapse the navigation behind a menu button on narrow screens.
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-menu-toggle]");
+    if (!t) return;
+    body.classList.toggle("menu-open");
+    t.setAttribute("aria-expanded", body.classList.contains("menu-open"));
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") body.classList.remove("menu-open"); });
+
+  // Reveal-on-scroll ("How it works" steps). Shown at once when motion is reduced or unsupported.
+  var revealables = document.querySelectorAll("[data-reveal], [data-reveal-item]");
+  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (still || !("IntersectionObserver" in window)) {
+    revealables.forEach(function (el) { el.classList.add("is-visible"); });
+  } else {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.25 });
+    revealables.forEach(function (el) { observer.observe(el); });
+  }
+
+  // Show / hide password, opt-in per box: <asp:TextBox TextMode="Password" data-password-toggle="true" />.
+  var eye = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var eyeOff = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 4.4-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+  document.querySelectorAll("input[type=password][data-password-toggle]").forEach(function (input) {
+    var wrap = document.createElement("span");
+    wrap.className = "pw-wrap d-block";
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pw-toggle";
+    btn.setAttribute("aria-label", "Show password");
+    btn.setAttribute("aria-pressed", "false");
+    btn.innerHTML = eye;
+    wrap.appendChild(btn);
+    btn.addEventListener("click", function () {
+      var showing = input.type === "text";
+      var start = input.selectionStart, end = input.selectionEnd;
+      input.type = showing ? "password" : "text";
+      btn.innerHTML = showing ? eye : eyeOff;
+      btn.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+      btn.setAttribute("aria-pressed", String(!showing));
+      input.focus();
+      try { input.setSelectionRange(start, end); } catch (ignore) { }
+    });
+  });
 
   // Mobile sidebar drawer (TutorConnect sidebar.js).
   document.addEventListener("click", function (e) {

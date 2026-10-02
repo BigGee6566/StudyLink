@@ -28,7 +28,7 @@ namespace StudyLink.Web.Student.Tutoring
             var result = S.Bookings.ForStudent(Actor, filter);
             Rows.DataSource = result.Items;
             Rows.DataBind();
-            EmptyState.Text = result.Total == 0 ? Ui.Empty("calendar", "No sessions here yet.",
+            EmptyState.Text = result.Total == 0 ? Ui.Empty(EmptyArt.Calendar, "No sessions here yet", "When you book a tutor, the session and its status appear in this list.",
                 "<a class=\"btn btn-sm btn-primary\" href=\"" + ResolveUrl("~/Catalogue/Tutors.aspx") + "\">Book a session</a>") : "";
             Pager.Text = Ui.Pager(Request, result);
         }

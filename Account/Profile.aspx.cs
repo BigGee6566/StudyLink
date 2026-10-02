@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.UI.WebControls;
@@ -27,6 +28,12 @@ namespace StudyLink.Web.Account
             UserName.Text = H(u.UserName);
             Roles.Text = H(string.Join(", ", u.Roles.Select(RoleNames.DisplayName)));
             Since.Text = Fmt.Date(u.CreatedAt);
+
+            var photo = S.Profiles.PhotoVersion(u.UserId);
+            PhotoPreview.Text = Ui.Avatar(u.UserId, photo, "avatar--lg");
+            RemovePhotoButton.Visible = photo.HasValue;
+            PhotoHint.Text = u.Roles.Contains(RoleNames.Tutor) && !photo.HasValue
+                ? "<p class=\"mb-2\">Students choose tutors they can recognise. Add a professional, friendly headshot.</p>" : "";
 
             var facts = new StringBuilder();
             void Fact(string label, string value) { if (!string.IsNullOrEmpty(value)) facts.Append("<dt>").Append(label).Append("</dt><dd>").Append(H(value)).Append("</dd>"); }
@@ -72,6 +79,28 @@ namespace StudyLink.Web.Account
             }
             Requests.DataSource = S.Profiles.MyRequests(u.UserId).Take(5);
             Requests.DataBind();
+        }
+
+        protected void UploadPhoto_Click(object sender, EventArgs e)
+        {
+            if (!Photo.HasFile)
+            {
+                Fail("Choose a photo to upload.");
+                return;
+            }
+            byte[] image;
+            using (var ms = new MemoryStream())
+            {
+                Photo.PostedFile.InputStream.CopyTo(ms);
+                image = ms.ToArray();
+            }
+            // Redirect so the sidebar avatar (drawn by the master page) shows the new photo at once.
+            if (Show(S.Profiles.SetPhoto(Actor, image))) RedirectWith("~/Account/Profile.aspx", "Your profile photo was updated.");
+        }
+
+        protected void RemovePhoto_Click(object sender, EventArgs e)
+        {
+            if (Show(S.Profiles.RemovePhoto(Actor))) RedirectWith("~/Account/Profile.aspx", "Your profile photo was removed.");
         }
 
         protected void SaveContact_Click(object sender, EventArgs e)

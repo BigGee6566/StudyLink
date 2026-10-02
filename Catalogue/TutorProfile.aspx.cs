@@ -21,7 +21,7 @@ namespace StudyLink.Web.Catalogue
             Title = p.Card.FullName;
             Heading = p.Card.FullName;
             Subheading = p.Card.Qualification;
-            Initials.Text = H(p.Card.Initials);
+            TutorAvatar.Text = Ui.Avatar(p.Card.UserId, p.Card.PhotoVersion, "avatar--lg");
             FullName.Text = H(p.Card.FullName);
             Qualification.Text = H(p.Card.Qualification);
             Rating.Text = Ui.Stars(p.Card.AverageRating, p.Card.ReviewCount);

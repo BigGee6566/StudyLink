@@ -39,8 +39,8 @@
                         <asp:ListItem Value="Male" Text="Male" />
                         <asp:ListItem Value="Other" Text="Other" />
                     </asp:DropDownList></div>
-                <div class="col-sm-6"><label class="form-label" for="<%= Password.ClientID %>">Password *</label><asp:TextBox ID="Password" runat="server" CssClass="form-control" TextMode="Password" MaxLength="128" autocomplete="new-password" /><div class="form-hint">At least 8 characters, with a letter and a number.</div></div>
-                <div class="col-sm-6"><label class="form-label" for="<%= ConfirmPassword.ClientID %>">Confirm password *</label><asp:TextBox ID="ConfirmPassword" runat="server" CssClass="form-control" TextMode="Password" MaxLength="128" autocomplete="new-password" /></div>
+                <div class="col-sm-6"><label class="form-label" for="<%= Password.ClientID %>">Password *</label><asp:TextBox ID="Password" runat="server" CssClass="form-control" TextMode="Password" data-password-toggle="true" MaxLength="128" autocomplete="new-password" /><div class="form-hint">At least 8 characters, with a letter and a number.</div></div>
+                <div class="col-sm-6"><label class="form-label" for="<%= ConfirmPassword.ClientID %>">Confirm password *</label><asp:TextBox ID="ConfirmPassword" runat="server" CssClass="form-control" TextMode="Password" data-password-toggle="true" MaxLength="128" autocomplete="new-password" /></div>
             </div>
             <div class="form-actions">
                 <asp:Button ID="AccountBack" runat="server" Text="Back" CssClass="btn btn-outline-secondary" OnClick="Back_Click" CausesValidation="false" />
@@ -52,7 +52,7 @@
         <asp:View ID="StudentStep" runat="server">
             <h1>Your studies</h1>
             <p class="lead">Your student number links your rentals, bookings and fees.</p>
-            <div class="mb-3"><label class="form-label" for="<%= StudentNumber.ClientID %>">Student number *</label><asp:TextBox ID="StudentNumber" runat="server" CssClass="form-control" MaxLength="20" /></div>
+            <div class="mb-3"><label class="form-label" for="<%= StudentNumber.ClientID %>">Student number *</label><asp:TextBox ID="StudentNumber" runat="server" CssClass="form-control" MaxLength="10" placeholder="S202600001" autocomplete="off" /><div class="form-hint">The letter S followed by 9 digits.</div></div>
             <div class="mb-3"><label class="form-label" for="<%= StudyLevel.ClientID %>">Year of study</label><asp:DropDownList ID="StudyLevel" runat="server" CssClass="form-select" DataTextField="Name" DataValueField="Id" AppendDataBoundItems="true"><asp:ListItem Value="" Text="Select…" /></asp:DropDownList></div>
             <div class="mb-3"><label class="form-label" for="<%= Faculty.ClientID %>">Faculty</label><asp:TextBox ID="Faculty" runat="server" CssClass="form-control" MaxLength="100" placeholder="e.g. Management & Commerce" /></div>
             <div class="form-check mb-3">

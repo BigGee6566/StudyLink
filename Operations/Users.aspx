@@ -73,7 +73,7 @@
                                 <div class="col-12"><label class="form-label" for="<%= Address.ClientID %>">Address</label><asp:TextBox ID="Address" runat="server" CssClass="form-control" MaxLength="250" /></div>
                             </asp:PlaceHolder>
                             <asp:PlaceHolder ID="StudentFields" runat="server">
-                                <div class="col-md-4"><label class="form-label" for="<%= StudentNumber.ClientID %>">Student number</label><asp:TextBox ID="StudentNumber" runat="server" CssClass="form-control" MaxLength="20" /></div>
+                                <div class="col-md-4"><label class="form-label" for="<%= StudentNumber.ClientID %>">Student number</label><asp:TextBox ID="StudentNumber" runat="server" CssClass="form-control" MaxLength="10" placeholder="S202600001" autocomplete="off" /><div class="form-hint">S followed by 9 digits.</div></div>
                                 <div class="col-md-4"><label class="form-label" for="<%= StudyLevel.ClientID %>">Study level</label><asp:DropDownList ID="StudyLevel" runat="server" CssClass="form-select" /></div>
                                 <div class="col-md-4"><label class="form-label" for="<%= Faculty.ClientID %>">Faculty</label><asp:TextBox ID="Faculty" runat="server" CssClass="form-control" MaxLength="100" /></div>
                             </asp:PlaceHolder>

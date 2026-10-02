@@ -10,7 +10,7 @@
     </div>
     <asp:Literal ID="ReviewNote" runat="server" />
     <div class="detail-grid">
-        <div class="panel">
+        <div class="panel doc-watermark">
             <div class="panel__header"><h2 class="panel__title"><asp:Literal ID="WeekTitle" runat="server" /></h2><span class="fw-bold"><asp:Literal ID="Total" runat="server" /></span></div>
             <div class="table-wrap">
                 <table class="data-table stack">

@@ -228,6 +228,10 @@
     <Compile Include="ErrorPages\Error500.aspx.designer.cs">
       <DependentUpon>Error500.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\Avatar.ashx.cs">
+      <DependentUpon>Avatar.ashx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Handlers\BookCover.ashx.cs">
       <DependentUpon>BookCover.ashx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -241,11 +245,15 @@
     <Compile Include="Infrastructure\BackgroundSweep.cs" />
     <Compile Include="Infrastructure\BasePage.cs" />
     <Compile Include="Infrastructure\CampusPreference.cs" />
+    <Compile Include="Infrastructure\CoverLibrary.cs" />
     <Compile Include="Infrastructure\DemoSeeder.cs" />
+    <Compile Include="Infrastructure\EmptyArt.cs" />
     <Compile Include="Infrastructure\ErrorLogger.cs" />
     <Compile Include="Infrastructure\Fmt.cs" />
     <Compile Include="Infrastructure\Icons.cs" />
     <Compile Include="Infrastructure\NavigationMap.cs" />
+    <Compile Include="Infrastructure\PublicContact.cs" />
+    <Compile Include="Infrastructure\SiteImage.cs" />
     <Compile Include="Infrastructure\Ui.cs" />
     <Compile Include="Infrastructure\WebAuth.cs" />
     <Compile Include="Manager\BookEdit.aspx.cs">
@@ -606,6 +614,13 @@
     <Compile Include="UserControls\CardForm.ascx.designer.cs">
       <DependentUpon>CardForm.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\HowItWorksSteps.ascx.cs">
+      <DependentUpon>HowItWorksSteps.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\HowItWorksSteps.ascx.designer.cs">
+      <DependentUpon>HowItWorksSteps.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
@@ -640,8 +655,22 @@
     <Content Include="Content\css\studylink.css" />
     <Content Include="ErrorPages\Error404.aspx" />
     <Content Include="ErrorPages\Error500.aspx" />
+    <Content Include="Handlers\Avatar.ashx" />
     <Content Include="Handlers\BookCover.ashx" />
     <Content Include="Handlers\InvoiceFile.ashx" />
+    <Content Include="Images\auth\Alice campus gate.jpeg" />
+    <Content Include="Images\auth\Alice campus.jpeg" />
+    <Content Include="Images\auth\Bisho campus.jpeg" />
+    <Content Include="Images\auth\Books-Stagged.jpg" />
+    <Content Include="Images\auth\Fort hare East London Campus.jpeg" />
+    <Content Include="Images\auth\Library-book-shelf.jpg" />
+    <Content Include="Images\auth\group tutoring.jpg" />
+    <Content Include="Images\auth\login-background.jpg" />
+    <Content Include="Images\auth\one on one tutoring.jpg" />
+    <Content Include="Images\auth\online tutoring.jpg" />
+    <Content Include="Images\auth\picking-a-book-in-a-bookshelf.jpg" />
+    <Content Include="Images\auth\register-background.jpg" />
+    <Content Include="Images\auth\ufh students outside alice gate.jpeg" />
     <Content Include="Images\branding\apple-touch-icon.png" />
     <Content Include="Images\branding\favicon-32.png" />
     <Content Include="Images\branding\studylink-dashboard-dark.png" />
@@ -649,6 +678,29 @@
     <Content Include="Images\branding\studylink-favicon.png" />
     <Content Include="Images\branding\studylink-logo.png" />
     <Content Include="Images\branding\studylink-mark.png" />
+    <Content Include="Images\covers\9780273655879.jpg" />
+    <Content Include="Images\covers\9780324665284.jpg" />
+    <Content Include="Images\covers\9781305585126.jpg" />
+    <Content Include="Images\covers\9781444128086.jpg" />
+    <Content Include="Images\site\book-pick-612.webp" />
+    <Content Include="Images\site\books-stack-612.webp" />
+    <Content Include="Images\site\campus-alice-547.webp" />
+    <Content Include="Images\site\campus-alice-road-572.webp" />
+    <Content Include="Images\site\campus-bisho-638.webp" />
+    <Content Include="Images\site\campus-east-london-678.webp" />
+    <Content Include="Images\site\community-568.webp" />
+    <Content Include="Images\site\hero-1280.webp" />
+    <Content Include="Images\site\hero-1920.webp" />
+    <Content Include="Images\site\hero-800.webp" />
+    <Content Include="Images\site\library-1280.webp" />
+    <Content Include="Images\site\library-800.webp" />
+    <Content Include="Images\site\login-bg-800.webp" />
+    <Content Include="Images\site\login-bg-900.webp" />
+    <Content Include="Images\site\online-1280.webp" />
+    <Content Include="Images\site\online-800.webp" />
+    <Content Include="Images\site\register-bg-512.webp" />
+    <Content Include="Images\site\tutoring-1280.webp" />
+    <Content Include="Images\site\tutoring-800.webp" />
     <Content Include="Manager\BookEdit.aspx" />
     <Content Include="Manager\Books.aspx" />
     <Content Include="Manager\Categories.aspx" />
@@ -701,6 +753,7 @@
     <Content Include="Tutor\Subjects.aspx" />
     <Content Include="Tutor\Timesheet.aspx" />
     <Content Include="UserControls\CardForm.ascx" />
+    <Content Include="UserControls\HowItWorksSteps.ascx" />
   </ItemGroup>
   <!-- END GENERATED ITEMS -->
   <PropertyGroup>

@@ -6,7 +6,7 @@
             <div class="panel">
                 <div class="panel__body">
                     <div class="tutor-card__head mb-3">
-                        <div class="avatar" aria-hidden="true"><asp:Literal ID="Initials" runat="server" /></div>
+                        <asp:Literal ID="TutorAvatar" runat="server" />
                         <div>
                             <div class="tutor-card__name fs-5"><asp:Literal ID="FullName" runat="server" /></div>
                             <div class="muted"><asp:Literal ID="Qualification" runat="server" /></div>
