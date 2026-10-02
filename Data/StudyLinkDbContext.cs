@@ -21,6 +21,7 @@ namespace StudyLink.Data
         // People and security
         public DbSet<Campus> Campuses { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserPhoto> UserPhotos { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Student> Students { get; set; }

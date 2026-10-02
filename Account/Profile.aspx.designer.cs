@@ -9,6 +9,11 @@ namespace StudyLink.Web.Account
 {
     public partial class Profile
     {
+        protected global::System.Web.UI.WebControls.Literal PhotoPreview;
+        protected global::System.Web.UI.WebControls.Literal PhotoHint;
+        protected global::System.Web.UI.WebControls.FileUpload Photo;
+        protected global::System.Web.UI.WebControls.Button UploadPhoto;
+        protected global::System.Web.UI.WebControls.Button RemovePhotoButton;
         protected global::System.Web.UI.WebControls.TextBox Email;
         protected global::System.Web.UI.WebControls.TextBox Cell;
         protected global::System.Web.UI.WebControls.DropDownList Campus;

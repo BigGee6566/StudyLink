@@ -38,6 +38,20 @@ namespace StudyLink.Data.Seed
         public const string OrganisationName = "General.OrganisationName";
         public const string SupportEmail = "General.SupportEmail";
         public const string BackupDirectory = "Backup.Directory";
+
+        // Shown in the public footer and on the Contact page.
+        public const string ContactPhone = "Contact.Phone";
+        public const string ContactEmail = "Contact.Email";
+        public const string ContactHours = "Contact.Hours";
+        public const string ContactWhatsApp = "Contact.WhatsApp";
+        public const string AddressAlice = "Contact.AddressAlice";
+        public const string AddressEastLondon = "Contact.AddressEastLondon";
+        public const string AddressBisho = "Contact.AddressBisho";
+        public const string SocialFacebook = "Social.Facebook";
+        public const string SocialInstagram = "Social.Instagram";
+        public const string SocialX = "Social.X";
+        public const string SocialLinkedIn = "Social.LinkedIn";
+        public const string SocialYouTube = "Social.YouTube";
     }
 
     /// <summary>
@@ -97,8 +111,35 @@ namespace StudyLink.Data.Seed
             (SettingKeys.LockoutMinutes, "15", "Minutes an account stays locked."),
             (SettingKeys.ResetTokenMinutes, "60", "Minutes a password-reset link stays valid."),
             (SettingKeys.OrganisationName, "Forte Books & Tuition Hub", "Shown on receipts and emails."),
-            (SettingKeys.SupportEmail, "support@studylink.local", "Reply-to address on system emails."),
-            (SettingKeys.BackupDirectory, "", "Folder for database backups on the SQL Server machine. Empty = SQL Server default.")
+            (SettingKeys.SupportEmail, "support@studylink.ac.za", "Reply-to address on system emails."),
+            (SettingKeys.BackupDirectory, "", "Folder for database backups on the SQL Server machine. Empty = SQL Server default."),
+            (SettingKeys.ContactPhone, "+27 (0)40 602 2000", "Hub phone number shown in the footer and on the Contact page."),
+            (SettingKeys.ContactEmail, "support@studylink.ac.za", "Hub email address shown in the footer and on the Contact page."),
+            (SettingKeys.ContactWhatsApp, "+27 (0)60 000 0000", "WhatsApp number shown in the footer and on the Contact page."),
+            (SettingKeys.ContactHours, "Mon-Fri 08:00-17:00, Sat 09:00-13:00", "Counter opening hours shown in the footer and on the Contact page."),
+            (SettingKeys.AddressAlice, "University of Fort Hare, Alice, 5700, Eastern Cape", "Alice campus address."),
+            (SettingKeys.AddressEastLondon, "50 Church Street, East London, 5201, Eastern Cape", "East London campus address."),
+            (SettingKeys.AddressBisho, "Independence Avenue, Bisho, 5605, Eastern Cape", "Bisho campus address."),
+            (SettingKeys.SocialFacebook, "", "Facebook page URL. Empty = the icon links nowhere yet."),
+            (SettingKeys.SocialInstagram, "", "Instagram profile URL. Empty = the icon links nowhere yet."),
+            (SettingKeys.SocialX, "", "X (Twitter) profile URL. Empty = the icon links nowhere yet."),
+            (SettingKeys.SocialLinkedIn, "", "LinkedIn page URL. Empty = the icon links nowhere yet."),
+            (SettingKeys.SocialYouTube, "", "YouTube channel URL. Empty = the icon links nowhere yet.")
+        };
+
+        /// <summary>
+        /// Placeholder values shipped by an earlier build. A setting still holding one of these exact values
+        /// is moved to the current default; any value an administrator typed is left alone.
+        /// </summary>
+        private static readonly (string Key, string Placeholder)[] RetiredPlaceholders =
+        {
+            (SettingKeys.ContactPhone, "To be confirmed"),
+            (SettingKeys.ContactEmail, "To be confirmed"),
+            (SettingKeys.ContactHours, "Mon-Fri 08:00-16:30"),
+            (SettingKeys.AddressAlice, "Hub counter, Alice campus (address to be confirmed)"),
+            (SettingKeys.AddressEastLondon, "Hub counter, East London campus (address to be confirmed)"),
+            (SettingKeys.AddressBisho, "Hub counter, Bisho campus (address to be confirmed)"),
+            (SettingKeys.SupportEmail, "support@studylink.local")
         };
 
         public static void Apply(StudyLinkDbContext db)
@@ -116,6 +157,15 @@ namespace StudyLink.Data.Seed
                 db.Categories.Add(new Category { Name = c.Name, Description = c.Description, IsActive = true });
             foreach (var s in Settings.Where(s => !db.SystemSettings.Any(x => x.SettingKey == s.Key)))
                 db.SystemSettings.Add(new SystemSetting { SettingKey = s.Key, Value = s.Value, Description = s.Description, UpdatedAt = now });
+            foreach (var (key, placeholder) in RetiredPlaceholders)
+            {
+                var setting = db.SystemSettings.FirstOrDefault(x => x.SettingKey == key && x.Value == placeholder);
+                if (setting == null) continue;
+                var current = Settings.First(s => s.Key == key);
+                setting.Value = current.Value;
+                setting.Description = current.Description;
+                setting.UpdatedAt = now;
+            }
 
             db.SaveChanges();
         }

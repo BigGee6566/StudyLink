@@ -10,7 +10,6 @@ namespace StudyLink.Web.Catalogue
     public partial class BookDetails
     {
         protected global::System.Web.UI.WebControls.Literal Cover;
-        protected global::System.Web.UI.WebControls.Literal CoverTitle;
         protected global::System.Web.UI.WebControls.Literal BookTitle;
         protected global::System.Web.UI.WebControls.Literal Byline;
         protected global::System.Web.UI.WebControls.Literal Isbn;

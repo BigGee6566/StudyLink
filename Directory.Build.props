@@ -5,9 +5,11 @@
     (Data, Services, Tests) therefore build to %LOCALAPPDATA%\StudyLinkBuild instead.
     The Web Forms project is old-style and keeps its bin\ folder, because IIS Express serves the
     site straight from the project directory.
+    The folder is keyed by a hash of this checkout's path, so two copies of the repository (for
+    example a git worktree and the main folder) never overwrite each other's restore and build files.
   -->
   <PropertyGroup Condition="'$(MSBuildProjectName)' != 'StudyLink.Web'">
-    <StudyLinkBuildRoot>$(LOCALAPPDATA)\StudyLinkBuild\</StudyLinkBuildRoot>
+    <StudyLinkBuildRoot>$(LOCALAPPDATA)\StudyLinkBuild\$([MSBuild]::StableStringHash($(MSBuildThisFileDirectory)))\</StudyLinkBuildRoot>
     <BaseIntermediateOutputPath>$(StudyLinkBuildRoot)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     <BaseOutputPath>$(StudyLinkBuildRoot)bin\$(MSBuildProjectName)\</BaseOutputPath>
   </PropertyGroup>

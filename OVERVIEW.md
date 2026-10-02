@@ -890,7 +890,7 @@ The actor filters the append-only log by action, record type, user and date rang
 * Payments settle fees through allocations; refunds point to the payment they reverse.
 * Order lines receive delivery lines, which create book copies.
 
-Enum values are stored as integers and documented in `Entities/Enums.cs` and `database/01_CreateSchema.sql`.
+Enum values are stored as integers and documented in `Entities/Enums.cs` and `database/StudyLink.sql`.
 
 ---
 

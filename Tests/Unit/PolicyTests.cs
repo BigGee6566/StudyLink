@@ -200,6 +200,76 @@ namespace StudyLink.Tests.Unit
             Assert.IsFalse(UserValidator.IsValidCell("12345"));
         }
 
+        [DataTestMethod]
+        [DataRow("S202600001", true, DisplayName = "S + 9 digits")]
+        [DataRow("s202600001", true, DisplayName = "lower-case s is accepted (stored upper-case)")]
+        [DataRow(" S202600001 ", true, DisplayName = "surrounding spaces are trimmed")]
+        [DataRow("202600001", false, DisplayName = "no S")]
+        [DataRow("2026000001", false, DisplayName = "10 digits without S")]
+        [DataRow("S20260001", false, DisplayName = "only 8 digits")]
+        [DataRow("S2026000011", false, DisplayName = "10 digits after S")]
+        [DataRow("SA02600001", false, DisplayName = "letter among the digits")]
+        [DataRow("Q202600001", false, DisplayName = "wrong prefix")]
+        [DataRow("", false, DisplayName = "empty")]
+        public void StudentNumberIsSAndNineDigits(string number, bool valid)
+        {
+            Assert.AreEqual(valid, UserValidator.IsValidStudentNumber(number));
+        }
+
+        [TestMethod]
+        public void ImagesAreRecognisedByTheirBytes()
+        {
+            var png = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0x0D };
+            var jpeg = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0, 0, 0x10, 0x4A, 0x46, 0x49, 0x46, 0, 1 };
+            var webp = System.Text.Encoding.ASCII.GetBytes("RIFF\0\0\0\0WEBPVP8 ");
+            Assert.AreEqual("image/png", ImageRules.Detect(png));
+            Assert.AreEqual("image/jpeg", ImageRules.Detect(jpeg));
+            Assert.AreEqual("image/webp", ImageRules.Detect(webp));
+            Assert.IsNull(ImageRules.Detect(System.Text.Encoding.UTF8.GetBytes("<html><script>x</script>")), "a renamed HTML file is not an image");
+            Assert.IsNotNull(ImageRules.Check(new byte[ImageRules.MaxBytes + 1]), "over 2 MB");
+            Assert.IsNull(ImageRules.Check(png));
+        }
+    }
+
+    [TestClass]
+    [TestCategory("Unit")]
+    public class AvatarPolicyTests
+    {
+        [DataTestMethod]
+        [DataRow(AvatarViewer.Public, AvatarOwner.VerifiedTutor, false, true, DisplayName = "public sees the tutor directory")]
+        [DataRow(AvatarViewer.Public, AvatarOwner.UnverifiedTutor, false, false, DisplayName = "public: unverified tutor hidden")]
+        [DataRow(AvatarViewer.Public, AvatarOwner.Student, false, false, DisplayName = "public: student hidden")]
+        [DataRow(AvatarViewer.Student, AvatarOwner.Student, false, false, DisplayName = "student: other student hidden")]
+        [DataRow(AvatarViewer.Student, AvatarOwner.VerifiedTutor, false, true, DisplayName = "student sees tutors")]
+        [DataRow(AvatarViewer.Student, AvatarOwner.Staff, false, false, DisplayName = "student: staff hidden")]
+        [DataRow(AvatarViewer.Tutor, AvatarOwner.Student, true, true, DisplayName = "tutor sees their own students")]
+        [DataRow(AvatarViewer.Tutor, AvatarOwner.Student, false, false, DisplayName = "tutor: other students hidden")]
+        [DataRow(AvatarViewer.Tutor, AvatarOwner.Staff, false, false, DisplayName = "tutor: staff hidden")]
+        [DataRow(AvatarViewer.Staff, AvatarOwner.Student, false, true, DisplayName = "staff sees students")]
+        [DataRow(AvatarViewer.Staff, AvatarOwner.Staff, false, true, DisplayName = "staff sees staff")]
+        [DataRow(AvatarViewer.Staff, AvatarOwner.Manager, false, false, DisplayName = "staff: manager hidden")]
+        [DataRow(AvatarViewer.Staff, AvatarOwner.Admin, false, false, DisplayName = "staff: admin hidden")]
+        [DataRow(AvatarViewer.Manager, AvatarOwner.Manager, false, true, DisplayName = "manager sees managers")]
+        [DataRow(AvatarViewer.Manager, AvatarOwner.Admin, false, false, DisplayName = "manager: admin hidden")]
+        [DataRow(AvatarViewer.Admin, AvatarOwner.Admin, false, true, DisplayName = "admin sees everyone")]
+        [DataRow(AvatarViewer.Supplier, AvatarOwner.Student, false, false, DisplayName = "supplier: student hidden")]
+        public void AccessMatrix(AvatarViewer viewer, AvatarOwner owner, bool tutorsOwner, bool expected)
+        {
+            Assert.AreEqual(expected, AvatarPolicy.CanView(false, new[] { viewer }, owner, tutorsOwner));
+        }
+
+        [TestMethod]
+        public void EveryoneSeesTheirOwnPhoto_AndOwnerIsTheirMostPrivateRole()
+        {
+            Assert.IsTrue(AvatarPolicy.CanView(true, new[] { AvatarViewer.Public }, AvatarOwner.Admin, false));
+            Assert.AreEqual(AvatarOwner.Manager, AvatarPolicy.OwnerKind(new[] { RoleNames.Staff, RoleNames.Manager }, false));
+            Assert.AreEqual(AvatarOwner.Student, AvatarPolicy.OwnerKind(new[] { RoleNames.Tutor, RoleNames.Student }, true));
+            Assert.AreEqual(AvatarOwner.UnverifiedTutor, AvatarPolicy.OwnerKind(new[] { RoleNames.Tutor }, false));
+            Assert.IsTrue(AvatarPolicy.IsPublic(AvatarOwner.VerifiedTutor));
+            Assert.IsFalse(AvatarPolicy.IsPublic(AvatarOwner.Student));
+            CollectionAssert.AreEqual(new[] { AvatarViewer.Public }, AvatarPolicy.ViewerKinds(null).ToArray(), "anonymous visitors are Public");
+        }
+
         private static Actor As(params string[] roles) => new Actor(1, "u", roles);
 
         [TestMethod]

@@ -36,6 +36,67 @@ namespace StudyLink.Web.Infrastructure
 #endif
         }
 
+        /// <summary>Brings demo data seeded by an older build up to date. Same conditions as the seed itself.</summary>
+        public static void CorrectIfRequested()
+        {
+#if DEBUG
+            if (!string.Equals(ConfigurationManager.AppSettings["Seed:Demo"], "true", StringComparison.OrdinalIgnoreCase)) return;
+            using (var s = AppServices.Create())
+                CorrectDemoData(s.Db);
+#endif
+        }
+
+        /// <summary>The demo catalogue: ISBN, title, authors, edition, category, subject, sale price, weekly fee, late fee, reorder level.</summary>
+        private static readonly (string Isbn, string Title, string Authors, string Edition, string Category, string Subject, decimal Price, decimal Weekly, decimal Late, int Reorder)[] BookSpecs =
+        {
+            ("9780273655879", "Financial Accounting for Non-Specialists", "Peter Atrill, Eddie McLaney", "3rd", "Accounting & Finance", "Accounting", 650m, 45m, 10m, 4),
+            ("9781292409207", "Business Statistics", "Paul Newbold, William Carlson", "9th", "Mathematics & Statistics", "Statistics", 720m, 50m, 10m, 3),
+            ("9780324665284", "Principles of Information Systems", "Ralph Stair, George Reynolds", "9th", "Computer Science & IS", "Information Systems", 890m, 60m, 12m, 3),
+            ("9780534362980", "Calculus: Early Transcendentals", "James Stewart", "4th", "Mathematics & Statistics", "Mathematics", 950m, 65m, 12m, 2),
+            ("9781305585126", "Principles of Economics", "N. Gregory Mankiw", "8th", "Economics", "Economics", 780m, 55m, 10m, 3),
+            ("9780190419264", "Introduction to South African Law", "Christa van Wyk (ed.)", "2nd", "Law", "Law", 540m, 40m, 8m, 2),
+            ("9781444128086", "Psychology: The Science of Mind and Behaviour", "Richard Gross", "6th", "Humanities & Social Sciences", "Psychology", 610m, 45m, 8m, 2),
+            ("9780199544813", "Business Management: A Contemporary Approach", "Marius Botha et al.", "3rd", "Business & Management", "Business Management", 480m, 35m, 8m, 3)
+        };
+
+        /// <summary>
+        /// The first demo catalogue used invented ISBNs that belong to other books, so a real cover could
+        /// never match. These titles are now real editions (covers ship in Images/covers); a database
+        /// seeded earlier has its old rows renamed. Idempotent: an old ISBN is gone after the first run.
+        /// </summary>
+        private static readonly (string Old, string New)[] ReplacedIsbns =
+        {
+            ("9780273778790", "9780273655879"), ("9781337902571", "9780324665284"), ("9780134093413", "9780534362980"),
+            ("9781319120054", "9781305585126"), ("9781473758537", "9781444128086")
+        };
+
+        /// <summary>Demo students seeded before student numbers became S + 9 digits.</summary>
+        private static readonly (string UserName, string Number)[] DemoStudentNumbers =
+        {
+            ("student.thando", "S202400101"), ("student.olona", "S202300456"), ("student.aphiwe", "S202200789")
+        };
+
+        private static void CorrectDemoData(StudyLink.Data.StudyLinkDbContext db)
+        {
+            foreach (var (userName, number) in DemoStudentNumbers)
+            {
+                var student = db.Students.FirstOrDefault(s => s.User.UserName == userName);
+                if (student != null && student.StudentNumber != number && !db.Students.Any(s => s.StudentNumber == number))
+                    student.StudentNumber = number;
+            }
+            foreach (var (old, isbn) in ReplacedIsbns)
+            {
+                var book = db.Books.FirstOrDefault(b => b.Isbn == old);
+                if (book == null || db.Books.Any(b => b.Isbn == isbn)) continue;
+                var spec = BookSpecs.Single(b => b.Isbn == isbn);
+                book.Isbn = spec.Isbn;
+                book.Title = spec.Title;
+                book.Authors = spec.Authors;
+                book.Edition = spec.Edition;
+            }
+            db.SaveChanges();
+        }
+
         private sealed class Run
         {
             private readonly StudyLinkServices _s;
@@ -176,9 +237,9 @@ namespace StudyLink.Web.Infrastructure
             {
                 var specs = new[]
                 {
-                    ("student.thando", "Thando", "Mbeki", "202400101", "Alice", "First Year"),
-                    ("student.olona", "Olona", "Vane", "202300456", "East London", "Second Year"),
-                    ("student.aphiwe", "Aphiwe", "Ncube", "202200789", "Bisho", "Third Year")
+                    ("student.thando", "Thando", "Mbeki", "S202400101", "Alice", "First Year"),
+                    ("student.olona", "Olona", "Vane", "S202300456", "East London", "Second Year"),
+                    ("student.aphiwe", "Aphiwe", "Ncube", "S202200789", "Bisho", "Third Year")
                 };
                 return specs.Select((x, i) =>
                 {
@@ -198,19 +259,8 @@ namespace StudyLink.Web.Infrastructure
             {
                 var supplierId = _s.Db.Suppliers.Single(x => x.UserId == supplier.UserId).SupplierId;
                 var cat = _s.Db.Categories.ToDictionary(c => c.Name, c => c.CategoryId);
-                var specs = new[]
-                {
-                    ("9780273778790", "Financial Accounting: An Introduction", "Eddie McLaney, Peter Atrill", "7th", "Accounting & Finance", "Accounting", 650m, 45m, 10m, 4),
-                    ("9781292409207", "Business Statistics", "Paul Newbold, William Carlson", "9th", "Mathematics & Statistics", "Statistics", 720m, 50m, 10m, 3),
-                    ("9781337902571", "Principles of Information Systems", "Ralph Stair, George Reynolds", "14th", "Computer Science & IS", "Information Systems", 890m, 60m, 12m, 3),
-                    ("9780134093413", "Calculus: Early Transcendentals", "James Stewart", "8th", "Mathematics & Statistics", "Mathematics", 950m, 65m, 12m, 2),
-                    ("9781319120054", "Principles of Economics", "N. Gregory Mankiw", "8th", "Economics", "Economics", 780m, 55m, 10m, 3),
-                    ("9780190419264", "Introduction to South African Law", "Christa van Wyk (ed.)", "2nd", "Law", "Law", 540m, 40m, 8m, 2),
-                    ("9781473758537", "Psychology: The Science of Mind and Behaviour", "Richard Gross", "8th", "Humanities & Social Sciences", "Psychology", 610m, 45m, 8m, 2),
-                    ("9780199544813", "Business Management: A Contemporary Approach", "Marius Botha et al.", "3rd", "Business & Management", "Business Management", 480m, 35m, 8m, 3)
-                };
                 var ids = new List<int>();
-                foreach (var b in specs)
+                foreach (var b in BookSpecs)
                 {
                     var r = _s.Inventory.Save(_manager, new BookEdit
                     {
@@ -218,7 +268,7 @@ namespace StudyLink.Web.Infrastructure
                         SubjectId = Subject(b.Item6), SalePrice = b.Item7, WeeklyRentalFee = b.Item8, LateFeePerDay = b.Item9,
                         ReorderLevel = b.Item10, PreferredSupplierId = supplierId, Publisher = "Demo Academic Press",
                         Description = "Prescribed text used across Fort Hare modules. Sample record created by the StudyLink demo seed."
-                    });
+                    }, allowMissingCover: true); // real covers are copied in from Images/covers at start-up
                     Ok(r, b.Item2);
                     ids.Add(r.Value);
                     var copies = ids.Count == 4 ? 1 : 3; // Calculus is deliberately scarce (low stock + waitlist demo)

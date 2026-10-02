@@ -126,6 +126,9 @@ namespace StudyLink.Tests
 
         public static string Suffix() => ReferenceGenerator.RandomCode(6);
 
+        /// <summary>A valid, practically unique student number: S and 9 digits.</summary>
+        public static string StudentNumber() => "S" + NextDigits(9);
+
         public int Campus(string name = "Alice") => S.Db.Campuses.Single(c => c.Name == name).CampusId;
         public int SubjectId(string name = "Mathematics") => S.Db.Subjects.Single(s => s.Name == name).SubjectId;
         public int LevelId(string name = "First Year") => S.Db.StudyLevels.Single(l => l.Name == name).StudyLevelId;
@@ -142,7 +145,7 @@ namespace StudyLink.Tests
             var result = S.Registration.RegisterStudent(new StudentRegistration
             {
                 UserName = "stu_" + x, FirstName = "Thando", LastName = "Student" + x, Email = "stu_" + x + "@test.local",
-                CellNumber = "0821234567", CampusId = Campus(), StudentNumber = "S" + x, Password = Password, ConfirmPassword = Password,
+                CellNumber = "0821234567", CampusId = Campus(), StudentNumber = StudentNumber(), Password = Password, ConfirmPassword = Password,
                 AcceptedTerms = true
             }, "test-ip-" + x); // unique key: the registration limiter is process-wide
             Assert.IsTrue(result.Succeeded, result.Error);
@@ -178,7 +181,7 @@ namespace StudyLink.Tests
             {
                 Role = role, UserName = role.ToLowerInvariant() + "_" + x, FirstName = role, LastName = "User" + x,
                 Email = role.ToLowerInvariant() + "_" + x + "@test.local", CellNumber = "0841234567", CampusId = Campus(),
-                CompanyName = "Books Direct " + x, ContactPerson = "Mr Supplier", Phone = "0431234567", StudentNumber = "C" + x
+                CompanyName = "Books Direct " + x, ContactPerson = "Mr Supplier", Phone = "0431234567", StudentNumber = StudentNumber()
             };
             var result = S.Users.CreateAccount(creator ?? Admin(), request, "https://test/reset?token=");
             Assert.IsTrue(result.Succeeded, result.Error);
@@ -232,7 +235,7 @@ namespace StudyLink.Tests
             {
                 Isbn = isbn, Title = "Financial Accounting " + x, Authors = "Test Author", CategoryId = S.Db.Categories.First().CategoryId,
                 SalePrice = salePrice, WeeklyRentalFee = weekly, LateFeePerDay = lateFee, ReorderLevel = reorder
-            });
+            }, allowMissingCover: true);
             Assert.IsTrue(saved.Succeeded, saved.Error);
             if (copiesAtAlice > 0)
                 Assert.IsTrue(S.Inventory.AddCopies(manager, saved.Value, Campus(), copiesAtAlice, CopyCondition.New, null).Succeeded);
@@ -241,7 +244,7 @@ namespace StudyLink.Tests
 
         private static readonly Random Rng = new Random();
 
-        private static string NextDigits(int count)
+        public static string NextDigits(int count)
         {
             lock (Rng)
                 return string.Concat(Enumerable.Range(0, count).Select(_ => Rng.Next(10)));

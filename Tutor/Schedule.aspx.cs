@@ -39,7 +39,7 @@ namespace StudyLink.Web.Tutor
             var result = S.Bookings.ForTutor(Actor, filter);
             Rows.DataSource = result.Items;
             Rows.DataBind();
-            EmptyState.Text = result.Total == 0 ? Ui.Empty("calendar", View == "past" ? "No sessions are waiting to be completed." : "No sessions here.") : "";
+            EmptyState.Text = result.Total == 0 ? Ui.Empty(EmptyArt.Calendar, View == "past" ? "Nothing to complete" : "No sessions here", View == "past" ? "Every past session has its attendance recorded." : null) : "";
             Pager.Text = Ui.Pager(Request, result);
 
             var pending = View == "requests" ? S.Postponements.PendingForTutor(Actor) : new System.Collections.Generic.List<PostponementRow>();

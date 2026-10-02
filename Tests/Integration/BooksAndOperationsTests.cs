@@ -9,6 +9,7 @@ using StudyLink.Data.Entities;
 using StudyLink.Data.Seed;
 using StudyLink.Services.DTOs;
 using StudyLink.Services.Infrastructure;
+using StudyLink.Services.Validation;
 
 namespace StudyLink.Tests.Integration
 {
@@ -241,6 +242,41 @@ namespace StudyLink.Tests.Integration
 
     [TestClass]
     [TestCategory("Integration")]
+    public class CoverRuleTests
+    {
+        private static readonly byte[] Png = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0x0D, 0x49, 0x48, 0x44, 0x52 };
+
+        [TestMethod]
+        public void NewBookNeedsARealCoverImage_UnlessTheSeederSaysOtherwise()
+        {
+            using (var w = new World())
+            {
+                var manager = w.NewManager();
+                BookEdit Book(byte[] cover) => new BookEdit
+                {
+                    Isbn = World.Isbn13("978" + World.NextDigits(9)), Title = "Cover Rule " + World.Suffix(), Authors = "Test Author",
+                    CategoryId = w.S.Db.Categories.First().CategoryId, SalePrice = 300m, WeeklyRentalFee = 30m, LateFeePerDay = 5m,
+                    ReorderLevel = 1, IsRentable = true, IsForSale = true, IsActive = true, CoverImage = cover, CoverContentType = "image/png"
+                };
+
+                var none = w.S.Inventory.Save(manager, Book(null));
+                Assert.IsFalse(none.Succeeded, "a manager cannot add a title without its cover");
+                Assert.AreEqual(StudyLink.Services.Implementations.InventoryService.CoverRequired, none.Error);
+
+                var fake = w.S.Inventory.Save(manager, Book(Encoding.UTF8.GetBytes("<script>alert(1)</script> pretending to be a png")));
+                Assert.IsFalse(fake.Succeeded, "the claimed content type is not trusted; the bytes are checked");
+
+                var real = w.S.Inventory.Save(manager, Book(Png));
+                Assert.IsTrue(real.Succeeded, real.Error);
+                Assert.AreEqual("image/png", w.S.Db.Books.Find(real.Value).CoverContentType);
+
+                Assert.IsTrue(w.S.Inventory.Save(manager, Book(null), allowMissingCover: true).Succeeded, "seeder/test override");
+            }
+        }
+    }
+
+    [TestClass]
+    [TestCategory("Integration")]
     public class AccountTests
     {
         [TestMethod]
@@ -252,13 +288,45 @@ namespace StudyLink.Tests.Integration
                 var clash = w.S.Registration.RegisterStudent(new StudentRegistration
                 {
                     UserName = student.UserName, FirstName = "A", LastName = "B", Email = "x_" + World.Suffix() + "@t.local", CellNumber = "0821234567",
-                    CampusId = w.Campus(), StudentNumber = "Q" + World.Suffix(), Password = World.Password, ConfirmPassword = World.Password, AcceptedTerms = true
+                    CampusId = w.Campus(), StudentNumber = World.StudentNumber(), Password = World.Password, ConfirmPassword = World.Password, AcceptedTerms = true
                 }, "dup-" + World.Suffix());
                 Assert.IsFalse(clash.Succeeded);
 
+                w.NewStaff(); // someone who can verify tutors must exist to be notified, whatever ran before
                 var tutor = w.NewTutor(verify: false);
                 Assert.AreEqual(TutorVerificationStatus.PendingVerification, w.S.Db.Tutors.Single(t => t.UserId == tutor.UserId).VerificationStatus);
                 Assert.IsTrue(w.S.Db.Notifications.Any(n => n.Type == NotificationType.TutorRegistrationSubmitted), "staff were told");
+            }
+        }
+
+        [TestMethod]
+        public void StudentNumberMustBeSAndNineDigits_OnRegistrationAndStaffCapture()
+        {
+            using (var w = new World())
+            {
+                StudentRegistration Form(string studentNumber) => new StudentRegistration
+                {
+                    UserName = "num_" + World.Suffix(), FirstName = "Ayanda", LastName = "Student", Email = "num_" + World.Suffix() + "@t.local",
+                    CellNumber = "0821234567", CampusId = w.Campus(), StudentNumber = studentNumber, Password = World.Password,
+                    ConfirmPassword = World.Password, AcceptedTerms = true
+                };
+
+                var nineDigits = w.S.Registration.RegisterStudent(Form("202600001"), "num-" + World.Suffix());
+                Assert.IsFalse(nineDigits.Succeeded, "the old 9-digit format is refused");
+                Assert.AreEqual(UserValidator.StudentNumberMessage, nineDigits.Error);
+
+                var number = World.StudentNumber();
+                var ok = w.S.Registration.RegisterStudent(Form(number.ToLowerInvariant()), "num-" + World.Suffix());
+                Assert.IsTrue(ok.Succeeded, ok.Error);
+                Assert.AreEqual(number, w.S.Db.Students.Single(s => s.UserId == ok.Value).StudentNumber, "stored upper-case");
+
+                var captured = w.S.Users.CreateAccount(w.NewStaff(), new CreateAccountRequest
+                {
+                    Role = RoleNames.Student, UserName = "cap_" + World.Suffix(), FirstName = "Lindo", LastName = "Captured",
+                    Email = "cap_" + World.Suffix() + "@t.local", CellNumber = "0841234567", CampusId = w.Campus(), StudentNumber = "S12345"
+                }, "https://test/reset?token=");
+                Assert.IsFalse(captured.Succeeded, "staff capture applies the same rule");
+                Assert.AreEqual(UserValidator.StudentNumberMessage, captured.Error);
             }
         }
 

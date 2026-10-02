@@ -20,7 +20,16 @@
                     <div class="col-md-3"><label class="form-label" for="<%= LateFee.ClientID %>">Late fee / day (R)</label><asp:TextBox ID="LateFee" runat="server" CssClass="form-control" inputmode="decimal" /></div>
                     <div class="col-md-3"><label class="form-label" for="<%= Reorder.ClientID %>">Reorder level</label><asp:TextBox ID="Reorder" runat="server" CssClass="form-control" TextMode="Number" /></div>
                     <div class="col-12"><label class="form-label" for="<%= Description.ClientID %>">Description</label><asp:TextBox ID="Description" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" MaxLength="2000" /></div>
-                    <div class="col-md-6"><label class="form-label" for="<%= Cover.ClientID %>">Cover image (JPG/PNG, max 1 MB)</label><asp:FileUpload ID="Cover" runat="server" CssClass="form-control" accept="image/jpeg,image/png" /></div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="<%= Cover.ClientID %>">Cover image<%= QueryInt("id").HasValue ? "" : " *" %></label>
+                        <div class="d-flex gap-3 align-items-start">
+                            <asp:Literal ID="CoverPreview" runat="server" />
+                            <div class="flex-fill">
+                                <asp:FileUpload ID="Cover" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/webp" />
+                                <div class="form-hint">A clear photo of the front cover (JPG, PNG or WebP, 2 MB max). <asp:Literal ID="CoverHint" runat="server" Text="Required for new titles, so students can check they are choosing the right edition." /></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-6 d-flex align-items-end gap-3">
                         <div class="form-check"><asp:CheckBox ID="Rentable" runat="server" /><label class="form-check-label" for="<%= Rentable.ClientID %>">Can be rented</label></div>
                         <div class="form-check"><asp:CheckBox ID="ForSale" runat="server" /><label class="form-check-label" for="<%= ForSale.ClientID %>">Can be bought</label></div>

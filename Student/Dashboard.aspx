@@ -19,6 +19,7 @@
                         <asp:Repeater ID="Sessions" runat="server">
                             <ItemTemplate>
                                 <a class="item" href="<%# ResolveUrl("~/Student/Tutoring/BookingDetails.aspx?id=" + Eval("BookingId")) %>">
+                                    <%# Icons.Subject((string)Eval("Subject"), 18) %>
                                     <div class="item__main">
                                         <div class="item__title"><%#: Eval("Subject") %> with <%#: Eval("TutorName") %></div>
                                         <div class="item__meta"><%# Fmt.Day((DateTime)Eval("SessionDate")) %> · <%#: Eval("TimeRange") %> · <%#: Eval("Campus") %></div>

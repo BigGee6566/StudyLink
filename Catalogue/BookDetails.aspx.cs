@@ -33,8 +33,7 @@ namespace StudyLink.Web.Catalogue
             Title = d.Title;
             Heading = d.Title;
             Subheading = d.Authors;
-            Cover.Text = d.HasCover ? "<img src=\"" + ResolveUrl("~/Handlers/BookCover.ashx?id=" + d.BookId) + "\" alt=\"Cover of " + H(d.Title) + "\" />" : "";
-            CoverTitle.Text = H(d.Title);
+            Cover.Text = Ui.BookCover(d.BookId, d.HasCover, d.Title, d.Authors, d.Edition, d.Category);
             BookTitle.Text = H(d.Title);
             Byline.Text = H(d.Authors) + (string.IsNullOrEmpty(d.Edition) ? "" : " · " + H(d.Edition)) + (d.PublishedYear.HasValue ? " · " + d.PublishedYear : "");
             Isbn.Text = H(d.Isbn);

@@ -44,7 +44,7 @@ namespace StudyLink.Web.Catalogue
             BookList.DataBind();
             ResultSummary.Text = (result.Total == 1 ? "1 title" : result.Total + " titles") +
                 (campus.HasValue ? " · stock shown for " + H(Campus.SelectedItem.Text) : " · stock shown across all campuses");
-            EmptyState.Text = result.Total == 0 ? Ui.Empty("book", "No textbooks match your search.") : "";
+            EmptyState.Text = result.Total == 0 ? Ui.Empty(EmptyArt.Search, "No textbooks match your search", "Try another title, author or ISBN, or clear the filters.") : "";
             Pager.Text = Ui.Pager(Request, result);
         }
 

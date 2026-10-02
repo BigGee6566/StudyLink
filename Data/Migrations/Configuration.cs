@@ -5,7 +5,7 @@ namespace StudyLink.Data.Migrations
 {
     /// <summary>
     /// Schema changes are explicit, reviewed migrations only - never automatic. The same
-    /// migrations produce database\01_CreateSchema.sql for installs done by script.
+    /// migrations produce database\StudyLink.sql (tools\build_sql.ps1) for installs done by script.
     /// </summary>
     public sealed class Configuration : DbMigrationsConfiguration<StudyLinkDbContext>
     {

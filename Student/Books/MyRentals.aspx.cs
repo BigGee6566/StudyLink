@@ -22,7 +22,7 @@ namespace StudyLink.Web.Student.Books
             var rentals = S.Rentals.MyRentals(Actor);
             RentalRows.DataSource = rentals;
             RentalRows.DataBind();
-            NoRentals.Text = rentals.Count == 0 ? Ui.Empty("library", "You haven't rented any books yet.") : "";
+            NoRentals.Text = rentals.Count == 0 ? Ui.Empty(EmptyArt.Books, "No rentals yet", "Browse the textbooks at your campus to rent one for the week.", "<a class=\"btn btn-sm btn-primary\" href=\"" + ResolveUrl("~/Catalogue/Books.aspx") + "\">Browse books</a>") : "";
 
             var purchases = S.Rentals.MyPurchases(Actor);
             Purchases.DataSource = purchases;

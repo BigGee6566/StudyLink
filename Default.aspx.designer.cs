@@ -14,5 +14,6 @@ namespace StudyLink.Web
         protected global::System.Web.UI.WebControls.Button FindTutorButton;
         protected global::System.Web.UI.WebControls.Literal BookCount;
         protected global::System.Web.UI.WebControls.Literal TutorCount;
+        protected global::StudyLink.Web.UserControls.HowItWorksSteps Steps;
     }
 }

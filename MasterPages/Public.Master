@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Public.Master.cs" Inherits="StudyLink.Web.MasterPages.Public" %>
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Public.Master.cs" Inherits="StudyLink.Web.MasterPages.Public" %>
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
@@ -17,29 +17,35 @@
     <meta name="description" content="StudyLink - Books, Tutoring & Academic Resource Hub for Forte Books & Tuition Hub (Alice, East London, Bisho)." />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
-<body>
+<body class="public-body">
     <a class="skip-link" href="#main">Skip to content</a>
     <form id="PublicForm" runat="server">
-        <header class="public-header">
-            <div class="public-header__inner">
-                <a class="public-header__logo" href="<%: ResolveUrl("~/Default.aspx") %>"><img src="<%: ResolveUrl("~/Images/branding/studylink-logo.png") %>" alt="StudyLink - Bringing students and tutors together." /></a>
-                <nav class="public-nav" aria-label="Site">
-                    <a href="<%: ResolveUrl("~/Catalogue/Books.aspx") %>">Browse Books</a>
-                    <a href="<%: ResolveUrl("~/Catalogue/Tutors.aspx") %>">Find a Tutor</a>
-                    <a href="<%: ResolveUrl("~/Public/HowItWorks.aspx") %>">How It Works</a>
-                    <a href="<%: ResolveUrl("~/Public/Contact.aspx") %>">Contact / Support</a>
-                    <asp:PlaceHolder ID="AnonLinks" runat="server">
-                        <a class="btn btn-primary btn-sm px-3" href="<%: ResolveUrl("~/Account/Login.aspx") %>">Log in</a>
-                    </asp:PlaceHolder>
-                    <asp:PlaceHolder ID="UserLinks" runat="server" Visible="false">
-                        <a class="btn btn-primary btn-sm px-3" href="<%: ResolveUrl(DashboardUrl) %>">My dashboard</a>
-                    </asp:PlaceHolder>
-                </nav>
+        <header class="site-header">
+            <div class="site-header__inner">
+                <a class="site-header__logo" href="<%: ResolveUrl("~/Default.aspx") %>"><img src="<%: ResolveUrl("~/Images/branding/studylink-logo.png") %>" alt="StudyLink home" width="184" height="46" /></a>
+                <button type="button" class="site-header__toggle" data-menu-toggle aria-expanded="false" aria-controls="site-menu"><%= Icons.Svg("menu", 22) %><span class="sr-only">Menu</span></button>
+                <div class="site-header__menu" id="site-menu">
+                    <nav class="site-nav" aria-label="Site">
+                        <a href="<%: ResolveUrl("~/Catalogue/Books.aspx") %>" <%= Current("~/Catalogue/Books.aspx") %>>Browse Books</a>
+                        <a href="<%: ResolveUrl("~/Catalogue/Tutors.aspx") %>" <%= Current("~/Catalogue/Tutors.aspx") %>>Find a Tutor</a>
+                        <a href="<%: ResolveUrl("~/Public/HowItWorks.aspx") %>" <%= Current("~/Public/HowItWorks.aspx") %>>How It Works</a>
+                        <a href="<%: ResolveUrl("~/Public/Contact.aspx") %>" <%= Current("~/Public/Contact.aspx") %>>Contact</a>
+                    </nav>
+                    <div class="site-header__actions">
+                        <asp:PlaceHolder ID="AnonLinks" runat="server">
+                            <a class="btn btn-white" href="<%: ResolveUrl("~/Account/Login.aspx") %>">Log in</a>
+                            <a class="btn btn-primary" href="<%: ResolveUrl("~/Account/Register.aspx") %>">Register</a>
+                        </asp:PlaceHolder>
+                        <asp:PlaceHolder ID="UserLinks" runat="server" Visible="false">
+                            <a class="btn btn-primary" href="<%: ResolveUrl(DashboardUrl) %>">My dashboard</a>
+                        </asp:PlaceHolder>
+                    </div>
+                </div>
             </div>
         </header>
         <asp:PlaceHolder ID="HeroHolder" runat="server">
-            <section class="page-hero" style="padding-bottom:48px">
-                <div style="max-width:1180px;margin:0 auto">
+            <section class="public-hero">
+                <div class="public-hero__inner">
                     <h1><asp:Literal ID="HeroTitle" runat="server" /></h1>
                     <p><asp:Literal ID="HeroSubtitle" runat="server" /></p>
                 </div>
@@ -47,20 +53,55 @@
         </asp:PlaceHolder>
         <main id="main">
             <asp:PlaceHolder ID="AlertHolder" runat="server"><div class="public-main pb-0"><asp:Literal ID="AlertArea" runat="server" /></div></asp:PlaceHolder>
-            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+            <div class="<%= ContainContent ? "public-main" : "public-full" %>">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+            </div>
         </main>
-        <footer class="public-footer">
-            <div class="public-footer__inner">
-                <div>
-                    <strong class="text-white">StudyLink</strong> &middot; Books, Tutoring &amp; Academic Resource Hub<br />
-                    Forte Books &amp; Tuition Hub &middot; Alice &middot; East London &middot; Bisho
+        <footer class="site-footer">
+            <img class="site-footer__watermark" src="<%: ResolveUrl("~/Images/branding/studylink-mark.png") %>" alt="" aria-hidden="true" />
+            <div class="site-footer__inner">
+                <div class="site-footer__brand">
+                    <a class="site-footer__wordmark" href="<%: ResolveUrl("~/Default.aspx") %>"><img src="<%: ResolveUrl("~/Images/branding/studylink-mark.png") %>" alt="" width="36" height="36" /> StudyLink</a>
+                    <p><strong>Books, Tutoring &amp; Academic Resource Hub.</strong><br />A service of Forte Books &amp; Tuition Hub for the Alice, East London and Bisho campuses.</p>
+                    <div class="site-footer__social" aria-label="Social media">
+                        <% foreach (var s in Contact.Social) { %>
+                            <a href="<%: s.Item3 %>" rel="noopener noreferrer" aria-label="<%: s.Item1 %>"<%= s.Item3 == "#" ? "" : " target=\"_blank\"" %>><%= Icons.Svg(s.Item2, 18) %></a>
+                        <% } %>
+                    </div>
                 </div>
                 <div>
-                    <a href="<%: ResolveUrl("~/Public/HowItWorks.aspx") %>">How it works</a> &middot;
-                    <a href="<%: ResolveUrl("~/Public/Contact.aspx") %>">Contact / Support</a> &middot;
-                    <a href="<%: ResolveUrl("~/Public/Privacy.aspx") %>">Privacy (POPIA)</a><br />
-                    Built by Nova Tech Developers &copy; 2026
+                    <h2 class="site-footer__title">Quick links</h2>
+                    <ul class="site-footer__list">
+                        <li><a href="<%: ResolveUrl("~/Default.aspx") %>">Home</a></li>
+                        <li><a href="<%: ResolveUrl("~/Catalogue/Books.aspx") %>">Browse Books</a></li>
+                        <li><a href="<%: ResolveUrl("~/Catalogue/Tutors.aspx") %>">Find a Tutor</a></li>
+                        <li><a href="<%: ResolveUrl("~/Public/HowItWorks.aspx") %>">How It Works</a></li>
+                        <li><a href="<%: ResolveUrl("~/Public/Contact.aspx") %>">Contact</a></li>
+                        <li><a href="<%: ResolveUrl("~/Account/Login.aspx") %>">Login</a></li>
+                        <li><a href="<%: ResolveUrl("~/Account/Register.aspx") %>">Register</a></li>
+                    </ul>
                 </div>
+                <div>
+                    <h2 class="site-footer__title">Contact us</h2>
+                    <ul class="site-footer__list site-footer__list--icons">
+                        <li><%= Icons.Svg("mail", 16) %><span><% if (Contact.EmailIsAddress) { %><a href="mailto:<%: Contact.Email %>"><%: Contact.Email %></a><% } else { %><%: Contact.Email %><% } %></span></li>
+                        <li><%= Icons.Svg("phone", 16) %><span><%: Contact.Phone %></span></li>
+                        <li><%= Icons.Svg("whatsapp", 16) %><span>WhatsApp <%: Contact.WhatsApp %></span></li>
+                        <li><%= Icons.Svg("clock", 16) %><span><%: Contact.Hours %></span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="site-footer__title">Our campuses</h2>
+                    <ul class="site-footer__list site-footer__list--icons">
+                        <% foreach (var c in Contact.Campuses) { %>
+                            <li><%= Icons.Svg("pin", 16) %><span><strong><%: c.Key %></strong><br /><%: c.Value %></span></li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+            <div class="site-footer__bar">
+                <span>&copy; <%: DateTime.Today.Year %> Nova Tech Developers &ndash; StudyLink. All rights reserved. POPIA-compliant. Images used with permission.</span>
+                <a href="<%: ResolveUrl("~/Public/Privacy.aspx") %>">Privacy notice (POPIA)</a>
             </div>
         </footer>
     </form>

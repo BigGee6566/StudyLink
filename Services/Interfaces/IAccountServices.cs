@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using StudyLink.Data.Entities;
 using StudyLink.Services.DTOs;
@@ -59,6 +60,20 @@ namespace StudyLink.Services.Interfaces
 
         /// <summary>Fields users cannot change on their own (they go through <see cref="RequestChange"/>).</summary>
         IList<string> RequestableFields(int userId);
+
+        /// <summary>Sets the signed-in user's own photo: JPEG, PNG or WebP (checked by content), 2 MB at most.</summary>
+        ServiceResult SetPhoto(Actor actor, byte[] image);
+
+        ServiceResult RemovePhoto(Actor actor);
+
+        /// <summary>
+        /// The photo when <paramref name="viewer"/> may see it (null viewer = anonymous visitor), else null:
+        /// a hidden photo is indistinguishable from no photo (AvatarPolicy).
+        /// </summary>
+        PhotoFile Photo(Actor viewer, int userId);
+
+        /// <summary>When the user's photo last changed, or null when they use the default avatar.</summary>
+        DateTime? PhotoVersion(int userId);
     }
 
     public interface IPasswordResetService

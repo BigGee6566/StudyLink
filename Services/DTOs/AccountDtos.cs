@@ -242,4 +242,16 @@ namespace StudyLink.Services.DTOs
         public int Id { get; set; }
         public string Name { get; set; }
     }
+
+    /// <summary>A profile photo the viewer is allowed to see.</summary>
+    public sealed class PhotoFile
+    {
+        public byte[] Data { get; set; }
+        public string ContentType { get; set; }
+
+        /// <summary>A verified tutor's photo (tutor directory): shared caches may keep it.</summary>
+        public bool IsPublic { get; set; }
+
+        public DateTime UpdatedAt { get; set; }
+    }
 }

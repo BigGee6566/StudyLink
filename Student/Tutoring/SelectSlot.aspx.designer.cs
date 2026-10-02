@@ -16,7 +16,7 @@ namespace StudyLink.Web.Student.Tutoring
         protected global::System.Web.UI.WebControls.Repeater Slots;
         protected global::System.Web.UI.WebControls.HiddenField SlotId;
         protected global::System.Web.UI.WebControls.Literal NoSlots;
-        protected global::System.Web.UI.WebControls.Literal TutorInitials;
+        protected global::System.Web.UI.WebControls.Literal TutorAvatar;
         protected global::System.Web.UI.WebControls.Literal TutorName;
         protected global::System.Web.UI.WebControls.Literal TutorRate;
         protected global::System.Web.UI.WebControls.TextBox Message;

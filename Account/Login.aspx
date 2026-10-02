@@ -10,7 +10,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label" for="<%= Password.ClientID %>">Password</label>
-            <asp:TextBox ID="Password" runat="server" CssClass="form-control" TextMode="Password" MaxLength="128" autocomplete="current-password" />
+            <asp:TextBox ID="Password" runat="server" CssClass="form-control" TextMode="Password" data-password-toggle="true" MaxLength="128" autocomplete="current-password" />
         </div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="form-check">

@@ -1,7 +1,7 @@
 namespace StudyLink.Data.Entities
 {
     // Enums are stored as INT. Explicit values keep existing rows stable if a member is added,
-    // and the numbers are documented in database\01_CreateSchema.sql for anyone querying by hand.
+    // and the numbers are documented in database\StudyLink.sql for anyone querying by hand.
 
     public enum Gender { Male = 1, Female = 2, Other = 3, PreferNotToSay = 4 }
 

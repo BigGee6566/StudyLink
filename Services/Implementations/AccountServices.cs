@@ -10,6 +10,7 @@ using StudyLink.Data.Seed;
 using StudyLink.Services.DTOs;
 using StudyLink.Services.Infrastructure;
 using StudyLink.Services.Interfaces;
+using StudyLink.Services.Policies;
 using StudyLink.Services.Security;
 using StudyLink.Services.Validation;
 
@@ -296,7 +297,7 @@ namespace StudyLink.Services.Implementations
                 return ServiceResult<int>.Fail("Too many registration attempts. Please wait 15 minutes and try again.");
 
             var error = Accounts.CheckDetails(_db, r)
-                        ?? (UserValidator.IsValidStudentNumber(r.StudentNumber) ? null : "Enter your student number (5–20 letters or digits).")
+                        ?? (UserValidator.IsValidStudentNumber(r.StudentNumber) ? null : UserValidator.StudentNumberMessage)
                         ?? (TextRules.TooLong(r.Faculty, 100) ? "Faculty is limited to 100 characters." : null)
                         ?? (r.StudyLevelId.HasValue && !_db.StudyLevels.Any(l => l.StudyLevelId == r.StudyLevelId) ? "Select a valid year of study." : null)
                         ?? UserValidator.CheckPassword(r.Password, r.ConfirmPassword)
@@ -535,7 +536,7 @@ namespace StudyLink.Services.Implementations
                     if (TextRules.TooLong(r.VatNumber, 20) || TextRules.TooLong(r.Address, 250)) return "VAT number or address is too long.";
                     return null;
                 case RoleNames.Student:
-                    if (!UserValidator.IsValidStudentNumber(r.StudentNumber)) return "Enter a valid student number (5–20 letters or digits).";
+                    if (!UserValidator.IsValidStudentNumber(r.StudentNumber)) return UserValidator.StudentNumberMessage;
                     var number = r.StudentNumber.Trim().ToUpperInvariant();
                     if (_db.Students.Any(s => s.StudentNumber == number && s.UserId != existingUserId)) return "That student number is already registered.";
                     return null;
@@ -786,6 +787,58 @@ namespace StudyLink.Services.Implementations
 
         public UserDetail Get(int userId) => Accounts.Detail(_db, userId);
 
+        public ServiceResult SetPhoto(Actor actor, byte[] image)
+        {
+            var error = ImageRules.Check(image);
+            if (error != null) return ServiceResult.Fail(error);
+            var photo = _db.UserPhotos.Find(actor.UserId) ?? _db.UserPhotos.Add(new UserPhoto { UserId = actor.UserId });
+            photo.Photo = image;
+            photo.ContentType = ImageRules.Detect(image);
+            photo.UpdatedAt = _clock.Now;
+            _audit.Record(actor, "ProfilePhotoChanged", "User", actor.UserId);
+            _db.SaveChanges();
+            return ServiceResult.Ok();
+        }
+
+        public ServiceResult RemovePhoto(Actor actor)
+        {
+            var photo = _db.UserPhotos.Find(actor.UserId);
+            if (photo == null) return ServiceResult.Ok();
+            _db.UserPhotos.Remove(photo);
+            _audit.Record(actor, "ProfilePhotoRemoved", "User", actor.UserId);
+            _db.SaveChanges();
+            return ServiceResult.Ok();
+        }
+
+        public PhotoFile Photo(Actor viewer, int userId)
+        {
+            var photo = _db.UserPhotos.AsNoTracking().FirstOrDefault(p => p.UserId == userId);
+            if (photo == null) return null;
+
+            var owner = _db.Users.AsNoTracking().Where(u => u.UserId == userId)
+                .Select(u => new
+                {
+                    u.IsActive,
+                    Roles = u.UserRoles.Select(r => r.Role.Name),
+                    TutorVerified = _db.Tutors.Any(t => t.UserId == userId && t.VerificationStatus == TutorVerificationStatus.Verified)
+                }).Single();
+            var ownerKind = AvatarPolicy.OwnerKind(owner.Roles.ToList(), owner.TutorVerified && owner.IsActive);
+            var isOwn = viewer != null && viewer.UserId == userId;
+            var viewerKinds = AvatarPolicy.ViewerKinds(viewer?.Roles);
+            var tutorsOwner = viewer != null && viewerKinds.Contains(AvatarViewer.Tutor)
+                              && _db.Bookings.Any(b => b.Tutor.UserId == viewer.UserId && b.Student.UserId == userId);
+
+            if (!AvatarPolicy.CanView(isOwn, viewerKinds, ownerKind, tutorsOwner)) return null;
+            return new PhotoFile
+            {
+                Data = photo.Photo, ContentType = photo.ContentType, UpdatedAt = photo.UpdatedAt,
+                IsPublic = AvatarPolicy.IsPublic(ownerKind)
+            };
+        }
+
+        public DateTime? PhotoVersion(int userId) =>
+            _db.UserPhotos.Where(p => p.UserId == userId).Select(p => (DateTime?)p.UpdatedAt).FirstOrDefault();
+
         public IList<string> RequestableFields(int userId)
         {
             var fields = new List<string> { "First name", "Last name" };
@@ -840,7 +893,7 @@ namespace StudyLink.Services.Implementations
             if (requestedValue.Length == 0 || requestedValue.Length > 200)
                 return ServiceResult.Fail("Enter the new value (200 characters max).");
             if (fieldName == "Student number" && !UserValidator.IsValidStudentNumber(requestedValue))
-                return ServiceResult.Fail("Enter a valid student number (5–20 letters or digits).");
+                return ServiceResult.Fail(UserValidator.StudentNumberMessage);
             if (_db.ProfileUpdateRequests.Any(p => p.UserId == actor.UserId && p.FieldName == fieldName && p.Status == RequestStatus.Pending))
                 return ServiceResult.Fail("You already have a pending request for this field.");
 

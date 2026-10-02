@@ -11,7 +11,7 @@ namespace StudyLink.Web.MasterPages
     {
         protected global::System.Web.UI.WebControls.ContentPlaceHolder HeadContent;
         protected global::System.Web.UI.HtmlControls.HtmlForm AppForm;
-        protected global::System.Web.UI.WebControls.Literal UserInitials;
+        protected global::System.Web.UI.WebControls.Literal UserAvatar;
         protected global::System.Web.UI.WebControls.Literal UserName;
         protected global::System.Web.UI.WebControls.Literal UserRole;
         protected global::System.Web.UI.WebControls.Literal NavLinks;

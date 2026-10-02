@@ -12,35 +12,50 @@ namespace StudyLink.Web
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            // The site brings its own database up to date (same migrations as database\01_CreateSchema.sql).
+            // The site brings its own database up to date (same migrations as database\StudyLink.sql).
             if (!string.Equals(ConfigurationManager.AppSettings["StudyLink:MigrateOnStart"], "false", StringComparison.OrdinalIgnoreCase))
                 Database.SetInitializer(new MigrateDatabaseToLatestVersion<StudyLinkDbContext, StudyLink.Data.Migrations.Configuration>(true));
             else
                 Database.SetInitializer<StudyLinkDbContext>(null);
 
-            try
+            // Each start-up step is isolated: a failure is logged and the site still starts, so the error
+            // page (or the rest of the site) can still explain what is wrong.
+            Step("Application_Start: migrations", () =>
             {
                 using (var db = new StudyLinkDbContext())
                 {
                     db.Database.Initialize(force: false);
                     DisableAutoClose(db);
                 }
-                DemoSeeder.RunIfRequested();
+            });
+            Step("Application_Start: demo seed", DemoSeeder.RunIfRequested);
+            Step("Application_Start: demo data correction", DemoSeeder.CorrectIfRequested);
+            Step("Application_Start: shipped covers", () =>
+            {
+                using (var db = new StudyLinkDbContext())
+                    CoverLibrary.FillMissing(db);
+            });
+
+            BackgroundSweep.Start();
+        }
+
+        private static void Step(string name, Action action)
+        {
+            try
+            {
+                action();
             }
             catch (Exception ex)
             {
-                // Keep the site up so the error page can explain; the log has the detail.
-                ErrorLogger.Log(ex, "Application_Start");
+                ErrorLogger.Log(ex, name);
             }
-
-            BackgroundSweep.Start();
         }
 
         /// <summary>
         /// SQL Express creates databases with AUTO_CLOSE ON, so the database shuts down whenever the last
         /// connection closes and every reopen delays the next login (timeouts on a busy machine).
         /// ALTER DATABASE cannot run inside a transaction, hence outside the migrations. Needs ALTER
-        /// permission; where that is missing the DBA script (database\01_CreateSchema.sql) does it.
+        /// permission; where that is missing the DBA script (database\StudyLink.sql) does it.
         /// </summary>
         private static void DisableAutoClose(StudyLinkDbContext db)
         {

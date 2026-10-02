@@ -1,7 +1,7 @@
 <%@ Page Title="Textbook Rentals" Language="C#" AutoEventWireup="true" CodeBehind="Books.aspx.cs" Inherits="StudyLink.Web.Catalogue.Books" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <%-- SC11 - Textbook Rentals (browse, search, live stock per campus) --%>
-    <div class="panel">
+    <div class="panel filter-panel">
         <div class="panel__body">
             <asp:Panel runat="server" CssClass="filter-bar" DefaultButton="SearchButton">
                 <div>
@@ -33,8 +33,7 @@
             <ItemTemplate>
                 <a class="book-card" href="<%# ResolveUrl("~/Catalogue/BookDetails.aspx?id=" + Eval("BookId") + CampusQuery) %>">
                     <div class="book-cover">
-                        <%# (bool)Eval("HasCover") ? "<img src=\"" + ResolveUrl("~/Handlers/BookCover.ashx?id=" + Eval("BookId")) + "\" alt=\"\" loading=\"lazy\" />" : "" %>
-                        <span><%#: Eval("Title") %></span>
+                        <%# Ui.BookCover((int)Eval("BookId"), (bool)Eval("HasCover"), (string)Eval("Title"), (string)Eval("Authors"), (string)Eval("Edition"), (string)Eval("Category")) %>
                     </div>
                     <div class="book-card__body">
                         <div class="book-card__title"><%#: Eval("Title") %></div>

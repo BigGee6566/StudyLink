@@ -22,6 +22,9 @@ namespace StudyLink.Web.Tutor
                 : d.Status == TutorVerificationStatus.Rejected ? "<div class=\"alert-box alert-box--error\"><div>Your tutor application was not approved. Please contact the hub for details.</div></div>"
                 : d.Status == TutorVerificationStatus.Suspended ? "<div class=\"alert-box alert-box--error\"><div>Your tutor profile is suspended, so students cannot book you. Please contact the hub.</div></div>"
                 : "";
+            if (!S.Profiles.PhotoVersion(CurrentUser.UserId).HasValue)
+                StatusNote.Text += "<div class=\"alert-box alert-box--info\">" + Icons.Svg("user") + "<div><strong>Add a profile photo.</strong> Students choose tutors they can recognise, so a friendly, professional headshot helps. <a href=\"" +
+                                   ResolveUrl("~/Account/Profile.aspx") + "\">Upload one on your profile</a>.</div></div>";
 
             Kpis.Text = Ui.Kpis(this, new[]
             {
@@ -35,7 +38,7 @@ namespace StudyLink.Web.Tutor
 
             Today.DataSource = d.Today;
             Today.DataBind();
-            NoToday.Text = d.Today.Count == 0 ? Ui.Empty("calendar", "No sessions today.") : "";
+            NoToday.Text = d.Today.Count == 0 ? Ui.Empty(EmptyArt.Calendar, "No sessions today", "Confirmed sessions for today will appear here.") : "";
             Upcoming.DataSource = d.Upcoming;
             Upcoming.DataBind();
             NoUpcoming.Text = d.Upcoming.Count == 0 ? "<p class=\"muted mb-0\">Nothing booked yet.</p>" : "";

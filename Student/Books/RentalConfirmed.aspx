@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Rental Confirmed" Language="C#" MasterPageFile="~/MasterPages/App.Master" AutoEventWireup="true" CodeBehind="RentalConfirmed.aspx.cs" Inherits="StudyLink.Web.Student.Books.RentalConfirmed" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <%-- SC13 - Rental Confirmed --%>
-    <div class="confirm-card">
+    <div class="confirm-card doc-watermark">
         <div class="confirm-card__icon"><%= Icons.Svg("check", 38) %></div>
         <h2><asp:Literal ID="Headline" runat="server" /></h2>
         <p class="muted"><asp:Literal ID="Lead" runat="server" /></p>

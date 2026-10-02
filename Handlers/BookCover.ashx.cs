@@ -23,7 +23,6 @@ namespace StudyLink.Web.Handlers
                 return;
             }
             context.Response.ContentType = contentType ?? "image/jpeg";
-            context.Response.Headers["X-Content-Type-Options"] = "nosniff";
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
             context.Response.Cache.SetMaxAge(TimeSpan.FromHours(1));
             context.Response.BinaryWrite(bytes);

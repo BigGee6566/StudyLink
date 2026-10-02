@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StudyLink.Web.Infrastructure
 {
@@ -43,13 +44,66 @@ namespace StudyLink.Web.Infrastructure
             ["plus"] = "<path d='M12 5v14M5 12h14'/>",
             ["pin"] = "<path d='M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z'/><circle cx='12' cy='9' r='2.5'/>",
             ["mail"] = "<rect x='3' y='5' width='18' height='14' rx='2'/><path d='M3 7l9 6 9-6'/>",
-            ["info"] = "<circle cx='12' cy='12' r='9'/><path d='M12 11v6M12 7.5v.5'/>"
+            ["info"] = "<circle cx='12' cy='12' r='9'/><path d='M12 11v6M12 7.5v.5'/>",
+            ["phone"] = "<path d='M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z'/>",
+
+            // Subjects
+            ["calculator"] = "<rect x='5' y='2.5' width='14' height='19' rx='2'/><path d='M8 6.5h8v3H8z'/><path d='M8.5 13h.01M12 13h.01M15.5 13h.01M8.5 16.5h.01M12 16.5h.01M15.5 16.5h.01'/>",
+            ["flask"] = "<path d='M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3'/><path d='M7 15h10'/>",
+            ["scale"] = "<path d='M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z'/>",
+            ["briefcase"] = "<rect x='3' y='7' width='18' height='13' rx='2'/><path d='M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18'/>",
+            ["laptop"] = "<rect x='4' y='5' width='16' height='11' rx='1.5'/><path d='M2 19h20'/>",
+            ["code"] = "<path d='M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14'/>",
+            ["brain"] = "<path d='M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a2 2 0 0 0-3-1z'/><path d='M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1'/>",
+            ["ledger"] = "<path d='M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z'/><path d='M9 8h6M9 12h6M9 16h3'/>",
+            ["trend"] = "<path d='M3 17l6-6 4 4 8-8'/><path d='M15 7h6v6'/>",
+            ["book-open"] = "<path d='M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5c-3-.5-6 0-8 1.5zM12 6v14.5'/>",
+
+            // Social (outline glyphs, same stroke style as the rest of the set)
+            ["facebook"] = "<path d='M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z'/>",
+            ["instagram"] = "<rect x='3' y='3' width='18' height='18' rx='5'/><circle cx='12' cy='12' r='4'/><path d='M17.5 6.5h.01'/>",
+            ["x"] = "<path d='M4 4l16 16M20 4L4 20'/>",
+            ["linkedin"] = "<rect x='3' y='3' width='18' height='18' rx='3'/><path d='M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7'/>",
+            ["youtube"] = "<rect x='2.5' y='5.5' width='19' height='13' rx='4'/><path d='M10 9.5v5l4.5-2.5z'/>",
+            ["whatsapp"] = "<path d='M4 20l1.3-3.8A8.5 8.5 0 1 1 8 19z'/><path d='M9 9.2c0 3 2.8 5.8 5.8 5.8l1.2-1.4-1.9-1-.9.7a4.6 4.6 0 0 1-2.5-2.5l.7-.9-1-1.9z'/>"
         };
 
         public static string Svg(string name, int size = 20)
         {
             Paths.TryGetValue(name ?? "", out var path);
             return "<svg class=\"icon\" width=\"" + size + "\" height=\"" + size + "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">" + (path ?? Paths["info"]).Replace('\'', '"') + "</svg>";
+        }
+
+        /// <summary>Subject name → (icon, tint). Unknown subjects get a plain book in navy.</summary>
+        private static readonly (string Match, string Icon, string Tone)[] SubjectIcons =
+        {
+            ("statistic", "chart", "indigo"),
+            ("math", "calculator", "blue"),
+            ("accounting", "ledger", "green"),
+            ("finance", "ledger", "green"),
+            ("econom", "trend", "amber"),
+            ("business", "briefcase", "orange"),
+            ("management", "briefcase", "orange"),
+            ("information", "laptop", "teal"),
+            ("computer", "code", "teal"),
+            ("law", "scale", "purple"),
+            ("psych", "brain", "pink"),
+            ("english", "book-open", "red"),
+            ("language", "book-open", "red"),
+            ("science", "flask", "green"),
+            ("chemistry", "flask", "green"),
+            ("biology", "flask", "green"),
+            ("physics", "flask", "green")
+        };
+
+        /// <summary>A subject's icon in a small tinted tile (tutor cards, slot picker, bookings).</summary>
+        public static string Subject(string subject, int size = 18)
+        {
+            var name = (subject ?? "").ToLowerInvariant();
+            var match = SubjectIcons.FirstOrDefault(s => name.Contains(s.Match));
+            var icon = match.Icon ?? "book";
+            var tone = match.Tone ?? "navy";
+            return "<span class=\"subject-icon subject-icon--" + tone + "\" title=\"" + System.Web.HttpUtility.HtmlAttributeEncode(subject) + "\">" + Svg(icon, size) + "</span>";
         }
     }
 }

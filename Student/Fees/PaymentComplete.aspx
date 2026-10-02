@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Payment Complete" Language="C#" MasterPageFile="~/MasterPages/App.Master" AutoEventWireup="true" CodeBehind="PaymentComplete.aspx.cs" Inherits="StudyLink.Web.Student.Fees.PaymentComplete" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <%-- SC17 - Payment Complete / printable receipt --%>
-    <div class="confirm-card">
+    <div class="confirm-card doc-watermark">
         <div class="confirm-card__icon"><%= Icons.Svg("check", 38) %></div>
         <h2><asp:Literal ID="Headline" runat="server" /></h2>
         <p class="muted mb-1"><asp:Literal ID="Organisation" runat="server" /></p>

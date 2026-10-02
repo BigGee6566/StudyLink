@@ -26,10 +26,10 @@ StudyLink\                  The Web Forms site (StudyLink.Web.csproj) lives dire
 ├─ Services\                StudyLink.Services: business rules (services, policies, validation, security, DTOs)
 ├─ Data\                    StudyLink.Data: EF6 entities, configurations, migrations, lookup seed
 ├─ Tests\                   StudyLink.Tests: unit, SQL-backed integration and HTTP (role access + crawl) tests
-├─ database\                01_CreateSchema.sql (generated from the migrations), 02_SeedLookups.sql
+├─ database\                StudyLink.sql: creates the database, tables and lookup data (generated)
 ├─ docs\                    Analysis, migration plan, testing plan, UAT checklist, demo walkthrough, mockups
 ├─ branding\                Source logo sheet and the script that cuts the logo, favicons and icons
-├─ tools\                   sync_web_project.py (designer files + project items), precompile.ps1
+├─ tools\                   sync_web_project.py (designer files + project items), precompile.ps1, build_sql.ps1
 └─ legacy\TutorConnect\     The original VB.NET TutorConnect source, untouched (reference only)
 ```
 
@@ -48,8 +48,10 @@ are hidden segments in `Web.config`, so IIS Express never serves them.
    * On first start the site creates or updates the `StudyLink` database from the EF migrations, seeds the
      lookups (campuses, roles, subjects, levels, categories, settings) and, in Debug builds with
      `Seed:Demo=true`, creates the demo accounts and sample activity. The first request takes a little while.
-   * If you prefer to create the database by hand, run `database\01_CreateSchema.sql` and then
-     `database\02_SeedLookups.sql` in SSMS, and set `StudyLink:MigrateOnStart` to `false` in `Web.config`.
+   * To create the database yourself, run `database\StudyLink.sql` in SSMS (or
+     `sqlcmd -S .\SQLEXPRESS -E -i database\StudyLink.sql`) and point the `StudyLink` connection string in
+     `Web.config` at that server. The header of the script walks through both steps. After adding a migration,
+     regenerate it with `powershell -File tools\build_sql.ps1`.
 4. Without demo data, the first visit goes to **Account/Setup** to create the first System Admin.
 
 ### Demo accounts
@@ -109,7 +111,7 @@ normally does.
 
 * **Errors mention "Connection Timeout Expired … post-login phase":** SQL Express creates databases with
   `AUTO_CLOSE ON`, so the database shuts down between requests and reopening it is slow on a busy PC. The site
-  turns it off at start-up, and `01_CreateSchema.sql` does the same. To fix by hand:
+  turns it off at start-up, and `database\StudyLink.sql` does the same. To fix by hand:
   `ALTER DATABASE StudyLink SET AUTO_CLOSE OFF;`
 * **The error page shows a reference code:** the full error for that reference is in `App_Data\Logs\errors-<date>.log`.
 * **A page compiles in Visual Studio but fails at runtime:** build, then precompile all markup to find the error:

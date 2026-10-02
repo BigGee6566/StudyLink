@@ -10,7 +10,7 @@
                         <ItemTemplate>
                             <tr>
                                 <td data-label="Reference" class="numeric"><%#: Eval("Reference") %></td>
-                                <td data-label="Session"><%#: Eval("Subject") %><div class="muted small"><%#: Eval("StudyLevel") %> · <%#: Eval("Campus") %></div></td>
+                                <td data-label="Session"><span class="d-inline-flex align-items-center gap-2"><%# Icons.Subject((string)Eval("Subject"), 16) %><%#: Eval("Subject") %></span><div class="muted small"><%#: Eval("StudyLevel") %> · <%#: Eval("Campus") %></div></td>
                                 <td data-label="Tutor"><%#: Eval("TutorName") %></td>
                                 <td data-label="When"><%# Fmt.Day((DateTime)Eval("SessionDate")) %><div class="muted small"><%#: Eval("TimeRange") %></div></td>
                                 <td data-label="Fee" class="col-num"><%# Fmt.Money(Eval("Fee")) %></td>

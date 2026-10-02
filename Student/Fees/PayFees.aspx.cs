@@ -35,7 +35,7 @@ namespace StudyLink.Web.Student.Fees
             Outstanding.Text = Fmt.Money(st.Outstanding);
             PayArea.Visible = st.Unpaid.Count > 0;
             NothingDue.Text = st.Unpaid.Count == 0
-                ? "<div class=\"panel\"><div class=\"panel__body\">" + Ui.Empty("check", "You have no outstanding fees.",
+                ? "<div class=\"panel\"><div class=\"panel__body\">" + Ui.Empty(EmptyArt.Receipt, "You're all paid up", "There are no outstanding fees on your account.",
                   "<a class=\"btn btn-primary\" href=\"" + ResolveUrl("~/Student/Fees/MyFees.aspx") + "\">Back to My Fees</a>") + "</div></div>"
                 : "";
         }

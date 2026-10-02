@@ -383,8 +383,9 @@ namespace StudyLink.Services.Implementations
                 .Skip((page - 1) * f.PageSize).Take(f.PageSize)
                 .Select(t => new
                 {
-                    t.TutorId, t.User.FirstName, t.User.LastName, t.Qualification, t.ExperienceYears, t.HourlyRate,
+                    t.TutorId, t.UserId, t.User.FirstName, t.User.LastName, t.Qualification, t.ExperienceYears, t.HourlyRate,
                     Campus = t.User.Campus.Name,
+                    Photo = _db.UserPhotos.Where(p => p.UserId == t.UserId).Select(p => (DateTime?)p.UpdatedAt).FirstOrDefault(),
                     Subjects = t.Subjects.Where(s => s.Subject.IsActive).Select(s => s.Subject.Name).Distinct(),
                     // Hidden reviews never move a public rating (TutorConnect moderation rule).
                     // Aggregated in SQL: a nested IQueryable member cannot be queried again once materialised.
@@ -397,8 +398,7 @@ namespace StudyLink.Services.Implementations
 
             var cards = raw.Select(t => new TutorCard
             {
-                TutorId = t.TutorId, FullName = t.FirstName + " " + t.LastName,
-                Initials = (t.FirstName.Substring(0, 1) + t.LastName.Substring(0, 1)).ToUpperInvariant(),
+                TutorId = t.TutorId, UserId = t.UserId, PhotoVersion = t.Photo, FullName = t.FirstName + " " + t.LastName,
                 Qualification = t.Qualification, ExperienceYears = t.ExperienceYears, HourlyRate = t.HourlyRate, Campus = t.Campus,
                 Subjects = string.Join(", ", t.Subjects.OrderBy(s => s)),
                 ReviewCount = t.ReviewCount,
@@ -419,8 +419,8 @@ namespace StudyLink.Services.Implementations
             {
                 Card = new TutorCard
                 {
-                    TutorId = t.TutorId, FullName = t.User.FullName,
-                    Initials = (t.User.FirstName.Substring(0, 1) + t.User.LastName.Substring(0, 1)).ToUpperInvariant(),
+                    TutorId = t.TutorId, UserId = t.UserId, FullName = t.User.FullName,
+                    PhotoVersion = _db.UserPhotos.Where(p => p.UserId == t.UserId).Select(p => (DateTime?)p.UpdatedAt).FirstOrDefault(),
                     Qualification = t.Qualification, ExperienceYears = t.ExperienceYears, HourlyRate = t.HourlyRate,
                     Campus = t.User.Campus.Name, ReviewCount = reviews.Count,
                     AverageRating = reviews.Any() ? Math.Round((decimal)reviews.Average(r => (int)r.Rating), 1) : (decimal?)null
