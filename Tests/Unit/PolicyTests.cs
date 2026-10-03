@@ -226,8 +226,35 @@ namespace StudyLink.Tests.Unit
             Assert.AreEqual("image/jpeg", ImageRules.Detect(jpeg));
             Assert.AreEqual("image/webp", ImageRules.Detect(webp));
             Assert.IsNull(ImageRules.Detect(System.Text.Encoding.UTF8.GetBytes("<html><script>x</script>")), "a renamed HTML file is not an image");
-            Assert.IsNotNull(ImageRules.Check(new byte[ImageRules.MaxBytes + 1]), "over 2 MB");
-            Assert.IsNull(ImageRules.Check(png));
+            Assert.IsNotNull(ImageRules.Prepare(new byte[ImageRules.MaxUploadBytes + 1], ImageRules.AvatarSide).Error, "over 15 MB");
+            Assert.IsNotNull(ImageRules.Prepare(png, ImageRules.AvatarSide).Error, "a PNG header with no picture behind it");
+        }
+
+        [TestMethod]
+        public void PhoneSizedPhoto_IsShrunkTurnedUprightAndStrippedOfMetadata()
+        {
+            var photo = TestImages.Jpeg(4000, 3000, noisy: true, exifOrientation: 6);
+            Assert.IsTrue(photo.Length > ImageRules.MaxBytes, "the sample is larger than what is stored, like a real phone photo");
+
+            var prepared = ImageRules.Prepare(photo, ImageRules.AvatarSide);
+            Assert.IsNull(prepared.Error, prepared.Error);
+            Assert.AreEqual("image/jpeg", prepared.ContentType);
+            Assert.IsTrue(prepared.Data.Length <= ImageRules.MaxBytes);
+            Assert.AreEqual(new System.Drawing.Size(384, 512), TestImages.SizeOf(prepared.Data), "orientation 6 = rotate 90°, then fit 512");
+            Assert.IsFalse(TestImages.HasExif(prepared.Data), "camera metadata is not kept");
+        }
+
+        [TestMethod]
+        public void SmallPng_IsKeptAsSent_AndWebpMustAlreadyBeSmall()
+        {
+            var png = TestImages.Png(200, 120);
+            var prepared = ImageRules.Prepare(png, ImageRules.AvatarSide);
+            Assert.AreEqual("image/png", prepared.ContentType);
+            CollectionAssert.AreEqual(png, prepared.Data);
+
+            var bigWebp = new byte[ImageRules.MaxBytes + 1];
+            System.Text.Encoding.ASCII.GetBytes("RIFF\0\0\0\0WEBPVP8 ").CopyTo(bigWebp, 0);
+            Assert.IsNotNull(ImageRules.Prepare(bigWebp, ImageRules.AvatarSide).Error, "WebP cannot be shrunk on .NET Framework");
         }
     }
 

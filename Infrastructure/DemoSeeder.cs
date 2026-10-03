@@ -151,22 +151,17 @@ namespace StudyLink.Web.Infrastructure
                 var r = _s.Users.CreateAccount(_admin, new CreateAccountRequest
                 {
                     Role = role, UserName = userName, FirstName = first, LastName = last, Email = userName + "@studylink.local",
-                    CellNumber = "0400000002", CampusId = Campus("Alice"), EmployeeNumber = empNo, JobTitle = title
-                }, "https://localhost/Account/ResetPassword.aspx?token=");
+                    CellNumber = "0400000002", CampusId = Campus("Alice"), EmployeeNumber = empNo, JobTitle = title, TemporaryPassword = _pw
+                }, "https://localhost/Account/Login.aspx");
                 Ok(r, userName);
-                SetPassword(r.Value);
-                return ActorOf(r.Value);
+                KeepPassword(r.Value.UserId);
+                return ActorOf(r.Value.UserId);
             }
 
-            /// <summary>Accounts created by staff normally receive a set-password link; demo accounts get the dev password.</summary>
-            private void SetPassword(int userId)
+            /// <summary>Accounts created by staff must change their temporary password; demo accounts keep the dev password.</summary>
+            private void KeepPassword(int userId)
             {
-                var user = _s.Db.Users.Find(userId);
-                var hashed = PasswordHasher.Create(_pw);
-                user.PasswordHash = hashed.Hash;
-                user.PasswordSalt = hashed.Salt;
-                user.HashIterations = hashed.Iterations;
-                user.MustChangePassword = false;
+                _s.Db.Users.Find(userId).MustChangePassword = false;
                 _s.Db.SaveChanges();
             }
 
@@ -177,11 +172,11 @@ namespace StudyLink.Web.Infrastructure
                     Role = RoleNames.Supplier, UserName = "supplier", FirstName = "Thabo", LastName = "Mokoena",
                     Email = "orders@vanschaik-demo.local", CellNumber = "0433000003", CampusId = Campus("East London"),
                     CompanyName = "Academic Books Direct (demo)", ContactPerson = "Thabo Mokoena", Phone = "0433000003",
-                    VatNumber = "4123456789", Address = "12 Oxford Street, East London"
-                }, "https://localhost/Account/ResetPassword.aspx?token=");
+                    VatNumber = "4123456789", Address = "12 Oxford Street, East London", TemporaryPassword = _pw
+                }, "https://localhost/Account/Login.aspx");
                 Ok(r, "supplier");
-                SetPassword(r.Value);
-                return ActorOf(r.Value);
+                KeepPassword(r.Value.UserId);
+                return ActorOf(r.Value.UserId);
             }
 
             private List<Actor> Tutors()

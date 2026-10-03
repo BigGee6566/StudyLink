@@ -41,11 +41,13 @@ namespace StudyLink.Services.Implementations
             return null;
         }
 
+        /// <summary>
+        /// A password chosen by someone else (<paramref name="createdBy"/> set) is temporary: the user
+        /// must replace it the first time they sign in.
+        /// </summary>
         public static User NewUser(PersonalDetails d, string password, DateTime now, int? createdBy)
         {
-            // Accounts created by staff get an unguessable random password and must set their own
-            // through the emailed link; nobody ever sees or types a temporary password.
-            var hashed = PasswordHasher.Create(password ?? Convert.ToBase64String(PasswordHasher.RandomBytes(32)));
+            var hashed = PasswordHasher.Create(password);
             return new User
             {
                 UserName = d.UserName.Trim(),
@@ -59,7 +61,7 @@ namespace StudyLink.Services.Implementations
                 PasswordSalt = hashed.Salt,
                 HashIterations = hashed.Iterations,
                 IsActive = true,
-                MustChangePassword = password == null,
+                MustChangePassword = createdBy.HasValue,
                 CreatedAt = now,
                 CreatedByUserId = createdBy
             };
@@ -493,17 +495,23 @@ namespace StudyLink.Services.Implementations
             return Accounts.Detail(_db, userId);
         }
 
-        public ServiceResult<int> CreateAccount(Actor actor, CreateAccountRequest r, string setupLinkBase)
+        private static string CheckTemporaryPassword(string password) =>
+            string.IsNullOrEmpty(password)
+                ? "Enter a temporary password for the user, or click Generate."
+                : UserValidator.CheckPassword(password, null);
+
+        public ServiceResult<NewAccount> CreateAccount(Actor actor, CreateAccountRequest r, string signInUrl)
         {
             if (!RolePermissions.CreatableRoles(actor).Contains(r.Role))
                 throw new AccessDeniedException("You cannot create " + RoleNames.DisplayName(r.Role) + " accounts.");
 
-            var error = Accounts.CheckDetails(_db, r) ?? Accounts.CheckUnique(_db, r.UserName, r.Email) ?? CheckRoleDetails(r, null);
+            var error = Accounts.CheckDetails(_db, r) ?? Accounts.CheckUnique(_db, r.UserName, r.Email) ?? CheckRoleDetails(r, null)
+                        ?? CheckTemporaryPassword(r.TemporaryPassword);
             if (error != null)
-                return ServiceResult<int>.Fail(error);
+                return ServiceResult<NewAccount>.Fail(error);
 
             var now = _clock.Now;
-            var user = Accounts.NewUser(r, null, now, actor.UserId);
+            var user = Accounts.NewUser(r, r.TemporaryPassword, now, actor.UserId);
             Accounts.AddRole(_db, user, r.Role, now, actor.UserId);
             _db.Users.Add(user);
             AddProfile(user, r);
@@ -514,15 +522,49 @@ namespace StudyLink.Services.Implementations
             }
             catch (DbUpdateException ex) when (DbErrors.IsUniqueViolation(ex))
             {
-                return ServiceResult<int>.Fail("That username, email, student number or employee number is already in use.");
+                return ServiceResult<NewAccount>.Fail("That username, email, student number or employee number is already in use.");
             }
 
             _audit.Record(actor, "UserCreated", "User", user.UserId, newState: r.Role + ": " + user.UserName);
             _notifications.Notify(user.UserId, NotificationType.AccountCreated, "Welcome to StudyLink",
                 "Your " + RoleNames.DisplayName(r.Role) + " account was created by " + actor.UserName + ".");
             _db.SaveChanges();
-            _resets.IssueSetupLink(actor, user.UserId, setupLinkBase);
-            return ServiceResult<int>.Ok(user.UserId);
+            var emailed = _resets.SendTemporaryPassword(user.UserId, r.TemporaryPassword, signInUrl, newAccount: true);
+            return ServiceResult<NewAccount>.Ok(new NewAccount { UserId = user.UserId, PasswordEmailed = emailed });
+        }
+
+        public ServiceResult<bool> SetTemporaryPassword(Actor actor, int userId, string temporaryPassword, string signInUrl)
+        {
+            if (!RolePermissions.Has(actor, Permission.ManageAllUsers) && !RolePermissions.Has(actor, Permission.CreateStaffAndSuppliers))
+                throw new AccessDeniedException("Only managers and administrators can set a temporary password.");
+            if (userId == actor.UserId)
+                return ServiceResult<bool>.Fail("Use Change password for your own account.");
+            if (!InScope(actor, userId))
+                throw new AccessDeniedException("You cannot manage this account.");
+            var error = CheckTemporaryPassword(temporaryPassword);
+            if (error != null)
+                return ServiceResult<bool>.Fail(error);
+            var user = _db.Users.Find(userId);
+            if (user == null)
+                return ServiceResult<bool>.Fail("That account could not be found.");
+            if (!user.IsActive)
+                return ServiceResult<bool>.Fail("Reactivate the account before giving it a new password.");
+
+            var now = _clock.Now;
+            var hashed = PasswordHasher.Create(temporaryPassword);
+            user.PasswordHash = hashed.Hash;
+            user.PasswordSalt = hashed.Salt;
+            user.HashIterations = hashed.Iterations;
+            user.MustChangePassword = true;
+            user.FailedLoginCount = 0;
+            user.LockoutEnd = null;
+            user.UpdatedAt = now;
+            // A reset link sent earlier must not override the password just handed out.
+            foreach (var open in _db.PasswordResetTokens.Where(t => t.UserId == userId && t.UsedAt == null))
+                open.UsedAt = now;
+            _audit.Record(actor, "TemporaryPasswordSet", "User", userId);
+            _db.SaveChanges();
+            return ServiceResult<bool>.Ok(_resets.SendTemporaryPassword(userId, temporaryPassword, signInUrl, newAccount: false));
         }
 
         private string CheckRoleDetails(CreateAccountRequest r, int? existingUserId)
@@ -789,11 +831,11 @@ namespace StudyLink.Services.Implementations
 
         public ServiceResult SetPhoto(Actor actor, byte[] image)
         {
-            var error = ImageRules.Check(image);
-            if (error != null) return ServiceResult.Fail(error);
+            var prepared = ImageRules.Prepare(image, ImageRules.AvatarSide);
+            if (prepared.Error != null) return ServiceResult.Fail(prepared.Error);
             var photo = _db.UserPhotos.Find(actor.UserId) ?? _db.UserPhotos.Add(new UserPhoto { UserId = actor.UserId });
-            photo.Photo = image;
-            photo.ContentType = ImageRules.Detect(image);
+            photo.Photo = prepared.Data;
+            photo.ContentType = prepared.ContentType;
             photo.UpdatedAt = _clock.Now;
             _audit.Record(actor, "ProfilePhotoChanged", "User", actor.UserId);
             _db.SaveChanges();
@@ -1088,16 +1130,19 @@ namespace StudyLink.Services.Implementations
             return ServiceResult.Ok();
         }
 
-        public void IssueSetupLink(Actor actor, int userId, string resetLinkBase)
+        public bool SendTemporaryPassword(int userId, string temporaryPassword, string signInUrl, bool newAccount)
         {
             var user = _db.Users.Find(userId);
-            if (user == null) return;
-            var link = IssueToken(user, null, TimeSpan.FromDays(3), resetLinkBase);
-            _db.SaveChanges();
-            _email.Send(user.Email, "Your StudyLink account is ready",
-                "<p>Hello " + Accounts.Html(user.FirstName) + ",</p><p>A StudyLink account was created for you (username <b>"
-                + Accounts.Html(user.UserName) + "</b>). Choose your password within 3 days using this link:</p>"
-                + "<p><a href=\"" + link + "\">" + Accounts.Html(link) + "</a></p>");
+            if (user == null) return false;
+            var intro = newAccount
+                ? "A StudyLink account has been created for you."
+                : "Hub staff have set a new temporary password for your StudyLink account.";
+            return _email.Send(user.Email, newAccount ? "Your StudyLink account is ready" : "Your new StudyLink password",
+                "<p>Hello " + Accounts.Html(user.FirstName) + ",</p><p>" + intro + "</p>"
+                + "<p>Username: <b>" + Accounts.Html(user.UserName) + "</b><br />Temporary password: <b>" + Accounts.Html(temporaryPassword) + "</b></p>"
+                + "<p>Sign in at <a href=\"" + Accounts.Html(signInUrl) + "\">" + Accounts.Html(signInUrl) + "</a>. "
+                + "You will be asked to choose your own password straight away.</p>"
+                + "<p>If you did not expect this email, contact the hub.</p>");
         }
 
         private string IssueToken(User user, int? requestId, TimeSpan lifetime, string linkBase)

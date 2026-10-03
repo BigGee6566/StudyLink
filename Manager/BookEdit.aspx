@@ -25,8 +25,8 @@
                         <div class="d-flex gap-3 align-items-start">
                             <asp:Literal ID="CoverPreview" runat="server" />
                             <div class="flex-fill">
-                                <asp:FileUpload ID="Cover" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/webp" />
-                                <div class="form-hint">A clear photo of the front cover (JPG, PNG or WebP, 2 MB max). <asp:Literal ID="CoverHint" runat="server" Text="Required for new titles, so students can check they are choosing the right edition." /></div>
+                                <asp:FileUpload ID="Cover" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/webp" data-max-mb="15" />
+                                <div class="form-hint">A clear photo of the front cover (JPG, PNG or WebP, up to 15 MB; large photos are resized). <asp:Literal ID="CoverHint" runat="server" Text="Required for new titles, so students can check they are choosing the right edition." /></div>
                             </div>
                         </div>
                     </div>

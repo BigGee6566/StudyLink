@@ -169,6 +169,7 @@ a.item:hover { border-color: var(--blue-500); color: var(--text); }
 .form-control, .form-select { border-radius: 10px; border-color: #cfd7e3; padding: 9px 12px; }
 .form-control:focus, .form-select:focus { border-color: var(--blue-500); box-shadow: 0 0 0 3px rgba(15,106,248,.15); }
 .form-hint { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; }
+.form-error { font-size: 12.5px; color: var(--red-text); margin-top: 4px; font-weight: 600; }
 .field-error { font-size: 13px; color: var(--red-600); }
 .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
 .filter-bar > * { flex: 1 1 180px; }

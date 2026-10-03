@@ -43,8 +43,26 @@ namespace StudyLink.Web.Infrastructure
                 new StudyLinkDbContext(),
                 Clock,
                 new SimulatedCardGateway(Clock),
-                new SmtpEmailSender(from, pickup),
+                new SmtpEmailSender(from, pickup, SmtpFromSettings()),
                 new DiskFileStore(HostingEnvironment.MapPath("~/App_Data")));
+        }
+
+        /// <summary>
+        /// The mail server from App_Data\local.settings.config (git-ignored, so the password never reaches
+        /// the repository). Null when Smtp:Host is not set: Web.config's &lt;mailSettings&gt; then apply.
+        /// </summary>
+        private static SmtpServer SmtpFromSettings()
+        {
+            var settings = ConfigurationManager.AppSettings;
+            if (string.IsNullOrWhiteSpace(settings["Smtp:Host"])) return null;
+            return new SmtpServer
+            {
+                Host = settings["Smtp:Host"].Trim(),
+                Port = int.TryParse(settings["Smtp:Port"], out var port) ? port : 587,
+                EnableSsl = !string.Equals(settings["Smtp:EnableSsl"], "false", StringComparison.OrdinalIgnoreCase),
+                UserName = settings["Smtp:UserName"],
+                Password = settings["Smtp:Password"]
+            };
         }
 
         public static void EndRequest(HttpContext ctx)

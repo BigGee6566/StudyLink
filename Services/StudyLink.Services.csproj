@@ -16,6 +16,8 @@
   <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>

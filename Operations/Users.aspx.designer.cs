@@ -43,6 +43,8 @@ namespace StudyLink.Web.Operations
         protected global::System.Web.UI.WebControls.TextBox StudentNumber;
         protected global::System.Web.UI.WebControls.DropDownList StudyLevel;
         protected global::System.Web.UI.WebControls.TextBox Faculty;
+        protected global::System.Web.UI.WebControls.PlaceHolder TempPasswordField;
+        protected global::System.Web.UI.WebControls.TextBox TemporaryPassword;
         protected global::System.Web.UI.WebControls.Button CreateButton;
         protected global::System.Web.UI.WebControls.Button SaveButton;
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl CreateHint;
@@ -55,6 +57,9 @@ namespace StudyLink.Web.Operations
         protected global::System.Web.UI.WebControls.Button DeactivateButton;
         protected global::System.Web.UI.WebControls.Button ActivateButton;
         protected global::System.Web.UI.WebControls.Button UnlockButton;
+        protected global::System.Web.UI.WebControls.PlaceHolder TempPasswordPanel;
+        protected global::System.Web.UI.WebControls.TextBox NewTempPassword;
+        protected global::System.Web.UI.WebControls.Button SetTempPasswordButton;
         protected global::System.Web.UI.WebControls.PlaceHolder RolesPanel;
         protected global::System.Web.UI.WebControls.Repeater RoleList;
         protected global::System.Web.UI.WebControls.DropDownList AddRole;

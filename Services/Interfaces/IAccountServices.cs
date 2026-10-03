@@ -37,7 +37,18 @@ namespace StudyLink.Services.Interfaces
     {
         PagedResult<UserRow> Search(Actor actor, UserFilter filter);
         UserDetail Get(Actor actor, int userId);
-        ServiceResult<int> CreateAccount(Actor actor, CreateAccountRequest request, string setupLinkBase);
+        /// <summary>
+        /// Creates the account with the request's temporary password, emails it with the username and
+        /// <paramref name="signInUrl"/>, and makes the user choose their own password at first sign-in.
+        /// </summary>
+        ServiceResult<NewAccount> CreateAccount(Actor actor, CreateAccountRequest request, string signInUrl);
+
+        /// <summary>
+        /// Managers and admins: replaces an account's password (within their scope, never their own) with a
+        /// temporary one, emails it, and makes the user change it at next sign-in. Value = whether the email went out.
+        /// </summary>
+        ServiceResult<bool> SetTemporaryPassword(Actor actor, int userId, string temporaryPassword, string signInUrl);
+
         ServiceResult UpdateDetails(Actor actor, int userId, CreateAccountRequest details);
         ServiceResult SetActive(Actor actor, int userId, bool active, string reason);
         ServiceResult AssignRole(Actor actor, int userId, string role);
@@ -61,7 +72,10 @@ namespace StudyLink.Services.Interfaces
         /// <summary>Fields users cannot change on their own (they go through <see cref="RequestChange"/>).</summary>
         IList<string> RequestableFields(int userId);
 
-        /// <summary>Sets the signed-in user's own photo: JPEG, PNG or WebP (checked by content), 2 MB at most.</summary>
+        /// <summary>
+        /// Sets the signed-in user's own photo: JPEG, PNG or WebP (checked by content), up to 15 MB as sent.
+        /// It is stored shrunk to <see cref="Validation.ImageRules.AvatarSide"/> pixels (ImageRules.Prepare).
+        /// </summary>
         ServiceResult SetPhoto(Actor actor, byte[] image);
 
         ServiceResult RemovePhoto(Actor actor);
@@ -85,8 +99,8 @@ namespace StudyLink.Services.Interfaces
         ServiceResult Approve(Actor actor, int requestId, string note, string resetLinkBase);
         ServiceResult Reject(Actor actor, int requestId, string note);
 
-        /// <summary>For accounts created by staff: email a first "set your password" link.</summary>
-        void IssueSetupLink(Actor actor, int userId, string resetLinkBase);
+        /// <summary>Emails the username and a temporary password set by staff. False when the email could not be sent.</summary>
+        bool SendTemporaryPassword(int userId, string temporaryPassword, string signInUrl, bool newAccount);
 
         bool IsTokenValid(string token);
         ServiceResult ResetWithToken(string token, string newPassword, string confirmPassword, string ipAddress);

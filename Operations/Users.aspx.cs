@@ -81,7 +81,7 @@ namespace StudyLink.Web.Operations
                 FormTitle.Text = "Account details";
                 Ui.FillText(NewRole, S.Users.CreatableRoles(Actor), null, Fmt.Words);
                 Ui.Select(NewRole, Query("role"));
-                RoleChoice.Visible = CreateButton.Visible = CreateHint.Visible = true;
+                RoleChoice.Visible = CreateButton.Visible = CreateHint.Visible = TempPasswordField.Visible = true;
                 SaveButton.Visible = AccountSide.Visible = false;
                 ToggleRoleFields(NewRole.SelectedValue);
                 return;
@@ -96,7 +96,7 @@ namespace StudyLink.Web.Operations
             Heading = u.FullName;
             Subheading = string.Join(", ", u.Roles.Select(RoleNames.DisplayName)) + " · " + u.UserName;
             FormTitle.Text = "Details";
-            RoleChoice.Visible = CreateButton.Visible = CreateHint.Visible = false;
+            RoleChoice.Visible = CreateButton.Visible = CreateHint.Visible = TempPasswordField.Visible = false;
             SaveButton.Visible = AccountSide.Visible = true;
 
             FirstName.Text = u.FirstName; LastName.Text = u.LastName; UserName.Text = u.UserName; UserName.Enabled = false;
@@ -119,6 +119,8 @@ namespace StudyLink.Web.Operations
             DeactivateButton.Visible = u.IsActive && u.UserId != CurrentUser.UserId;
             ActivateButton.Visible = !u.IsActive;
             UnlockButton.Visible = locked && RolePermissions.Has(Actor, Permission.ManageSecurity);
+            TempPasswordPanel.Visible = u.IsActive && u.UserId != CurrentUser.UserId
+                && (RolePermissions.Has(Actor, Permission.ManageAllUsers) || RolePermissions.Has(Actor, Permission.CreateStaffAndSuppliers));
 
             RolesPanel.Visible = RolePermissions.Has(Actor, Permission.AssignRoles);
             if (RolesPanel.Visible)
@@ -141,7 +143,7 @@ namespace StudyLink.Web.Operations
 
         private CreateAccountRequest ReadForm() => new CreateAccountRequest
         {
-            Role = NewRole.SelectedValue,
+            Role = NewRole.SelectedValue, TemporaryPassword = TemporaryPassword.Text,
             UserName = UserName.Text, FirstName = FirstName.Text, LastName = LastName.Text, Email = Email.Text, CellNumber = Cell.Text,
             CampusId = Ui.Int(Campus) ?? 0, Gender = Ui.EnumOf<Gender>(Gender) ?? Data.Entities.Gender.PreferNotToSay,
             EmployeeNumber = EmployeeNumber.Text, JobTitle = JobTitle.Text,
@@ -151,9 +153,25 @@ namespace StudyLink.Web.Operations
 
         protected void Create_Click(object sender, EventArgs e)
         {
-            var result = S.Users.CreateAccount(Actor, ReadForm(), ResetLinkBase);
-            if (Show(result))
-                RedirectWith("~/Operations/Users.aspx?id=" + result.Value, "Account created. A link to set a password has been emailed to the user.");
+            var result = S.Users.CreateAccount(Actor, ReadForm(), SignInUrl);
+            if (!Show(result)) return;
+            if (result.Value.PasswordEmailed)
+                RedirectWith("~/Operations/Users.aspx?id=" + result.Value.UserId,
+                    "Account created. The username and temporary password were emailed to " + Email.Text.Trim() + ".");
+            else
+                RedirectWith("~/Operations/Users.aspx?id=" + result.Value.UserId,
+                    "Account created, but the email could not be sent. Give the user their temporary password yourself.", AlertKind.Warning);
+        }
+
+        protected void SetTempPassword_Click(object sender, EventArgs e)
+        {
+            var result = S.Users.SetTemporaryPassword(Actor, EditedUserId ?? 0, NewTempPassword.Text, SignInUrl);
+            if (!Show(result)) return;
+            if (result.Value)
+                RedirectWith("~/Operations/Users.aspx?id=" + EditedUserId, "Temporary password set and emailed to the user.");
+            else
+                RedirectWith("~/Operations/Users.aspx?id=" + EditedUserId,
+                    "Temporary password set, but the email could not be sent. Give it to the user yourself.", AlertKind.Warning);
         }
 
         protected void Save_Click(object sender, EventArgs e) =>

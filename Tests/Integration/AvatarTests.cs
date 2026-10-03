@@ -7,7 +7,7 @@ namespace StudyLink.Tests.Integration
     [TestCategory("Integration")]
     public class AvatarTests
     {
-        private static readonly byte[] Png = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0x0D, 0x49, 0x48, 0x44, 0x52 };
+        private static readonly byte[] Png = TestImages.Png(64, 64);
 
         [TestMethod]
         public void UploadIsCheckedByContentAndSize()
@@ -16,7 +16,12 @@ namespace StudyLink.Tests.Integration
             {
                 var student = w.NewStudent();
                 Assert.IsFalse(w.S.Profiles.SetPhoto(student, Encoding.UTF8.GetBytes("<script>alert(1)</script> renamed to photo.png")).Succeeded, "not an image");
-                Assert.IsFalse(w.S.Profiles.SetPhoto(student, new byte[3 * 1024 * 1024]).Succeeded, "over 2 MB");
+                Assert.IsFalse(w.S.Profiles.SetPhoto(student, new byte[StudyLink.Services.Validation.ImageRules.MaxUploadBytes + 1]).Succeeded, "over 15 MB");
+
+                var phonePhoto = w.S.Profiles.SetPhoto(student, TestImages.Jpeg(4000, 3000, noisy: true));
+                Assert.IsTrue(phonePhoto.Succeeded, "a photo larger than 2 MB is shrunk, not refused: " + phonePhoto.Error);
+                Assert.AreEqual(new System.Drawing.Size(512, 384), TestImages.SizeOf(w.S.Profiles.Photo(student, student.UserId).Data));
+
                 Assert.IsTrue(w.S.Profiles.SetPhoto(student, Png).Succeeded);
 
                 var own = w.S.Profiles.Photo(student, student.UserId);

@@ -77,12 +77,17 @@
                                 <div class="col-md-4"><label class="form-label" for="<%= StudyLevel.ClientID %>">Study level</label><asp:DropDownList ID="StudyLevel" runat="server" CssClass="form-select" /></div>
                                 <div class="col-md-4"><label class="form-label" for="<%= Faculty.ClientID %>">Faculty</label><asp:TextBox ID="Faculty" runat="server" CssClass="form-control" MaxLength="100" /></div>
                             </asp:PlaceHolder>
+                            <asp:PlaceHolder ID="TempPasswordField" runat="server">
+                                <div class="col-md-6"><label class="form-label" for="<%= TemporaryPassword.ClientID %>">Temporary password</label>
+                                    <asp:TextBox ID="TemporaryPassword" runat="server" CssClass="form-control" TextMode="Password" MaxLength="128" autocomplete="new-password" data-password-toggle="true" />
+                                    <div class="form-hint">At least 8 characters with a letter and a number. <button type="button" class="btn btn-link btn-sm p-0 align-baseline" data-generate-password="<%= TemporaryPassword.ClientID %>">Generate one</button></div></div>
+                            </asp:PlaceHolder>
                         </div>
                         <div class="form-actions">
                             <asp:Button ID="CreateButton" runat="server" CssClass="btn btn-primary" Text="Create account" OnClick="Create_Click" />
                             <asp:Button ID="SaveButton" runat="server" CssClass="btn btn-primary" Text="Save details" OnClick="Save_Click" />
                         </div>
-                        <p class="form-hint" id="CreateHint" runat="server">The new user receives an email with a single-use link to choose their own password. No password is shown or sent.</p>
+                        <p class="form-hint" id="CreateHint" runat="server">The new user is emailed their username and this temporary password, and must choose their own password the first time they sign in.</p>
                     </div>
                 </div>
 
@@ -105,6 +110,18 @@
                                 </div>
                             </div>
                         </div>
+                        <asp:PlaceHolder ID="TempPasswordPanel" runat="server">
+                            <div class="panel">
+                                <div class="panel__header"><h2 class="panel__title">Temporary password</h2></div>
+                                <asp:Panel runat="server" CssClass="panel__body" DefaultButton="SetTempPasswordButton">
+                                    <p class="form-hint mt-0 mb-3">Replaces the user's password and emails them the new one. They must choose their own password when they next sign in.</p>
+                                    <label class="form-label" for="<%= NewTempPassword.ClientID %>">New temporary password</label>
+                                    <asp:TextBox ID="NewTempPassword" runat="server" CssClass="form-control" TextMode="Password" MaxLength="128" autocomplete="new-password" data-password-toggle="true" />
+                                    <div class="form-hint mb-2">At least 8 characters with a letter and a number. <button type="button" class="btn btn-link btn-sm p-0 align-baseline" data-generate-password="<%= NewTempPassword.ClientID %>">Generate one</button></div>
+                                    <asp:Button ID="SetTempPasswordButton" runat="server" CssClass="btn btn-outline-primary" Text="Set and email password" OnClick="SetTempPassword_Click" data-confirm="Replace this user's password? They will be emailed the new one." />
+                                </asp:Panel>
+                            </div>
+                        </asp:PlaceHolder>
                         <asp:PlaceHolder ID="RolesPanel" runat="server">
                             <div class="panel">
                                 <div class="panel__header"><h2 class="panel__title">Roles</h2></div>

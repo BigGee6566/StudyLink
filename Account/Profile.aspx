@@ -10,8 +10,8 @@
                         <div class="flex-fill">
                             <asp:Literal ID="PhotoHint" runat="server" />
                             <label class="form-label" for="<%= Photo.ClientID %>">Choose a photo</label>
-                            <asp:FileUpload ID="Photo" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/webp" />
-                            <div class="form-hint">JPEG, PNG or WebP, 2 MB at most. A clear, front-facing photo works best.</div>
+                            <asp:FileUpload ID="Photo" runat="server" CssClass="form-control" accept="image/jpeg,image/png,image/webp" data-max-mb="15" />
+                            <div class="form-hint">JPEG, PNG or WebP, up to 15 MB. Large photos are resized for you. A clear, front-facing photo works best.</div>
                             <div class="form-actions mt-2">
                                 <asp:Button ID="UploadPhoto" runat="server" CssClass="btn btn-primary" Text="Upload photo" OnClick="UploadPhoto_Click" />
                                 <asp:Button ID="RemovePhotoButton" runat="server" CssClass="btn btn-outline-danger" Text="Remove photo" OnClick="RemovePhoto_Click" data-confirm="Remove your profile photo?" />

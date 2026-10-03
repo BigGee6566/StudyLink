@@ -88,7 +88,11 @@ namespace StudyLink.Tests
     public sealed class CapturingEmail : IEmailSender
     {
         public ConcurrentBag<Tuple<string, string, string>> Sent { get; } = new ConcurrentBag<Tuple<string, string, string>>();
-        public void Send(string to, string subject, string htmlBody) => Sent.Add(Tuple.Create(to, subject, htmlBody));
+        public bool Send(string to, string subject, string htmlBody)
+        {
+            Sent.Add(Tuple.Create(to, subject, htmlBody));
+            return true;
+        }
     }
 
     /// <summary>
@@ -181,11 +185,12 @@ namespace StudyLink.Tests
             {
                 Role = role, UserName = role.ToLowerInvariant() + "_" + x, FirstName = role, LastName = "User" + x,
                 Email = role.ToLowerInvariant() + "_" + x + "@test.local", CellNumber = "0841234567", CampusId = Campus(),
-                CompanyName = "Books Direct " + x, ContactPerson = "Mr Supplier", Phone = "0431234567", StudentNumber = StudentNumber()
+                CompanyName = "Books Direct " + x, ContactPerson = "Mr Supplier", Phone = "0431234567", StudentNumber = StudentNumber(),
+                TemporaryPassword = Password
             };
-            var result = S.Users.CreateAccount(creator ?? Admin(), request, "https://test/reset?token=");
+            var result = S.Users.CreateAccount(creator ?? Admin(), request, "https://test/Account/Login.aspx");
             Assert.IsTrue(result.Succeeded, result.Error);
-            return ActorFor(result.Value);
+            return ActorFor(result.Value.UserId);
         }
 
         public Actor NewStaff() => NewAccount(RoleNames.Staff);

@@ -59,6 +59,9 @@ namespace StudyLink.Services.DTOs
     {
         public string Role { get; set; }
 
+        /// <summary>Chosen by whoever creates the account; emailed to the user, who must replace it at first sign-in.</summary>
+        public string TemporaryPassword { get; set; }
+
         // Staff / Manager
         public string EmployeeNumber { get; set; }
         public string JobTitle { get; set; }
@@ -74,6 +77,14 @@ namespace StudyLink.Services.DTOs
         public string StudentNumber { get; set; }
         public int? StudyLevelId { get; set; }
         public string Faculty { get; set; }
+    }
+
+    public sealed class NewAccount
+    {
+        public int UserId { get; set; }
+
+        /// <summary>False when the email with the temporary password could not be sent: hand it over in person.</summary>
+        public bool PasswordEmailed { get; set; }
     }
 
     public sealed class UserFilter

@@ -128,6 +128,7 @@ namespace StudyLink.Web.Infrastructure
 
         /// <summary>Absolute reset/setup link prefix the services append the single-use token to.</summary>
         protected string ResetLinkBase => new Uri(Request.Url, ResolveUrl("~/Account/ResetPassword.aspx?token=")).AbsoluteUri;
+        protected string SignInUrl => new Uri(Request.Url, ResolveUrl("~/Account/Login.aspx")).AbsoluteUri;
     }
 
     /// <summary>

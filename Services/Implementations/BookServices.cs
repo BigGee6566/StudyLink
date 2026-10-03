@@ -271,6 +271,7 @@ namespace StudyLink.Services.Implementations
         {
             RolePermissions.Demand(actor, Permission.ManageBooks);
             var isbn = BookRules.NormaliseIsbn(e.Isbn, out var isbnError);
+            var cover = e.CoverImage != null ? ImageRules.Prepare(e.CoverImage, ImageRules.CoverSide) : null;
             var error = isbnError
                         ?? (string.IsNullOrWhiteSpace(e.Title) || e.Title.Trim().Length > 200 ? "Enter the title (200 characters max)." : null)
                         ?? (string.IsNullOrWhiteSpace(e.Authors) || e.Authors.Trim().Length > 200 ? "Enter the author(s) (200 characters max)." : null)
@@ -285,7 +286,7 @@ namespace StudyLink.Services.Implementations
                         ?? (e.SubjectId.HasValue && !_db.Subjects.Any(s => s.SubjectId == e.SubjectId) ? "Choose a valid subject." : null)
                         ?? (e.PreferredSupplierId.HasValue && !_db.Suppliers.Any(s => s.SupplierId == e.PreferredSupplierId) ? "Choose a valid supplier." : null)
                         ?? (!e.BookId.HasValue && !allowMissingCover && (e.CoverImage == null || e.CoverImage.Length == 0) ? CoverRequired : null)
-                        ?? (e.CoverImage != null ? ImageRules.Check(e.CoverImage) : null)
+                        ?? cover?.Error
                         ?? (_db.Books.Any(b => b.Isbn == isbn && b.BookId != e.BookId) ? "A book with this ISBN already exists." : null);
             if (error != null) return ServiceResult<int>.Fail(error);
 
@@ -323,10 +324,10 @@ namespace StudyLink.Services.Implementations
             book.IsForSale = e.IsForSale;
             book.IsActive = e.IsActive;
             book.PreferredSupplierId = e.PreferredSupplierId;
-            if (e.CoverImage != null)
+            if (cover != null)
             {
-                book.CoverImage = e.CoverImage;
-                book.CoverContentType = ImageRules.Detect(e.CoverImage);
+                book.CoverImage = cover.Data;
+                book.CoverContentType = cover.ContentType;
             }
 
             try

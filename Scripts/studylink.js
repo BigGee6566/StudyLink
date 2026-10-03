@@ -58,6 +58,42 @@
     });
   });
 
+  // Temporary password generator: <button data-generate-password="ClientIdOfTheBox">. Letters and
+  // digits only, without look-alikes (0/O, 1/l/I), so it can be read out or copied from an email.
+  document.querySelectorAll("[data-generate-password]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var input = document.getElementById(btn.getAttribute("data-generate-password"));
+      if (!input) return;
+      var letters = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ", digits = "23456789";
+      var all = letters + digits, bytes = new Uint32Array(12), out = "";
+      window.crypto.getRandomValues(bytes);
+      for (var i = 0; i < bytes.length; i++) out += all[bytes[i] % all.length];
+      out = letters[bytes[0] % letters.length] + out.slice(1, 11) + digits[bytes[11] % digits.length];
+      input.value = out;
+      var toggle = input.parentNode.querySelector(".pw-toggle");
+      if (input.type === "password" && toggle) toggle.click();
+      input.focus();
+      input.select();
+    });
+  });
+
+  // Uploads: refuse an oversized file before it is sent, instead of failing on the server.
+  document.querySelectorAll("input[type=file][data-max-mb]").forEach(function (input) {
+    var max = +input.getAttribute("data-max-mb");
+    var note = document.createElement("div");
+    note.className = "form-error";
+    note.setAttribute("role", "alert");
+    note.hidden = true;
+    input.insertAdjacentElement("afterend", note);
+    input.addEventListener("change", function () {
+      var file = input.files && input.files[0];
+      var tooBig = !!file && file.size > max * 1024 * 1024;
+      note.hidden = !tooBig;
+      note.textContent = tooBig ? "That file is " + (file.size / 1048576).toFixed(1) + " MB. Choose one of " + max + " MB or less." : "";
+      if (tooBig) input.value = "";
+    });
+  });
+
   // Mobile sidebar drawer (TutorConnect sidebar.js).
   document.addEventListener("click", function (e) {
     var t = e.target.closest("[data-nav-toggle]");

@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace StudyLink.Services.Validation
@@ -90,7 +95,18 @@ namespace StudyLink.Services.Validation
     /// </summary>
     public static class ImageRules
     {
+        /// <summary>Largest picture a user may send. Phone photos are larger than what is kept, so they are shrunk.</summary>
+        public const int MaxUploadBytes = 15 * 1024 * 1024;
+
+        /// <summary>Largest picture kept in the database.</summary>
         public const int MaxBytes = 2 * 1024 * 1024;
+
+        public const int AvatarSide = 512;
+        public const int CoverSide = 900;
+
+        // A small file can still decode to a huge bitmap; refuse those before allocating it.
+        private const long MaxPixels = 60000000;
+        private const int ExifOrientation = 0x0112;
 
         /// <summary>"image/jpeg", "image/png" or "image/webp"; null for anything else.</summary>
         public static string Detect(byte[] data)
@@ -104,11 +120,101 @@ namespace StudyLink.Services.Validation
             return null;
         }
 
-        /// <summary>Null when the image is acceptable; otherwise the message to show.</summary>
-        public static string Check(byte[] data) =>
-            data == null || data.Length == 0 ? "Choose an image to upload."
-            : data.Length > MaxBytes ? "The image must be 2 MB or smaller."
-            : Detect(data) == null ? "The image must be a JPEG, PNG or WebP picture."
-            : null;
+        /// <summary>
+        /// Checks an uploaded picture and returns what to store. JPEG photos are always redrawn: upright,
+        /// at most <paramref name="maxSide"/> pixels a side, without camera metadata (phones embed the GPS
+        /// position). A PNG that is already small enough is kept as sent. WebP cannot be decoded on .NET
+        /// Framework, so it is kept as sent and must already fit within <see cref="MaxBytes"/>.
+        /// </summary>
+        public static PreparedImage Prepare(byte[] data, int maxSide)
+        {
+            if (data == null || data.Length == 0) return PreparedImage.Fail("Choose an image to upload.");
+            if (data.Length > MaxUploadBytes) return PreparedImage.Fail("The picture must be 15 MB or smaller.");
+            var type = Detect(data);
+            if (type == null) return PreparedImage.Fail("The image must be a JPEG, PNG or WebP picture.");
+            if (type == "image/webp")
+                return data.Length <= MaxBytes
+                    ? new PreparedImage { Data = data, ContentType = type }
+                    : PreparedImage.Fail("WebP pictures must be 2 MB or smaller. Save the picture as a JPEG to upload a larger one.");
+
+            try
+            {
+                using (var input = new MemoryStream(data))
+                using (var image = Image.FromStream(input, false, true))
+                {
+                    if ((long)image.Width * image.Height > MaxPixels)
+                        return PreparedImage.Fail("The picture has too many pixels. Use a smaller photo.");
+                    if (type == "image/png" && data.Length <= MaxBytes && image.Width <= maxSide && image.Height <= maxSide)
+                        return new PreparedImage { Data = data, ContentType = type };
+
+                    var jpeg = Redraw(image, maxSide);
+                    return jpeg.Length <= MaxBytes
+                        ? new PreparedImage { Data = jpeg, ContentType = "image/jpeg" }
+                        : PreparedImage.Fail("The picture is too large even after shrinking it. Use a smaller photo.");
+                }
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is ExternalException || ex is OutOfMemoryException)
+            {
+                // GDI+ reports a damaged or unsupported file as one of these.
+                return PreparedImage.Fail("This picture could not be read. Try another photo.");
+            }
+        }
+
+        private static byte[] Redraw(Image image, int maxSide)
+        {
+            ApplyOrientation(image);
+            var scale = Math.Min(1.0, (double)maxSide / Math.Max(image.Width, image.Height));
+            var width = Math.Max(1, (int)Math.Round(image.Width * scale));
+            var height = Math.Max(1, (int)Math.Round(image.Height * scale));
+
+            using (var canvas = new Bitmap(width, height, PixelFormat.Format24bppRgb))
+            {
+                using (var g = Graphics.FromImage(canvas))
+                {
+                    g.Clear(Color.White); // transparent PNG areas become white in a JPEG
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    g.DrawImage(image, 0, 0, width, height);
+                }
+
+                var codec = ImageCodecInfo.GetImageEncoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
+                using (var quality = new EncoderParameters(1))
+                using (var output = new MemoryStream())
+                {
+                    quality.Param[0] = new EncoderParameter(Encoder.Quality, 85L);
+                    canvas.Save(output, codec, quality);
+                    return output.ToArray();
+                }
+            }
+        }
+
+        /// <summary>Phones store "rotate me" in EXIF instead of rotating the pixels; browsers would show the raw pixels.</summary>
+        private static void ApplyOrientation(Image image)
+        {
+            if (!image.PropertyIdList.Contains(ExifOrientation)) return;
+            var value = image.GetPropertyItem(ExifOrientation).Value;
+            if (value == null || value.Length == 0) return;
+            switch (value[0])
+            {
+                case 2: image.RotateFlip(RotateFlipType.RotateNoneFlipX); break;
+                case 3: image.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
+                case 4: image.RotateFlip(RotateFlipType.Rotate180FlipX); break;
+                case 5: image.RotateFlip(RotateFlipType.Rotate90FlipX); break;
+                case 6: image.RotateFlip(RotateFlipType.Rotate90FlipNone); break;
+                case 7: image.RotateFlip(RotateFlipType.Rotate270FlipX); break;
+                case 8: image.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
+            }
+        }
+    }
+
+    /// <summary>The result of <see cref="ImageRules.Prepare"/>: the bytes to store and their type, or why not.</summary>
+    public sealed class PreparedImage
+    {
+        public byte[] Data { get; set; }
+        public string ContentType { get; set; }
+        public string Error { get; private set; }
+
+        internal static PreparedImage Fail(string error) => new PreparedImage { Error = error };
     }
 }

@@ -76,8 +76,9 @@ stored.
 * `4111 1111 1111 1111` with any future expiry and a 3-digit CVV is **approved**.
 * `4000 0000 0000 0002` is **declined**.
 
-Emails (receipts, reset links, set-password links) are written as `.eml` files to `App_Data\MailDrop`
-in development. Set `StudyLink:MailMode` to `Smtp` and configure `<mailSettings>` to send real mail.
+Emails (receipts, reset links, temporary passwords for accounts created by staff) are written as `.eml`
+files to `App_Data\MailDrop` in development. To send real mail, set `StudyLink:MailMode` to `Smtp` and the
+`Smtp:*` keys in `App_Data\local.settings.config` (see the `.sample` file; Gmail needs an app password).
 
 ## Tests
 

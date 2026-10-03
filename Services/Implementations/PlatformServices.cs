@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using StudyLink.Data;
@@ -256,21 +257,24 @@ namespace StudyLink.Services.Implementations
     {
         private readonly string _from;
         private readonly string _pickupDirectory;
+        private readonly SmtpServer _server;
 
         /// <param name="pickupDirectory">
         /// When set, messages are written as .eml files to this absolute folder instead of being sent
-        /// (development). When null, the SMTP server in &lt;system.net&gt;&lt;mailSettings&gt; is used.
+        /// (development). When null, mail goes to <paramref name="server"/>.
         /// </param>
-        public SmtpEmailSender(string fromAddress, string pickupDirectory = null)
+        /// <param name="server">When null, the SMTP server in &lt;system.net&gt;&lt;mailSettings&gt; is used.</param>
+        public SmtpEmailSender(string fromAddress, string pickupDirectory = null, SmtpServer server = null)
         {
             _from = fromAddress;
             _pickupDirectory = pickupDirectory;
+            _server = server;
         }
 
-        public void Send(string to, string subject, string htmlBody)
+        public bool Send(string to, string subject, string htmlBody)
         {
             if (string.IsNullOrWhiteSpace(to))
-                return;
+                return false;
             try
             {
                 using (var message = new MailMessage(_from, to.Trim(), subject, htmlBody) { IsBodyHtml = true })
@@ -282,15 +286,35 @@ namespace StudyLink.Services.Implementations
                         client.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
                         client.PickupDirectoryLocation = _pickupDirectory;
                     }
+                    else if (_server != null)
+                    {
+                        client.Host = _server.Host;
+                        client.Port = _server.Port;
+                        client.EnableSsl = _server.EnableSsl;
+                        if (!string.IsNullOrEmpty(_server.UserName))
+                            client.Credentials = new NetworkCredential(_server.UserName, _server.Password);
+                    }
                     client.Send(message);
+                    return true;
                 }
             }
             catch (Exception ex)
             {
                 // Email is a courtesy copy of what the app already shows; never fail the action for it.
                 Trace.TraceError("StudyLink email to {0} failed: {1}", to, ex.Message);
+                return false;
             }
         }
+    }
+
+    /// <summary>An SMTP server and its sign-in (e.g. Gmail: smtp.gmail.com, 587, SSL, an app password).</summary>
+    public sealed class SmtpServer
+    {
+        public string Host { get; set; }
+        public int Port { get; set; } = 587;
+        public bool EnableSsl { get; set; } = true;
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 
     public sealed class DiskFileStore : IFileStore

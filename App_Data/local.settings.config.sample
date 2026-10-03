@@ -3,8 +3,23 @@
   Copy to local.settings.config (git-ignored) in this folder.
   Seed:Demo = true creates the demo accounts and sample data on first start of a DEBUG build,
   all with the password given in Seed:DevPassword. Leave Seed:Demo false in production.
+
+  Real email (temporary passwords, receipts, reset links): set StudyLink:MailMode to Smtp and fill in
+  the Smtp:* keys. Without them, emails are written as .eml files to App_Data\MailDrop.
+  Gmail: Smtp:Host smtp.gmail.com, Smtp:Port 587, and an app password (Google Account > Security >
+  App passwords), not the normal Gmail password. StudyLink:MailFrom should then be that Gmail address.
 -->
 <appSettings>
   <add key="Seed:Demo" value="true" />
   <add key="Seed:DevPassword" value="choose-a-dev-password-1" />
+
+  <!--
+  <add key="StudyLink:MailMode" value="Smtp" />
+  <add key="StudyLink:MailFrom" value="StudyLink &lt;your.address@gmail.com&gt;" />
+  <add key="Smtp:Host" value="smtp.gmail.com" />
+  <add key="Smtp:Port" value="587" />
+  <add key="Smtp:EnableSsl" value="true" />
+  <add key="Smtp:UserName" value="your.address@gmail.com" />
+  <add key="Smtp:Password" value="your-16-letter-app-password" />
+  -->
 </appSettings>

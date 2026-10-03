@@ -46,8 +46,11 @@ namespace StudyLink.Services.Interfaces
 
     public interface IEmailSender
     {
-        /// <summary>Best effort: a mail failure is logged and never undoes the business action.</summary>
-        void Send(string to, string subject, string htmlBody);
+        /// <summary>
+        /// Best effort: a mail failure is logged and never undoes the business action. Returns false when
+        /// the message could not be handed over, so a caller can tell the person to pass the news on themselves.
+        /// </summary>
+        bool Send(string to, string subject, string htmlBody);
     }
 
     /// <summary>Private file storage (supplier invoices) outside the public web root.</summary>
