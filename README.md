@@ -68,6 +68,38 @@ All demo accounts use the password you set in `Seed:DevPassword`.
 | `tutor.pending` | Tutor | Pending verification, for the SC22 demo |
 | `student.thando`, `student.olona`, `student.aphiwe` | Student | Bookings, rentals (Olona's is overdue), a purchase |
 
+### Sample data: two months of history
+
+`database\SeedData.sql` fills a database that already has the demo accounts with realistic activity, so
+dashboards, reports, timesheets and the money pages have something to show. Run it once:
+
+```
+sqlcmd -S .\SQLEXPRESS -E -I -d StudyLink -i database\SeedData.sql
+```
+
+(or open it in SSMS with the StudyLink database selected and press Execute). It runs in one transaction, and
+running it again prints "already seeded" and changes nothing. All dates are relative to the moment it runs:
+eight weeks back and two weeks ahead.
+
+* **30 students and 15 tutors**, ten students and five tutors per campus, all with the password
+  `StudyLink@2026`. For example: `lwazi.mbatha` (Alice), `sinethemba.jacobs` (East London) and `sisipho.makana`
+  (Bisho) are students; `zola.ngcobo` (Alice), `lindiwe.dube` (East London) and `noluthando.gusha` (Bisho)
+  are tutors. The full list is in the script header. Existing accounts keep their passwords.
+* **Every** student and verified tutor, old and new, gets:
+  * tutoring history: completed, cancelled, declined and expired bookings, attendance, reviews, and approved,
+    declined, withdrawn and pending postponements
+  * weekly timesheets: approved, returned, submitted and this week's draft
+  * upcoming confirmed, awaiting-tutor and awaiting-payment sessions
+  * fees, card payments and refunds
+* **20 more titles**, with copies at all three campuses. History covers:
+  * rentals: on time, late (fines paid, waived or outstanding), damaged, lost, renewed, active, overdue and cancelled
+  * book sales and waitlists
+  * supplier orders, deliveries and the stock they brought in
+* Support messages, password-reset requests, notifications and the daily business metrics are added too.
+
+Existing students and tutors created inside the history window are back-dated to just before it, so no activity
+predates an account. The awaiting-payment holds expire 30 minutes after the script runs, like real ones.
+
 ### Test cards (simulated gateway)
 
 Payments go through a simulated card gateway (`IPaymentGateway`). Only the card brand and last four digits are
